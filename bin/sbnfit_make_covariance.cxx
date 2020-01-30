@@ -139,7 +139,8 @@ int main(int argc, char* argv[])
 
         //and make some plots of the resulting things
         //Will be outputted in the form: SBNfit_covariance_plots_TAG.root
-        example_covar.PrintMatricies(tag);
+	// Not using this, so commenting it out for now... (Lauren)
+        //example_covar.PrintMatricies(tag);
 
         //Constraint will be patched in shortly: mark
         /* 
@@ -165,8 +166,9 @@ int main(int argc, char* argv[])
 
         //and make some plots of the resulting things
         //Will be outputted in the form: SBNfit_covariance_plots_TAG.root
-        example_covar.PrintMatricies(tag);
-
+	// Not using this, so commenting it out for now... (Lauren)
+        //example_covar.PrintMatricies(tag);
+	
         //Constraint will be patched in shortly: mark
         //example_covar.DoConstraint(0,1);
 

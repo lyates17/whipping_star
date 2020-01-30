@@ -1456,7 +1456,7 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
 
         TH2D h2_coll_corr(coll_correlation);
         h2_coll_corr.SetName("coll_corr");
-        TCanvas *c_coll_corr = new TCanvas("collapsed correlation matrix");
+        TCanvas *c_coll_corr = new TCanvas(("SBNfit_collapsed_correlation_matrix_"+tag+"_canvas").c_str());
         c_coll_corr->cd();
         c_coll_corr->SetFixedAspectRatio();
         h2_coll_corr.Draw("colz");
@@ -1485,7 +1485,7 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
 
         TH2D h2_coll_frac(coll_frac_covariance);
         h2_coll_frac.SetName("coll_frac");
-        TCanvas *c_coll_frac = new TCanvas("collapsed fractional covariance matrix");
+        TCanvas *c_coll_frac = new TCanvas(("SBNfit_collapsed_fractional_covariance_matrix_"+tag+"_canvas").c_str());
         c_coll_frac->cd();
         c_coll_frac->SetFixedAspectRatio();
         h2_coll_frac.Draw("colz");
@@ -1514,7 +1514,7 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
 
         TH2D h2_coll_full(coll_covariance);
         h2_coll_full.SetName("coll_full");
-        TCanvas *c_coll_full = new TCanvas("collapsed covariance matrix");
+        TCanvas *c_coll_full = new TCanvas(("SBNfit_collapsed_covariance_matrix_"+tag+"_canvas").c_str());
         c_coll_full->cd();
         c_coll_full->SetFixedAspectRatio();
         h2_coll_full.Draw("colz");
