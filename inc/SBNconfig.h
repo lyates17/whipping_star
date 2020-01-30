@@ -167,6 +167,9 @@ class SBNconfig {
     std::vector<std::string> weightmaps_patterns;
     std::vector<std::string> weightmaps_mode;
 
+    std::map<std::string,bool> variation_whitelist;
+    std::map<std::string,bool> variation_blacklist;
+
     std::map<std::string,std::vector<std::string>> montecarlo_file_friend_map;
     std::map<std::string,std::vector<std::string>> montecarlo_file_friend_treename_map;
 

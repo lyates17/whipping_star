@@ -33,7 +33,7 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
 
 
     // we have Modes, Detectors, Channels
-    TiXmlElement *pMode, *pDet, *pChan, *pCov, *pMC, *pData,*pPOT, *pWeiMaps;
+    TiXmlElement *pMode, *pDet, *pChan, *pCov, *pMC, *pData,*pPOT, *pWeiMaps, *pList;
 
 
     //Grab the first element. Note very little error checking here! make sure they exist.
@@ -45,6 +45,7 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     pData   = doc.FirstChildElement("data");
     pPOT    = doc.FirstChildElement("plotpot");
     pWeiMaps = doc.FirstChildElement("WeightMaps");
+    pList = doc.FirstChildElement("variation_list");
 
     if(!pMode){
         std::cout<<otag<<"ERROR: Need at least 1 mode defined in xml./n";
@@ -440,6 +441,30 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
             branch_variables.push_back(TEMP_branch_variables);
             //next file
             pMC=pMC->NextSiblingElement("MultisimFile");
+        }
+    }
+
+    if(!pList){
+        if(is_verbose)std::cout<<otag<<"No Whitelist or Blacklist set, including ALL variations by default"<<std::endl;
+    }else{
+        while(pList){
+                    
+                    TiXmlElement *pWhiteList = pList->FirstChildElement("whitelist");
+                     while(pWhiteList){
+                             std::string wt = std::string(pWhiteList->GetText());
+                             variation_whitelist[wt] = true; 
+                             if(is_verbose)std::cout<<otag<<" Whitelisting variation "<<" "<<wt<<std::endl;
+                             pWhiteList = pWhiteList->NextSiblingElement("whitelist");
+                     }
+                    
+                    TiXmlElement *pBlackList = pList->FirstChildElement("blacklist");
+                     while(pBlackList){
+                             std::string bt = std::string(pBlackList->GetText());
+                             variation_blacklist[bt] = true; 
+                             if(is_verbose)std::cout<<otag<<" Blacklisting variation "<<" "<<bt<<std::endl;
+                             pBlackList = pBlackList->NextSiblingElement("blacklist");
+                     }
+                     pList = pList->NextSiblingElement("variation_list");
         }
     }
 
