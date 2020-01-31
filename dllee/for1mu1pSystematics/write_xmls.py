@@ -1,6 +1,10 @@
 # Write the 2*3*21 xml files
 
 import math
+import subprocess
+
+outdir = "auto"
+subprocess.call("mkdir -p %s" % outdir, shell=True)
 
 xml_str = """<?xml version="1.0" ?>
 
@@ -94,7 +98,8 @@ postsel_dict = { "nbins": [ 12, 12, 12, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 
                  "xlow": [ 10., -106., 0., 250., 0.8, 0., 0., 0., 0.1, 0., 75., 0., 0., -1*math.pi, 5., 20., 0., -1*math.pi, 5., 40., 0. ],
                  "xhigh": [ 250., 106., 1006., 1150., 3., 800., math.pi, 2., 0.8, 0.75e6, 0.65e3, 1.3e3, 3., math.pi, 500., 700., 3., math.pi, 150., 600., 1. ], 
                  "file_name": "input_to_sbnfit_v33_MaMvRES_Jan31.root" }
-sel_dict = { "presel": presel_dict, "postsel": postsel_dict }
+#sel_dict = { "presel": presel_dict, "postsel": postsel_dict }
+sel_dict = { "postsel": postsel_dict } 
 
 # 3 sets of plots...
 # (1) untuned MCC9 (spline weight only), flux systematics
@@ -128,7 +133,7 @@ for sel in sel_dict:
     nbins = sel_dict[sel]["nbins"]
     xlow  = sel_dict[sel]["xlow"]
     xhigh = sel_dict[sel]["xhigh"]
-    # Also set the file name
+    # Also set the input file name
     file_name = sel_dict[sel]["file_name"]
 
     for plot_set in set_dict:
@@ -156,7 +161,7 @@ for sel in sel_dict:
             var_xml_str = var_xml_str.replace("ADDITIONAL_WEIGHT", additional_weight)
             var_xml_str = var_xml_str.replace("GENIE_WHITELIST_STR", genie_whitelist_str)
             
-            output = "auto_%s_%s-%s.xml" % (sel, plot_set, var_list[i])
+            output = "./auto/%s_%s__%s.xml" % (sel, plot_set, var_list[i])
             with open(output, 'w') as f:
                 f.write(var_xml_str)
                 
