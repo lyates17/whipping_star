@@ -13,10 +13,10 @@
   <subchannel name="extbnb"/>
 </channel>
 
-<plotpot value=10.1e20/>
+<plotpot value=3.456e+19/>
 
 
-<MultisimFile treename="sel1mu1p_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="1.22e21">
+<MultisimFile treename="sel1mu1p_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="1.219e21">
   <branch
       name="nu_energy_reco"
       type="double"
@@ -26,7 +26,7 @@
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="1.31e23">
+<MultisimFile treename="sel1mu1p_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="1.314e23">
   <branch
       name="nu_energy_reco"
       type="double"
@@ -36,7 +36,7 @@
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="3.26e20">
+<MultisimFile treename="sel1mu1p_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="3.257e20">
   <branch
       name="nu_energy_reco"
       type="double"
@@ -46,7 +46,7 @@
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="1.61e21">
+<MultisimFile treename="sel1mu1p_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit.root" scale="1.0" maxevents="100000" pot="5.524e19">
   <branch
       name="nu_energy_reco"
       type="double"
