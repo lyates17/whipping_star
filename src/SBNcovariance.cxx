@@ -953,7 +953,7 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
         TFile *fout=new TFile((tag+".SBNcovar.root").c_str(),"RECREATE");
         fout->cd();
         full_covariance.Write("full_covariance",TObject::kWriteDelete);
-        frac_covariance.Write("frac_covariance",TObject::kWriteDelete);
+        frac_covariance.Write("full_fraccovariance",TObject::kWriteDelete);
         full_correlation.Write("full_correlation",TObject::kWriteDelete);
 
 
@@ -987,8 +987,20 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
 
         for(int m=0; m< variations.size();m++){
             vec_full_correlation.at(m).Write( (variations.at(m)+"_full_correlation").c_str(), TObject::kWriteDelete);
-            vec_frac_covariance.at(m).Write( (variations.at(m)+"_frac_covariance").c_str(), TObject::kWriteDelete);
+            vec_frac_covariance.at(m).Write( (variations.at(m)+"_full_fraccovariance").c_str(), TObject::kWriteDelete);
             vec_full_covariance.at(m).Write( (variations.at(m)+"_full_covariance").c_str(), TObject::kWriteDelete);
+
+	    // also the collapsed matrices
+	    collapse_chi.CollapseModes(vec_full_covariance.at(m), coll_covariance);
+	    for(int i=0; i<num_bins_total_compressed; i++){
+	      for(int j=0; j<num_bins_total_compressed; j++){
+		coll_frac_covariance(i,j) = coll_covariance(i,j)/(spec_central_value.collapsed_vector.at(i)*spec_central_value.collapsed_vector.at(j)) ;
+		coll_correlation(i,j) = coll_covariance(i,j)/(sqrt(coll_covariance(i,i))*sqrt(coll_covariance(j,j)));
+	      }
+	    }
+	    coll_correlation.Write((variations.at(m)+"_collapsed_correlation").c_str(), TObject::kWriteDelete);
+	    coll_frac_covariance.Write((variations.at(m)+"_collapsed_fraccovariance").c_str(), TObject::kWriteDelete);
+	    coll_covariance.Write((variations.at(m)+"_collapsed_covariance").c_str(), TObject::kWriteDelete);
         }
 
 
