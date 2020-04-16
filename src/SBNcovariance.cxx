@@ -953,7 +953,7 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
         TFile *fout=new TFile((tag+".SBNcovar.root").c_str(),"RECREATE");
         fout->cd();
         full_covariance.Write("full_covariance",TObject::kWriteDelete);
-        frac_covariance.Write("full_fraccovariance",TObject::kWriteDelete);
+        frac_covariance.Write("frac_covariance",TObject::kWriteDelete);
         full_correlation.Write("full_correlation",TObject::kWriteDelete);
 
 
@@ -987,7 +987,7 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
 
         for(int m=0; m< variations.size();m++){
             vec_full_correlation.at(m).Write( (variations.at(m)+"_full_correlation").c_str(), TObject::kWriteDelete);
-            vec_frac_covariance.at(m).Write( (variations.at(m)+"_full_fraccovariance").c_str(), TObject::kWriteDelete);
+            vec_frac_covariance.at(m).Write( (variations.at(m)+"_frac_covariance").c_str(), TObject::kWriteDelete);
             vec_full_covariance.at(m).Write( (variations.at(m)+"_full_covariance").c_str(), TObject::kWriteDelete);
 
 	    // also the collapsed matrices
