@@ -294,6 +294,13 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
                 montecarlo_pot.push_back(strtod(inpot,&end) );
             }
 
+            const char* isfake = pMC->Attribute("fake");
+            if(isfake==NULL){
+                montecarlo_fake.push_back(false);
+            }else{
+                montecarlo_fake.push_back(true);
+            }
+
 
             /*
             //Currently take all parameter variations in at once. Depreciated code. 
@@ -610,7 +617,7 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     }
 
 
-
+    if(is_verbose) std::cout<<otag<<"There are "<< fullnames.size() << " used subchannel histograms" << std::endl;
 
 
     //For here on down everything is derivable, above is just until I actually Get config working.
