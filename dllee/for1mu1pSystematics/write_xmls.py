@@ -1,4 +1,4 @@
-# Write the 2*3*21 xml files
+# Write the 21 xml files
 
 import math
 import subprocess
@@ -21,10 +21,10 @@ xml_str = """<?xml version="1.0" ?>
   <subchannel name="extbnb"/>
 </channel>
 
-<plotpot value=3.456e+19/>
+<plotpot value=4.4e+19/>
 
 
-<MultisimFile treename="sel1mu1p_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="1.219e21">
+<MultisimFile treename="sel1mu1p_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="4.72e20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -34,7 +34,7 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="1.314e23">
+<MultisimFile treename="sel1mu1p_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="9.8e22">
   <branch
       name="VAR_NAME"
       type="double"
@@ -44,7 +44,7 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="3.257e20">
+<MultisimFile treename="sel1mu1p_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="2.62e20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -54,7 +54,7 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="5.524e19">
+<MultisimFile treename="sel1mu1p_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.435" maxevents="100000" pot="4.4e19">
   <branch
       name="VAR_NAME"
       type="double"
@@ -65,7 +65,6 @@ xml_str = """<?xml version="1.0" ?>
 
 
 <variation_list>
-  GENIE_WHITELIST_STR
   <whitelist>expskin_FluxUnisim</whitelist>
   <whitelist>horncurrent_FluxUnisim</whitelist>
   <whitelist>kminus_PrimaryHadronNormalization</whitelist>
@@ -79,40 +78,35 @@ xml_str = """<?xml version="1.0" ?>
   <whitelist>pionqexsec_FluxUnisim</whitelist>
   <whitelist>piontotxsec_FluxUnisim</whitelist>
   <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
+  <whitelist>All_UBGenie</whitelist>
+  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
+  <whitelist>RPA_CCQE_UBGenie</whitelist>
+  <whitelist>AxFFCCQEshape_UBGenie</whitelist>
+  <whitelist>VecFFCCQEshape_UBGenie</whitelist>
+  <whitelist>DecayAngMEC_UBGenie</whitelist>
+  <whitelist>xsr_scc_Fa3_SCC</whitelist>
+  <whitelist>xsr_scc_Fv3_SCC</whitelist>
+  <whitelist>NormCCCOH_UBGenie</whitelist>
+  <whitelist>NormNCCOH_UBGenie</whitelist>
+  <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
+  <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
+  <whitelist>reinteractions_piminus_Geant4</whitelist>
+  <whitelist>reinteractions_piplus_Geant4</whitelist>
+  <whitelist>reinteractions_proton_Geant4</whitelist>
 </variation_list>
 
 <WeightMaps>
-  <variation pattern="_Genie" weight_formula="1./ub_tune_weight"/>
+  <variation pattern="_UBGenie" weight_formula="1./ub_tune_weight"/>
 </WeightMaps>
 """
 
 
-# 2 selections...
-# pre-selection
-presel_dict = { "nbins": [ 40, 40, 40, 20, 20, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40, 40 ],
-                "xlow": [ 10., -106., 0., 250., 0., 0., 0., 0., 0.1, 0., 75., 0., 0., -1*math.pi, 5., 20., 0., -1*math.pi, 5., 40., 0. ],
-                "xhigh": [ 250., 106., 1006., 1250., math.pi, 1400., math.pi, 4., 0.9, 1.0e6, 1.0e3, 1.4e3, math.pi, math.pi, 500., 700., math.pi, math.pi, 150., 1000., 1. ],
-                "file_name": "input_to_sbnfit_v33_MaMvRES_Jan31_presel.root" }
 # post-selection
-postsel_dict = { "nbins": [ 12, 12, 12, 10, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12 ],
-                 "xlow": [ 10., -106., 0., 250., 0.8, 0., 0., 0., 0.1, 0., 75., 0., 0., -1*math.pi, 5., 20., 0., -1*math.pi, 5., 40., 0. ],
-                 "xhigh": [ 250., 106., 1006., 1150., 3., 800., math.pi, 2., 0.8, 0.75e6, 0.65e3, 1.3e3, 3., math.pi, 500., 700., 3., math.pi, 150., 600., 1. ], 
-                 "file_name": "input_to_sbnfit_v33_MaMvRES_Jan31.root" }
-#sel_dict = { "presel": presel_dict, "postsel": postsel_dict }
+postsel_dict = { "nbins": [ 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18 ],
+                 "xlow": [ 15., -101.5, 15., 200., 0.5, 0., 0., 0., 0., 0., 70., 50., 0., -1*math.pi, 5., 20., 0., -1*math.pi, 5., 50., 0. ],
+                 "xhigh": [ 241.25, 101.5, 1021.8, 2000., math.pi, 850., math.pi, 2., 1., 6e5, 600., 1000., math.pi, math.pi, 200., 600., math.pi, math.pi, 150., 500., 1. ], 
+                 "file_name": "input_to_sbnfit_v40_Apr20.root" }
 sel_dict = { "postsel": postsel_dict } 
-
-# 3 sets of plots...
-# (1) untuned MCC9 (spline weight only), flux systematics
-set1_dict = { "additional_weight": "spline_weight",
-              "genie_whitelist_str": "<!-- <whitelist>All_Genie</whitelist> -->" }
-# (2) tuned MCC9, flux systematics
-set2_dict = { "additional_weight": "xsec_corr_weight",
-              "genie_whitelist_str": "<!-- <whitelist>All_Genie</whitelist> -->" }
-# (3) tuned MCC9, flux and All_Genie systematics
-set3_dict = { "additional_weight": "xsec_corr_weight",
-              "genie_whitelist_str": "<whitelist>All_Genie</whitelist>" }
-set_dict = { "set1": set1_dict, "set2": set2_dict, "set3": set3_dict }
-
 
 # 21 variables...
 var_list = [ "x_reco", "y_reco", "z_reco",
@@ -136,34 +130,31 @@ for sel in sel_dict:
     # Also set the input file name
     file_name = sel_dict[sel]["file_name"]
 
-    for plot_set in set_dict:
-        
-        # Set the weights and toggle genie systematics based on plot set
-        additional_weight   = set_dict[plot_set]["additional_weight"]
-        genie_whitelist_str = set_dict[plot_set]["genie_whitelist_str"]
+    # Set the weights
+    additional_weight = "xsec_corr_weight"
 
-        for i in range(len(var_list)):
+    # Loop over the variables...
+    for i in range(len(var_list)):
+        
+        var_xml_str = xml_str
+        
+        edges = [ xlow[i] + ((xhigh[i] - xlow[i])/nbins[i])*j for j in range(nbins[i]+1) ]
+        edges_str = ''
+        for bin_edge in edges:
+            edges_str += str(bin_edge)
+            edges_str += " "
+        edges_str = edges_str.strip()
+        #print var_list[i], edges_str
+        
+        var_xml_str = var_xml_str.replace("UNIT", units[i])
+        var_xml_str = var_xml_str.replace("BIN_EDGES", edges_str)
+        var_xml_str = var_xml_str.replace("FILE_NAME", file_name)
+        var_xml_str = var_xml_str.replace("VAR_NAME", var_list[i])
+        var_xml_str = var_xml_str.replace("ADDITIONAL_WEIGHT", additional_weight)
             
-            var_xml_str = xml_str
-            
-            edges = [ xlow[i] + ((xhigh[i] - xlow[i])/nbins[i])*j for j in range(nbins[i]+1) ]
-            edges_str = ''
-            for bin_edge in edges:
-                edges_str += str(bin_edge)
-                edges_str += " "
-            edges_str = edges_str.strip()
-            #print var_list[i], edges_str
-                
-            var_xml_str = var_xml_str.replace("UNIT", units[i])
-            var_xml_str = var_xml_str.replace("BIN_EDGES", edges_str)
-            var_xml_str = var_xml_str.replace("FILE_NAME", file_name)
-            var_xml_str = var_xml_str.replace("VAR_NAME", var_list[i])
-            var_xml_str = var_xml_str.replace("ADDITIONAL_WEIGHT", additional_weight)
-            var_xml_str = var_xml_str.replace("GENIE_WHITELIST_STR", genie_whitelist_str)
-            
-            output = "./auto/%s_%s__%s.xml" % (sel, plot_set, var_list[i])
-            with open(output, 'w') as f:
-                f.write(var_xml_str)
-                
+        output = "./auto/%s__%s.xml" % (sel, var_list[i])
+        with open(output, 'w') as f:
+            f.write(var_xml_str)
+        
 
 print "Done!"

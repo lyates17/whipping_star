@@ -17,12 +17,12 @@ os.chdir(autodir)
 
 #for sel in ["presel", "postsel"]:
 for sel in ["postsel"]:
-    for plot_set in ["set1", "set2", "set3"]:
-        for var in var_list:
-            tag = "%s_%s__%s" % (sel, plot_set, var)
-            cmd = "/uboone/app/users/yatesla/sbnfit/whipping_star/build/bin/sbnfit_make_covariance --xml %s.xml --tag %s" % (tag, tag)
-            print cmd
-            subprocess.call(cmd, shell=True)
+    #for plot_set in ["set1", "set2", "set3"]:
+    for var in var_list:
+        tag = "%s__%s" % (sel, var)
+        cmd = "/uboone/app/users/yatesla/sbnfit/whipping_star/build/bin/sbnfit_make_covariance --xml %s.xml --tag %s" % (tag, tag)
+        print cmd
+        subprocess.call(cmd, shell=True)
 
 os.chdir(topdir)
 
