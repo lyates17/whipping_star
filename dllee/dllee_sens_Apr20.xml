@@ -16,7 +16,7 @@
 
 <channel name="1mu1p" unit="MeV">
   <bins
-      edges="350 408 467 525 583 642 700 758 817 875 933 992 1050"
+      edges="300 400 500 600 700 800 900 1000 1100 1200 1300 1400 1500 1600 1700 1800 1900 2000"
       />
   <subchannel name="bnb"   />
   <subchannel name="nue"   />
