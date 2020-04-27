@@ -113,13 +113,19 @@ int SBNcls::CalcCLS(int numMC, std::string tag){
 
     std::cout<<"We have "<<h1_results[i].m_pdf.Integral()<<" integral of H1 and "<<h0_results[i].m_pdf.Integral()<<" integral of H0 for metric "<<h1_results[i].m_tag<<std::endl;
     }
+
+
     std::cout << "Total wall time: " << difftime(time(0), start_time)/1.0 << " Secs.\n";
-        
-    for(int i=0;i< h0_results.size();i++){
-            makePlots( h0_results[i], h1_results[i], tag+std::to_string(i), which_mode);
+    
+    std::vector<std::string> nice_names = {"Pearson_Chi","Poisson_Log_Likelihood","CNP_Chi"};
+
+    for(int i=0;i< 3;i++){
+    //for(int i=0;i< h0_results.size();i++){
+            makePlots( h0_results[i], h1_results[i], tag+nice_names[i], which_mode);
     }
 
-    //Constraint test
+    makePlots( h0_results[3], h0_results[4], tag+"_Base_PearsonChi_true_H0", 0);
+    makePlots( h1_results[3], h1_results[4], tag+"_Base_PearsonChi_true_H1", 0);
     
 
     return 0 ;
@@ -149,11 +155,12 @@ int SBNcls::makePlots(CLSresult &h0_result, CLSresult & h1_result, std::string t
     std::vector<double> quantiles(prob_values.size());	
     quantiles = h1_result.m_quantiles;
 
+    if(which_mode==1){
     //lets do CLs
     for(int p=0; p<pval.size();p++){
         vec_CLs.push_back(pval.at(p)/(1-prob_values.at(p)) );
     }
-
+    }
     TFile * fp = new TFile(("SBNfit_CLs_"+tag+".root").c_str(),"recreate");
     fp->cd();
     TCanvas *cp=new TCanvas();
@@ -173,6 +180,8 @@ int SBNcls::makePlots(CLSresult &h0_result, CLSresult & h1_result, std::string t
 
     h0_pdf.Draw("hist");
 
+    h0_pdf.SetTitle(tag.c_str());
+
     double maxval =std::max(  h0_pdf.GetMaximum(),h1_pdf.GetMaximum());
     double minval = 0;
     std::cout<<"SBNcls::CalcCLS() || Minimum value: "<<minval<<" Maximum value: "<<maxval<<std::endl;
@@ -191,7 +200,7 @@ int SBNcls::makePlots(CLSresult &h0_result, CLSresult & h1_result, std::string t
     std::vector<std::string> quantile_names = {"-2#sigma","-1#sigma","Median","+1#sigma","+2#sigma"};
     std::vector<int> cols ={kYellow-7, kGreen+1, kBlack,kGreen+1, kYellow-7};	
 
-    if(draw_both){
+    if(draw_both && which_mode==1){
         for(int i=0; i< quantiles.size(); i++){
             if(quantiles.size()!=pval.size() || quantiles.size() != prob_values.size() || quantiles.size() != vec_CLs.size()){
              //   std::cout<<quantiles.size()<<" "<<pval.size()<<" "<<prob_values.size()<<" "<<vec_CLs.size()<<std::endl;
@@ -223,7 +232,8 @@ int SBNcls::makePlots(CLSresult &h0_result, CLSresult & h1_result, std::string t
                 a_string = "10^{"+to_string_prec(log10(pval[i]),2)+"}";
             }
 
-            std::string details =  ("#splitline{"+quantile_names.at(i)+"}{1-#beta(" +to_string_prec(1-prob_values.at(i),3) + ") #alpha("+ a_string +" | "+whatsigma+ ") CL_{s}("+to_string_prec(vec_CLs.at(i),3)+")}");
+            std::string details =  ("#splitline{"+quantile_names.at(i)+"}{1-#beta(" +to_string_prec(1-prob_values.at(i),3) + ") #alpha("+ a_string +" | "+whatsigma+ ")}");
+//          std::string details =  ("#splitline{"+quantile_names.at(i)+"}{1-#beta(" +to_string_prec(1-prob_values.at(i),3) + ") #alpha("+ a_string +" | "+whatsigma+ ") CL_{s}("+to_string_prec(vec_CLs.at(i),3)+")}");
             std::string details2 =  ("#splitline{"+quantile_names.at(i)+"}{1-#beta(" +to_string_prec(1-prob_values.at(i),10) + ") #alpha("+ to_string_prec(pval.at(i),10) +" | "+to_string_prec(pval2sig(pval.at(i)),1)+ "#sigma) CL_{s}("+to_string_prec(vec_CLs.at(i),10)+")}");
             std::cout<<details2<<std::endl;
             qvals->DrawLatexNDC(0.875, 0.2+i*0.1,details.c_str()  );
