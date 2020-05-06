@@ -467,6 +467,47 @@ double SBNchi::CalcChi(std::vector<double> sigVec){
     return tchi;
 }
 
+
+//a shape-fit chi 
+double SBNchi::CalcShapeChi(TMatrixT<double> inverted_matrix, std::vector<double>& data, std::vector<double>& constrained_vec, std::vector<double>& free_vec, bool is_background){
+	double tchi = 0.0;
+	int matrix_bins = inverted_matrix.GetNcols();    
+	// check dimension
+	if(data.size() != matrix_bins || constrained_vec.size()!= matrix_bins || free_vec.size()!= matrix_bins){
+        	std::cerr<<"ERROR: SBNchi::CalcShapeChi ~ your inputed vector does not have correct dimensions"<<std::endl;
+        	std::cerr<<"data.size(): "<<data.size()<<" num_bins of matrix "<< matrix_bins<<std::endl;
+        	std::cerr<<"constrained_vec.size(): "<< constrained_vec.size()<<" num_bins of matrix "<< matrix_bins<<std::endl;
+        	std::cerr<<"free_vec.size(): "<<free_vec.size()<<" num_bins of matrix: "<< matrix_bins<<std::endl;
+        	exit(EXIT_FAILURE);
+   	}
+
+
+
+	std::vector<double> free_true;
+	free_true.clear();
+	// if 'free_vec' is the background hypothesis, then you need to normalize it to the total excess
+	// if 'free_vec' is signal hypothesis, then no need to normalize it to total excess
+	if(is_background){
+		double sum_data = std::accumulate(data.begin(), data.end(), 0.0);
+		double sum_constrain = std::accumulate(constrained_vec.begin(), constrained_vec.end(), 0.0);
+		double sum_free = std::accumulate(free_vec.begin(), free_vec.end(), 0.0);
+		for(int i =0; i< free_vec.size(); i++)
+			free_true.push_back(free_vec[i]*(sum_data-sum_constrain)/sum_free);
+	}	
+	else free_true = free_vec;
+
+	for(int i=0 ; i< matrix_bins; i++){
+		for(int j=0; j< matrix_bins; j++){
+			tchi += inverted_matrix(i,j)*(data[i]-constrained_vec[i]-free_true[i])*(data[j]-constrained_vec[j]-free_true[j]);
+		}
+	}
+
+	return tchi;
+}
+
+
+
+
 //A log-lilihood based one used @ MiniBooNE
 double SBNchi::CalcChiLog(SBNspec *sigSpec){
     double tchi = 0;
@@ -622,6 +663,70 @@ void SBNchi::CollapseModes(TMatrixT <double> & M, TMatrixT <double> & Mc){
     return;
 }
 
+
+TMatrixT<double> SBNchi::CalcNeymanCovarianceMatrix(TMatrixT<double>* frac_covar, std::vector<double>& mc_full, std::vector<double>& data_full){
+	TMatrixT<double> Mfull(frac_covar->GetNcols(), frac_covar->GetNcols());
+	TMatrixT<double> Mout(num_bins_total_compressed, num_bins_total_compressed);	
+
+	for(int i =0 ; i<frac_covar->GetNcols(); i++){
+		for(int j =0; j< frac_covar->GetNcols(); j++){
+			if(std::isnan( (*frac_covar)(i,j) )){
+				Mfull(i,j) = 0.0;
+			}
+			else Mfull(i,j) = (*frac_covar)(i,j) *mc_full[i]*mc_full[j];
+			if(i == j) Mfull(i,j) += data_full[i];
+		}
+	}
+
+	CollapseModes(Mfull, Mout);
+	return Mout;
+}
+
+// add stat matrix, could be used for Neyman or Pearson statistic
+// can be used either for collapsed matrix or uncollapsed matrix
+TMatrixT<double> SBNchi::AddStatMatrix(TMatrixT<double>*M,  const std::vector<double>& datavec ){
+
+    if(M->GetNcols() != datavec.size()){
+	std::cout << "ERROR: AddStatMatrix: size of covariance matrix doesn't match size of the spectrum" << std::endl;
+	exit(EXIT_FAILURE);
+    }
+
+    TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
+    
+    for(int i =0; i<M->GetNcols(); i++)
+    {
+        for(int j =0; j<M->GetNrows(); j++)
+        {
+	    Mout(i,j) = (*M)(i,j);
+            if(i==j) Mout(i,i) += datavec[i];
+        }
+    }
+    return Mout;
+}
+
+//generate Pearson covariance matrix(uncollapsed matrix)
+TMatrixT<double> SBNchi::CalcCovarianceMatrix(TMatrixT<double>*M, TVectorT<double>& spec){
+
+    TMatrixT<double> Mout( M->GetNcols(), M->GetNcols() );
+    // systematics per scaled event
+    for(int i =0; i<M->GetNcols(); i++)
+    {
+        //std::cout<<"KRAK: "<<core_spectrum.full_vector.at(i)<<std::endl;
+        for(int j =0; j<M->GetNrows(); j++)
+        {
+            if(  std::isnan( (*M)(i,j))){
+                Mout(i,j) = 0.0;
+            }else{
+                Mout(i,j) = (*M)(i,j)*spec(i)*spec(j);
+            }
+            if(i==j) Mout(i,i) +=spec(i);
+        }
+    }
+    return Mout;
+}
+
+
+
 TMatrixT<double> SBNchi::CalcCovarianceMatrix(TMatrixT<double>*M, std::vector<double>& spec){
 
     TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
@@ -642,9 +747,60 @@ TMatrixT<double> SBNchi::CalcCovarianceMatrix(TMatrixT<double>*M, std::vector<do
     return Mout;
 }
 
+//given fractional covariance matrix, MC predicted spctrum, bkgd spectrum
+//return  shape only systematic covariance matrix
+TMatrixT<double> SBNchi::CalcShapeOnlyCovarianceMatrix(TMatrixT<double> &M, SBNspec *mc, SBNspec* bkg){
+
+
+	int mc_num_bins = mc->num_bins_total;
+	std::vector<double> mc_full = mc->full_vector;
+	std::vector<double> bkgd_full = bkg->full_vector;
+		
+	TMatrixT<double> full_systematic(mc_num_bins, mc_num_bins);
+	TMatrixT<double> full_shape_covar(mc_num_bins,mc_num_bins);
+
+	if(mc_full.size() != M.GetNcols()){
+		std::cout << "Dimension of MC  full vector " << mc_num_bins<< " does not match dimension of covariance matrix:" << M.GetNcols() << std::endl;
+		exit(EXIT_FAILURE);
+	}	
+
+
+        //fill the usual systematic covariance matrix
+	for(int i=0; i< mc_num_bins; i++){
+		for(int j=0; j< mc_num_bins; j++){
+			if( std::isnan(  M(i,j)  )) full_systematic(i,j) = 0.0;
+			else full_systematic(i,j) = M(i,j)*mc_full[i]*mc_full[j];
+		}
+	}
+
+
+
+	double sum_bkd = std::accumulate(bkgd_full.begin(), bkgd_full.end(), 0.0);
+	double N = full_systematic.Sum()/pow(sum_bkd, 2.0);
+	//vector of sum over rows for collapsed syst covariance matrix
+	std::vector<double> P_sum;
+	for(int i=0; i< mc_num_bins; i++){
+		double P_temp = 0;
+		for(int j=0; j< mc_num_bins; j++) P_temp += full_systematic(i,j);
+		P_sum.push_back(P_temp);
+	}
+	
+	//construct shape only systematic covariance matrix
+	for(int i=0; i< mc_num_bins; i++){
+		for(int j=0 ;j< mc_num_bins; j++){
+			full_shape_covar(i,j) = full_systematic(i,j)+bkgd_full[i]*bkgd_full[j]*N - (bkgd_full[i]*P_sum[j]+bkgd_full[j]*P_sum[i])/sum_bkd;
+		}
+	}	
+
+	return full_shape_covar;
+}
+
+
+
+
 
 //here spec is full vector of MC, spec_collapse is collapsed vector of MC, datavec is collapsed vector of data
-TMatrixT<double> SBNchi::CalcCovarianceMatrixCNP(TMatrixT<double> M, std::vector<double>& spec, std::vector<double>& spec_collapse, const std::vector<double>& datavec ){
+TMatrixT<double> SBNchi::CalcCovarianceMatrixCNP(TMatrixT<double> &M, std::vector<double>& spec, std::vector<double>& spec_collapse, const std::vector<double>& datavec ){
 
     if(M.GetNcols() != spec.size()){
 	 std::cout << "ERROR: your input vector does not have the right dimenstion  " << std::endl; 
@@ -678,6 +834,58 @@ TMatrixT<double> SBNchi::CalcCovarianceMatrixCNP(TMatrixT<double> M, std::vector
 }
 
 
+//return collapsed syst+stat matrix (in CNP method)
+TMatrixT<double> SBNchi::CalcCovarianceMatrixCNP(TMatrixT<double>* M, std::vector<double>& spec, std::vector<double>& spec_collapse, const std::vector<float>& datavec ){
+
+    if(M->GetNcols() != spec.size()){
+	 std::cout << "ERROR: your input vector does not have the right dimenstion  " << std::endl; 
+	 std::cout << "Fractional Matrix size :"<< M->GetNcols() << " || Input Full Vector size "<< spec.size() << std::endl;  
+	 exit(EXIT_FAILURE);
+    }
+
+    TMatrixT<double> M_temp(M->GetNcols(), M->GetNcols() );
+    TMatrixT<double> Mout(spec_collapse.size(), spec_collapse.size()); //collapsed covariance matrix
+  
+    //systematic apart 
+    for(int i =0; i<M->GetNcols(); i++)
+    {
+        for(int j =0; j<M->GetNrows(); j++)
+        {
+            if(  std::isnan( (*M)(i,j) )){
+                M_temp(i,j) = 0.0;
+            }else{
+
+                M_temp(i,j) = (*M)(i,j)*spec[i]*spec[j];
+            }
+        }
+    }
+  
+    CollapseModes(M_temp, Mout);
+    //add stats part	
+    for(int i=0; i< spec_collapse.size(); i++){
+	Mout(i,i) +=   ( datavec[i] >0.001 ? 3.0/(1.0/datavec[i] +  2.0/spec_collapse[i])  : spec_collapse[i]/2.0 ); 
+	//Mout(i,i) += datavec[i];
+   }
+    return Mout;
+}
+
+// add stat part to the collapsed systematic covariance matrix: CNP chi
+TMatrixT<double> SBNchi::AddStatMatrixCNP(TMatrixT<double>*M, std::vector<double>& spec, const std::vector<double>& datavec ){
+
+    TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
+    
+    for(int i =0; i<M->GetNcols(); i++)
+    {
+        for(int j =0; j<M->GetNrows(); j++)
+        {
+	    Mout(i,j) = (*M)(i,j);
+            if(i==j) Mout(i,i) +=   ( datavec[i] >0.001 ? 3.0/(1.0/datavec[i] +  2.0/spec[i])  : spec[i]/2.0 );
+        }
+    }
+    return Mout;
+}
+
+//this function is wrong
 TMatrixT<double> SBNchi::CalcCovarianceMatrixCNP(TMatrixT<double>*M, std::vector<double>& spec, const std::vector<float>& datavec ){
 
     TMatrixT<double> Mout(M->GetNcols(), M->GetNcols() );
@@ -698,25 +906,7 @@ TMatrixT<double> SBNchi::CalcCovarianceMatrixCNP(TMatrixT<double>*M, std::vector
     return Mout;
 }
 
-TMatrixT<double> SBNchi::CalcCovarianceMatrix(TMatrixT<double>*M, TVectorT<double>& spec){
 
-    TMatrixT<double> Mout( M->GetNcols(), M->GetNcols() );
-    // systematics per scaled event
-    for(int i =0; i<M->GetNcols(); i++)
-    {
-        //std::cout<<"KRAK: "<<core_spectrum.full_vector.at(i)<<std::endl;
-        for(int j =0; j<M->GetNrows(); j++)
-        {
-            if(  std::isnan( (*M)(i,j))){
-                Mout(i,j) = 0.0;
-            }else{
-                Mout(i,j) = (*M)(i,j)*spec(i)*spec(j);
-            }
-            if(i==j) Mout(i,i) +=spec(i);
-        }
-    }
-    return Mout;
-}
 
 
 TMatrixT<double> SBNchi::InvertMatrix(TMatrixT<double> &M){
@@ -866,6 +1056,38 @@ void SBNchi::FillStatsMatrix(TMatrixT <double> &M, std::vector<double> diag){
     return ;
 }
 
+
+TMatrixT<double> SBNchi::FillSystMatrix(TMatrixT<double>& frac_covar, std::vector<double>& full){
+	return FillSystMatrix(frac_covar, full, false);
+}
+
+
+//return a full or collapsed systematic covariance matrix
+TMatrixT<double> SBNchi::FillSystMatrix(TMatrixT<double>& frac_covar, std::vector<double>& full, bool do_collapse){
+
+	int matrix_size = frac_covar.GetNcols();
+	if(matrix_size != full.size()){
+		std::cout << "ERROR: FillSystMatrix, matrix has diffrent size as spectrum: "<< matrix_size<< " vs " << full.size() << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	TMatrixT<double> full_syst(matrix_size, matrix_size);
+	for(int i=0; i< matrix_size ; i++){
+		for(int j=0; j<matrix_size; j++){
+			if(std::isnan(frac_covar(i,j))) full_syst(i,j) = 0.0;
+			else full_syst(i,j) = frac_covar(i,j)*full[i]*full[j];
+
+		}
+	}
+
+	if(do_collapse == true){
+		TMatrixT<double> collapsed_syst(num_bins_total_compressed, num_bins_total_compressed);
+		CollapseModes(full_syst, collapsed_syst);
+		return collapsed_syst;
+	}else{
+		return full_syst;
+	}
+}
 
 
 TMatrixT<double> SBNchi::FillSystematicsFromXML(){

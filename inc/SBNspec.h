@@ -9,6 +9,7 @@
 #include <string>
 #include <TF1.h>
 #include <THStack.h>
+#include <TMatrixT.h>
 #include <TLegend.h>
 #include <TCanvas.h>
 #include <TLine.h>
@@ -105,7 +106,7 @@ namespace sbn{
 			//Same as above but normalises to value rather than scales
 			int NormAll(double);
 			int Norm(std::string name, double val);
-
+			int Keep(std::string name, double val);  // only keep histograms whose name contains string name, and scale it by val
 			int Clear();
 
 			//Addes two SBNspec toGether. must have same xml!
@@ -135,6 +136,7 @@ namespace sbn{
 			
             std::vector<int> GetIndiciesFromSubchannel(std::string const & subchannel);
 			int CompareSBNspecs(SBNspec * compsec, std::string tag);
+			int CompareSBNspecs(TMatrixT<double> M, SBNspec * compsec, std::string tag);
 			};
 
 

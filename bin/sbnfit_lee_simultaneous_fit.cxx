@@ -164,16 +164,17 @@ int main(int argc, char* argv[])
 
     NGrid mygrid;
 
-    //now only available for 2 subchannels only
-    mygrid.AddDimension("NCPi0Coh", 0, 5, 0.1);   //0.1 FULL
-    mygrid.AddDimension("NCPi0NotCoh", 0., 3, 0.1);   //0.1 FULL
-    mygrid.AddDimension("NCDeltaRadOverlaySM", 0., 4, 0.2);   //0.1 FULL
+    //now only available for 3 subchannels only
+    mygrid.AddDimension("NCPi0Coh", 0, 5, 1);   //0.1 FULL
+    mygrid.AddDimension("NCPi0NotCoh", 0., 3, 0.5);   //0.1 FULL
+    mygrid.AddDimension("NCDeltaRadOverlaySM", 0., 4, 0.5);   //0.1 FULL
 
 
     std::cout << "Fraction Fit|| "<< "\tStart initializing MC and data spectrum" << std::endl;
 
     //initialize the MC spectrum
     SBNspec mc_spec(mc_filename, xml);
+    mc_spec.CollapseVector();
 
     //initlaize the data spectrum
     SBNspec data_spec(data_filename, xml);
@@ -253,80 +254,114 @@ int main(int argc, char* argv[])
    std::cout << "Fraction Fit||"<<  "\tStart GLOBAL SCAN" <<std::endl;
    std::vector<double> chi;  //vector to save chi square values.
    chi.reserve(grid.size());  //reserve the memory
+   std::vector<double> last_chi;
+   last_chi.reserve(grid.size());
 
-   for(int i =0; i< grid.size() ;i++){
+   //do iterative fit
+   int iterative_number = 3;  //max number of iteration
+   double chi_square_tolerance = 1e-3;  //tolerance on chi square convergence
+   bool chi_converged = false;
+   int best_fit, last_best_fit;   //index of best-fit point
+   double best_chi,last_best_chi;  //chi minimum
 
-	std::cout << "on Point " << i << std::endl;
-	//set a temperary SBNspec, assume there is already a MC CV root file with corresponding sequence defined in xml	
-	SBNspec spec_temp(mc_filename, xml, false);
-	
-	//access grid point
-	std::vector<double> point = grid[i];
+   //initialize a SBNchi
+   SBNchi chi_temp(xml);
+   //inverted collapsed covariance matrix
+   TMatrixT<double> collapsed_syst(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);	
+   TMatrixT<double> collapsed_temp(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
+   TMatrixT<double> invert_collapsed_temp(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
 
-	//check dimension point
-	if(point.size() != dimension_name.size()){
-		std::cout << "dimension doesn't match: something wrong with grid setup!" << std::endl;
-		return 1;
-	}
 
-	//scale chosen subchannels
-	for(int j=0; j< point.size(); j++ ){
-		spec_temp.Scale(dimension_name[j], point[j]);
-	}
+   for(int n_iter = 0; n_iter < iterative_number ; n_iter++){
 
-	spec_temp.CollapseVector();
+	   //construct collapsed covariance matrix
+	   if(n_iter == 0 ){
+		collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, mc_spec.full_vector, true);
+	   	collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, mc_spec.collapsed_vector, data_spec.collapsed_vector);	   
+		tag = "Syst_MC";
+		mc_spec.CompareSBNspecs(collapsed_syst, &data_spec, tag);
+	   }
+	   else{
+		SBNspec last_best_spec(mc_filename, xml, false);
+		std::vector<double> last_best_point = grid[last_best_fit];
+		for(int j=0; j< last_best_point.size(); j++ ){
+                        last_best_spec.Scale(dimension_name[j], last_best_point[j]);
+                }
+		collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, last_best_spec.full_vector, true);
+	   	collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, last_best_spec.collapsed_vector, data_spec.collapsed_vector);	   
+	   }
 
-	//initialize a SBNchi
-	SBNchi chi_temp(xml);
-	//inverted collapsed covariance matrix	
-	TMatrixT<double> collapsed_temp(spec_temp.num_bins_total_compressed, spec_temp.num_bins_total_compressed);
-	TMatrixT<double> invert_collapsed_temp(spec_temp.num_bins_total_compressed, spec_temp.num_bins_total_compressed);
-	collapsed_temp = chi_temp.CalcCovarianceMatrixCNP(frac_syst_matrix, spec_temp.full_vector, spec_temp.collapsed_vector, data_spec.collapsed_vector);
-	invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_temp);
-	//calculate chi2
-	double chi_value = chi_temp.CalcChi(invert_collapsed_temp, spec_temp.collapsed_vector, data_spec.collapsed_vector);
-	chi.push_back(chi_value);
-	//chi.push_back(chi_temp.CalcChi(data_spec.collapsed_vector));
-	h_chi2_raw->Fill(point[0], point[1], point[2],chi.back());
+	   //invert covariance matrix
+	   invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_temp);
 
-	//print out chi square value
-	//std::cout << "CHI2: " << i << " " << chi.back();
-	//for(int j=0; j<point.size() ; j++) std::cout << " " << point[j];
-	//std::cout << std::endl;
+	   best_chi = DBL_MAX;
+	   chi.clear();
+	   for(int i =0; i< grid.size() ;i++){
 
+		//set a temperary SBNspec, assume there is already a MC CV root file with corresponding sequence defined in xml	
+		SBNspec spec_temp(mc_filename, xml, false);
+		
+		//access grid point
+		std::vector<double> point = grid[i];
+
+		//scale chosen subchannels
+		for(int j=0; j< point.size(); j++ ){
+			spec_temp.Scale(dimension_name[j], point[j]);
+		}
+
+
+		//calculate chi2
+		double chi_value = chi_temp.CalcChi(invert_collapsed_temp, spec_temp.collapsed_vector, data_spec.collapsed_vector);
+		chi.push_back(chi_value);
+		//chi.push_back(chi_temp.CalcChi(data_spec.collapsed_vector));
+
+		if(chi_value < best_chi){
+			best_chi = chi_value;
+			best_fit = i;
+		}
+	   }
+	   std::cout << "Iteration " << n_iter << " finished, with best fit point at " << best_fit << " and minimum chi2 " << best_chi;
+	   
+	   if(chi_converged) break;
+	 
+	   if(n_iter != 0){
+		if(abs(last_best_chi - best_chi) < chi_square_tolerance) chi_converged = true;
+	   }
+ 
+	   last_best_fit = best_fit;
+	   last_best_chi = best_chi;
+	   last_chi = chi;
+	   std::cout << ", chi2 converged " << chi_converged << std::endl;
    }
-   
-   f_output->cd();
-   h_chi2_raw->Write();   
+   std::cout << std::endl;
 
-   double chi_min=DBL_MAX; // minimum of chi2.
-   int chi_min_index = -99;   // index of the min chi value
-   chi_min_index = std::min_element(chi.begin(), chi.end()) - chi.begin();
-   chi_min = *std::min_element(chi.begin(), chi.end());
 
    //compare spectrum between data and the best fit point
-   SBNspec spec_temp(mc_filename, xml, false);
-   std::vector<double> best_point = grid[chi_min_index];
+   SBNspec best_spec(mc_filename, xml, false);
+   std::vector<double> best_point = grid[best_fit];
    for(int i=0; i< best_point.size(); i++ ){
-                spec_temp.Scale(dimension_name[i], best_point[i]);
+                best_spec.Scale(dimension_name[i], best_point[i]);
    }
    tag = "best_fit";
-   spec_temp.CompareSBNspecs(&data_spec, tag);
+   best_spec.CompareSBNspecs(collapsed_syst, &data_spec, tag);
    std::cout << "Fraction Fit||" <<  "\tBest Fit Point: (" << best_point[0] << ", " << best_point[1] << ", " << best_point[2] << ")"<<std::endl;
 
 
    std::cout << "Fraction Fit||\tPrint out delta chi square for grid points now" << std::endl;
    //delta chi2;
    for(int i=0; i< grid.size(); i++){
-	 chi[i] -= chi_min;
+
 	 std::vector<double> point = grid[i];
+	 h_chi2_raw->Fill(point[0], point[1], point[2], chi[i]);
+	 chi[i] -= best_chi;
 	 h_chi2_delta->Fill(point[0], point[1], point[2], chi[i]);	 
-	 //std::cout << "DeltaChi: " << i << " " << chi[i];
-	 //for(int j =0;j <point.size(); j++) std::cout << " " << point[j];
-	 //std::cout << std::endl;
+	 std::cout << "DeltaChi: " << i << " " << chi[i];
+	 for(int j =0;j <point.size(); j++) std::cout << " " << point[j];
+	 std::cout << std::endl;
    }
    h_chi2_delta->SetMinimum(-1);  // to show the zero z values
    f_output->cd();
+   h_chi2_raw->Write();   
    h_chi2_delta->Write();
    std::cout << "Fraction Fit||" <<  "\t End of Global Scan--Chi2 calculation" << std::endl;
 
@@ -367,7 +402,7 @@ int main(int argc, char* argv[])
 		//conditional operator, saver the smaller chi.
 		if(chi[ip]< h_mchi2_xy->GetBinContent(ix+1, iy+1)){
 			 h_mchi2_xy->SetBinContent(ix+1, iy+1, chi[ip]);
-			std::cout << "chi2 value: " << chi[ip] << std::endl;
+			 //std::cout << "chi2 value: " << chi[ip] << std::endl;
 		}
 		if(chi[ip]< h_mchi2_xz->GetBinContent(ix+1, iz+1)) h_mchi2_xz->SetBinContent(ix+1, iz+1, chi[ip]);
 		if(chi[ip]< h_mchi2_yz->GetBinContent(iy+1, iz+1)) h_mchi2_yz->SetBinContent(iy+1, iz+1, chi[ip]);

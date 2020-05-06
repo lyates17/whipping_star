@@ -261,6 +261,17 @@ int SBNspec::Norm(std::string name, double val){
 
 
 
+int SBNspec::Keep(std::string name, double val){
+	for(auto& h: hist){
+		std::string test = h.GetName();
+
+		if(test.find(name)!=std::string::npos ) h.Scale(val);
+		else h.Scale(0.0);
+	}
+	this->CollapseVector();
+	return 0;
+}
+
 
 
 int SBNspec::CalcFullVector(){
@@ -381,7 +392,8 @@ int SBNspec::WriteOut(std::string tag){
 
 				Cstack->cd();
 				THStack * hs = new THStack(canvas_name.c_str(),  canvas_name.c_str());
-				TLegend legStack(0.65,0.25,0.89,0.89);
+				TLegend legStack(0.11,0.7,0.89,0.89);
+				legStack.SetNColumns(2);
 				legStack.SetLineWidth(0);
 				legStack.SetLineColor(kWhite);
 				int n=0;
@@ -399,7 +411,7 @@ int SBNspec::WriteOut(std::string tag){
 
 						double total_events = h.GetSumOfWeights();
 						h.Sumw2(false);
-						h.Scale(1,"width,nosw2");
+						//h.Scale(1,"width,nosw2");
 						h.GetYaxis()->SetTitle("Events/GeV");
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
@@ -485,12 +497,21 @@ int SBNspec::WriteOut(std::string tag){
 }
 
 
-
-int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
+//compare 'this' spec with the compsec with tag
+//collapsed covariance matrix 'collapse_covar' gives the error of 'this' spec
+int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec, std::string tag){
 	//kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
 	//kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
 	//kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
 	std::vector<int> mycol = {kAzure -9, kRed-7, kGreen-3, kBlue-6, kMagenta-3, kYellow-7,  kOrange-3, kBlue, kBlue+2,  kGreen+1,kBlue-7, kPink, kViolet, kCyan,kMagenta,kAzure};
+
+
+	//first check the dimension of covariance matrix
+	if(collapse_covar.GetNcols() != this->num_bins_total_compressed){
+		std::cout << "ERROR: dimension of covariance matrix " << collapse_covar.GetName() << " is diffrent from num_bins_total_compressed" << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
 
 
 	TFile *f = new TFile(("SBNfit_compare_plots_"+tag+".root").c_str(),"RECREATE");
@@ -510,8 +531,8 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 		TH1D * h1 = (TH1D*) temp.at(map_hist[fullnames.at(k)]).Clone((std::to_string(k)+fullnames.at(k)+"_1").c_str());
 		TH1D * h2 = (TH1D*) temp_comp.at(map_hist[fullnames.at(k)]).Clone((std::to_string(k)+fullnames.at(k)+"_2").c_str());
 
-		h1->Scale(1,"width");
-		h2->Scale(1,"width");
+		//h1->Scale(1,"width");
+		//h2->Scale(1,"width");
 
 		h1->SetLineColor(kRed);
 		h1->SetLineWidth(2);
@@ -527,8 +548,9 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 		ctmp->Write();
 	}
 
+	
 
-
+	int error_bin=0;
 
 	for(auto m: mode_names){
 		for(auto d: detector_names){
@@ -544,7 +566,9 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 
 				Cstack->cd();
 				THStack * hs = new THStack(canvas_name.c_str(),  canvas_name.c_str());
-				TLegend legStack(0.65,0.25,0.89,0.89);
+				//TLegend legStack(0.50, 0.5, 0.89, 0.89);
+				TLegend legStack(0.11, 0.7, 0.80, 0.89);
+				legStack.SetNColumns(2);
 				legStack.SetLineWidth(0);
 				legStack.SetLineColor(kWhite);
 				int n=0;
@@ -560,8 +584,8 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 						double total_events = h.GetSumOfWeights();
 
 
-						h.Sumw2(false);
-						h.Scale(1,"width,nosw2");
+						//h.Sumw2(false);
+						//h.Scale(1,"width,nosw2");
 						//h.GetYaxis()->SetTitle("Events/GeV");
 						//h.SetMarkerStyle(20);
 						//h.SetMarkerColor(mycol[n]);
@@ -600,8 +624,8 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					if(test.find(canvas_name)!=std::string::npos ){
 
 						double total_events = h.GetSumOfWeights();
-						h.Sumw2(false);
-						h.Scale(1,"width,nosw2");
+						//h.Sumw2(false);
+						//h.Scale(1,"width,nosw2");
 						h.GetYaxis()->SetTitle("Events/GeV");
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
@@ -635,13 +659,20 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 				}
 				//Sort!
 				for (int i: SortIndexes(integral_sorter)) {
-					hs->Add(to_sort.at(i));
+					hs->Add(to_sort.at(i), "HIST");
 					legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
 				}
 
 				legStack.AddEntry(hcomp, "Compared Point", "fl");
 
 
+				//set the error of 'this' spec according to the covariance matrix
+				for(int i=0; i<hsum->GetNbinsX(); i++){
+					double error = hsum->GetBinError(i+1) + sqrt(collapse_covar(error_bin+i, error_bin+i));
+					std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
+					hsum->SetBinError(i+1, error);
+				}
+				error_bin +=hsum->GetNbinsX();
 
 
 				/****Not sure why but this next line seg faults...******
@@ -661,28 +692,45 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 
 
 					Cstack->cd();
+					gStyle->SetErrorX(0);
 					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.35, 1, 1.0);
 					pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 					pad0top->Draw();             // Draw the upper pad: pad2top
 					pad0top->cd();               // pad2top becomes the current pad
 					hs->Draw();
-					hcomp->SetLineColor(kBlack);
+					//draw error bar for 'this' SBNspec
+					hsum->SetFillColor(kBlack);
+					hsum->SetFillStyle(3008);
+					hsum->Draw("E2 same");
+					//hs->GetYaxis()->SetTitle("Events/GeV");
+					hs->GetYaxis()->SetTitle("Events");
+					
+					//draw rectangular and dashed line for compared spectrum
+					/*hcomp->SetLineColor(kBlack);
 					hcomp->SetLineWidth(2);
 					hcomp->SetFillColor(kBlack);
 					hcomp->SetFillStyle(3244);
 
-					hs->GetYaxis()->SetTitle("Events/GeV");
 					hcomp->Draw("E2 same");
+
 					TH1* hcompclone = (TH1*)hcomp->Clone("dangit");
 					hcompclone->SetFillStyle(0);
 
 					hcompclone->SetLineWidth(3);
 					hcompclone->SetLineStyle(9);
 					hcompclone->Draw("same hist");
+					*/
 
+					hcomp->SetMarkerStyle(8);
+					hcomp->SetMarkerColor(kBlack);
+					hcomp->SetMarkerSize(1.5);
+					hcomp->SetLineWidth(3);
+					hcomp->SetLineColor(kBlack);
+					hcomp->Draw("EP same");
 
 					//hcomp->Draw("hist same");
-					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
+					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.3);
+					//hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
 					hs->SetMinimum(0.001);
 
 					Cstack->Update();
@@ -719,7 +767,278 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
 					ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
 					ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
-					ratpre->GetXaxis()->SetTitle("Reconstructed Energy [GeV]");
+					//ratpre->GetXaxis()->SetTitle("Reconstructed Energy [GeV]");
+					ratpre->GetXaxis()->SetTitle("cos(#theta_{#pi})"); // for NC pi0 fit
+
+					Cstack->Write(canvas_name.c_str() );
+                    Cstack->SaveAs((canvas_name+".pdf").c_str(),"pdf");
+
+				}
+
+			}
+		}
+	}
+
+	f->Close();
+
+	return 0;
+}
+
+
+int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
+	//kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
+	//kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
+	//kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
+	std::vector<int> mycol = {kAzure -9, kRed-7, kGreen-3, kBlue-6, kMagenta-3, kYellow-7,  kOrange-3, kBlue, kBlue+2,  kGreen+1,kBlue-7, kPink, kViolet, kCyan,kMagenta,kAzure};
+
+
+	TFile *f = new TFile(("SBNfit_compare_plots_"+tag+".root").c_str(),"RECREATE");
+	f->cd();
+
+
+	std::vector<TH1D> temp = hist;
+	std::vector<TH1D> temp_comp = compsec->hist;
+
+	for(int k=0; k< fullnames.size(); k++){
+		TCanvas *ctmp = new TCanvas((tag+"_"+std::to_string(k)+"_"+fullnames.at(k)).c_str(), (std::to_string(k)+"_"+fullnames.at(k)).c_str(),1200,1200);
+		ctmp->cd();
+
+        if(map_hist.count(fullnames.at(k)) <=0 ){
+                std::cout<<"WARNING:  hist "<<fullnames[k]<<" is not in map_hist"<<std::endl;
+        }
+		TH1D * h1 = (TH1D*) temp.at(map_hist[fullnames.at(k)]).Clone((std::to_string(k)+fullnames.at(k)+"_1").c_str());
+		TH1D * h2 = (TH1D*) temp_comp.at(map_hist[fullnames.at(k)]).Clone((std::to_string(k)+fullnames.at(k)+"_2").c_str());
+
+		//h1->Scale(1,"width");
+		//h2->Scale(1,"width");
+
+		h1->SetLineColor(kRed);
+		h1->SetLineWidth(2);
+		h1->Draw("hist");
+
+		h2->SetLineColor(kBlue);
+		h2->SetLineStyle(5);
+		h2->SetLineWidth(2);
+		h2->Draw("hist same");
+
+		h1->SetMaximum(std::max(h1->GetMaximum(), h2->GetMaximum())*1.10);
+
+		ctmp->Write();
+	}
+
+
+
+
+	for(auto m: mode_names){
+		for(auto d: detector_names){
+			for(auto c: channel_names){
+
+				std::string canvas_name = m+"_"+d+"_"+c;
+
+				bool this_run = false;
+				bool this_run_comp = false;
+
+				TCanvas* Cstack= new TCanvas((tag+"_"+canvas_name).c_str(),canvas_name.c_str(),1200,1200);
+				//Cstack->SetFixedAspectRatio();
+
+				Cstack->cd();
+				THStack * hs = new THStack(canvas_name.c_str(),  canvas_name.c_str());
+				//TLegend legStack(0.50, 0.5, 0.89, 0.89);
+				TLegend legStack(0.11, 0.7, 0.80, 0.89);
+				legStack.SetNColumns(2);
+				legStack.SetLineWidth(0);
+				legStack.SetLineColor(kWhite);
+				int n=0;
+				int nc=0;
+				TH1D * hcomp;
+				TH1D *hsum;
+
+
+
+				for(auto &h : temp_comp){
+					std::string test = h.GetName();
+					if(test.find(canvas_name)!=std::string::npos){
+						double total_events = h.GetSumOfWeights();
+
+
+						h.Sumw2(false);
+						//h.Scale(1,"width,nosw2");
+						//h.GetYaxis()->SetTitle("Events/GeV");
+						//h.SetMarkerStyle(20);
+						//h.SetMarkerColor(mycol[n]);
+						//h.SetFillColor(mycol[n]);
+						h.SetLineColor(kBlack);
+						//h.SetTitle(h.GetName());
+
+
+						if(!this_run_comp){
+							hcomp = (TH1D*)h.Clone(("comp_"+canvas_name).c_str());
+							hcomp->Reset();
+						}
+
+						std::ostringstream out;
+						out << std::setprecision(3) << total_events;
+						std::string hmm = "\t";
+						std::string tmp = h.GetName() +hmm+ out.str();
+
+
+						hcomp->Add(&h);
+						nc++;
+
+						this_run_comp=true;
+
+					}
+				}
+
+
+				//Ok to sort the histograms based on "size" will need a few tricks
+				std::vector<double> integral_sorter;
+				std::vector<TH1*> to_sort;
+				std::vector<std::string> l_to_sort;
+
+				for(auto &h : temp){
+					std::string test = h.GetName();
+					if(test.find(canvas_name)!=std::string::npos ){
+
+						double total_events = h.GetSumOfWeights();
+						//h.Sumw2(false);
+						//h.Scale(1,"width,nosw2");
+						h.GetYaxis()->SetTitle("Events/GeV");
+						h.SetMarkerStyle(20);
+						h.SetMarkerColor(mycol[n]);
+						h.SetFillColor(mycol[n]);
+						h.SetLineColor(kBlack);
+						h.SetTitle(h.GetName());
+						//h.Write();
+
+						if(!this_run){
+							hsum = (TH1D*)h.Clone(("sum_"+canvas_name).c_str());
+							hsum->Reset();
+						}
+
+						std::ostringstream out;
+						out <<std::fixed<< std::setprecision(0) << total_events;
+						std::string hmm = " | ";
+						std::string tmp = h.GetName()+hmm+ out.str();
+						//std::string tmp = map_subchannel_plotnames.at(h.GetName()) +hmm+ out.str(); //fix this
+						//legStack.AddEntry(&h, tmp.c_str() , "f");
+						hsum->Add(&h);
+						//hs->Add(&h);
+						n++;
+
+						this_run=true;
+
+						to_sort.push_back(&h);
+						l_to_sort.push_back(tmp);
+						integral_sorter.push_back(total_events);
+
+					}
+				}
+				//Sort!
+				for (int i: SortIndexes(integral_sorter)) {
+					hs->Add(to_sort.at(i), "HIST");
+					legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+				}
+
+				legStack.AddEntry(hcomp, "Compared Point", "fl");
+
+
+
+
+				/****Not sure why but this next line seg faults...******
+				 *	hs->GetYaxis()->SetTitle("Events/GeV");
+				 ******************************************************/
+				if(this_run && this_run_comp){
+					double plot_pot=5e19;
+
+					double title_size_ratio=0.1;
+					double label_size_ratio=0.1;
+					double title_offSet_ratioY = 0.3 ;
+					double title_offSet_ratioX = 1.1;
+
+					double title_size_upper=0.15;
+					double label_size_upper=0.05;
+					double title_offSet_upper = 1.45;
+
+
+					Cstack->cd();
+					gStyle->SetErrorX(0);
+					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.35, 1, 1.0);
+					pad0top->SetBottomMargin(0); // Upper and lower plot are joined
+					pad0top->Draw();             // Draw the upper pad: pad2top
+					pad0top->cd();               // pad2top becomes the current pad
+					hs->Draw();
+					//draw error bar for 'this' SBNspec
+					hsum->SetFillColor(kBlack);
+					hsum->SetFillStyle(3008);
+					hsum->Draw("E2 same");
+					//hs->GetYaxis()->SetTitle("Events/GeV");
+					hs->GetYaxis()->SetTitle("Events");
+					
+					//draw rectangular and dashed line for compared spectrum
+					/*hcomp->SetLineColor(kBlack);
+					hcomp->SetLineWidth(2);
+					hcomp->SetFillColor(kBlack);
+					hcomp->SetFillStyle(3244);
+
+					hcomp->Draw("E2 same");
+
+					TH1* hcompclone = (TH1*)hcomp->Clone("dangit");
+					hcompclone->SetFillStyle(0);
+
+					hcompclone->SetLineWidth(3);
+					hcompclone->SetLineStyle(9);
+					hcompclone->Draw("same hist");
+					*/
+
+					hcomp->SetMarkerStyle(8);
+					hcomp->SetMarkerColor(kBlack);
+					hcomp->SetMarkerSize(1.5);
+					hcomp->SetLineWidth(3);
+					hcomp->SetLineColor(kBlack);
+					hcomp->Draw("EP same");
+
+					//hcomp->Draw("hist same");
+					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.3);
+					//hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
+					hs->SetMinimum(0.001);
+
+					Cstack->Update();
+					legStack.Draw();
+
+					Cstack->cd();
+					gStyle->SetOptStat(0);
+					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.35);
+					pad0bot->SetTopMargin(0);
+					pad0bot->SetBottomMargin(0.351);
+					pad0bot->SetGridx(); // vertical grid
+					pad0bot->Draw();
+					pad0bot->cd();       // pad0bot becomes the current pad
+
+					TH1* ratpre = (TH1*)hcomp->Clone(("ratio_"+canvas_name).c_str());
+					ratpre->Divide(hsum);
+					ratpre->SetStats(false);
+					ratpre->Draw("hist");
+					ratpre->SetFillColor(kWhite);
+					ratpre->SetFillStyle(0);
+					ratpre->SetLineWidth(2);
+
+					gStyle->SetOptStat(0);
+					TLine *line = new TLine(ratpre->GetXaxis()->GetXmin(),1.0,ratpre->GetXaxis()->GetXmax(),1.0 );
+					line->Draw("same");
+					ratpre->SetLineColor(kBlack);
+					ratpre->SetTitle("");
+					ratpre->GetYaxis()->SetTitle("Ratio");
+					ratpre->GetXaxis()->SetTitleOffset(title_offSet_ratioX);
+					ratpre->GetYaxis()->SetTitleOffset(title_offSet_ratioY);
+					ratpre->SetMinimum(ratpre->GetMinimum()*0.97);
+					ratpre->SetMaximum(ratpre->GetMaximum()*1.03);
+					ratpre->GetYaxis()->SetTitleSize(title_size_ratio);
+					ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
+					ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
+					ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
+					//ratpre->GetXaxis()->SetTitle("Reconstructed Energy [GeV]");
+					ratpre->GetXaxis()->SetTitle("cos(#theta_{#pi})"); // for NC pi0 fit
 
 					Cstack->Write(canvas_name.c_str() );
                     Cstack->SaveAs((canvas_name+".pdf").c_str(),"pdf");

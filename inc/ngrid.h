@@ -33,6 +33,10 @@ struct NGridDimension{
     double f_fixed_value;
     bool f_is_fixed;
     int f_N;
+	
+    bool f_has_constrain;  
+    double f_constrain_value;
+    double f_constrain_range;
 
     std::vector<double> f_points;
 
@@ -41,7 +45,17 @@ struct NGridDimension{
         f_points.resize(f_N);
         this->CalcGrid();
         f_is_fixed = false;
+	f_has_constrain = false;
     };
+
+
+    NGridDimension(std::string name, double min, double max, double step, double constrained_value, double constrain_range):f_name(name), f_min(min), f_max(max), f_step(step), f_constrain_value(constrained_value), f_constrain_range(constrain_range){
+	f_N = ceil(fabs(f_min-f_max)/step);
+	f_points.resize(f_N);
+	this->CalcGrid();
+	f_is_fixed=false;
+	f_has_constrain=true;
+    }
 
 
     NGridDimension(std::string name, double val) : f_name(name), f_fixed_value(val), f_is_fixed(true){
@@ -51,7 +65,9 @@ struct NGridDimension{
         f_min = f_fixed_value;
         f_points.resize(f_N);
         this->CalcGrid();
+	f_has_constrain = false;
     }
+
 
     int GetNPoints(){return f_N;};
 
@@ -110,6 +126,14 @@ struct NGrid{
         f_dimensions.emplace_back(NGridDimension(name,val));
         f_num_dimensions++;
         return;
+    }
+
+
+    void AddConstrainedDimension(std::string name, double min, double max, double step, double constrained_value, double constrain_range){
+	f_dimensions.emplace_back(NGridDimension(name, min, max, step, constrained_value, constrain_range));
+	f_num_dimensions++;
+	f_num_total_points *= f_dimensions.back().GetNPoints();
+	return ;
     }
 
 

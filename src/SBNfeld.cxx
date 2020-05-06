@@ -456,8 +456,7 @@ int SBNfeld::FullFeldmanCousins(){
 
 
 int SBNfeld::UpdateInverseCovarianceMatrixCNP(size_t best_grid_point, const std::vector<float> &datavec, TMatrixT<double>& inverse_collapsed, SBNchi * helper){
-    TMatrixT<double> full = helper->CalcCovarianceMatrixCNP(m_full_fractional_covariance_matrix, m_cv_spec_grid[best_grid_point]->full_vector, datavec);
-    helper->CollapseModes(full, inverse_collapsed);    
+    inverse_collapsed = helper->CalcCovarianceMatrixCNP(m_full_fractional_covariance_matrix, m_cv_spec_grid[best_grid_point]->full_vector, m_cv_spec_grid[best_grid_point]->collapsed_vector, datavec);
     inverse_collapsed = helper->InvertMatrix(inverse_collapsed);   
     return 0;
 }
@@ -485,6 +484,7 @@ std::vector<double> SBNfeld::PerformIterativeGridFit(const std::vector<float> &d
         //Step 1. What covariance matrix do we use?
         //For first iteration, use the precalculated background only inverse covariance matrix.
         //For all subsequent iterations what is the full covariance matrix? Use the last best grid point.
+	//update 'inverse_current_collpased_covariance_matrix'
         if(n_iter!=0){
             //Calculate current full covariance matrix, collase it, then Invert. 
             if(m_use_CNP){
