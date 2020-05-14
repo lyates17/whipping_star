@@ -6,7 +6,7 @@ outdir = "output"
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 
 var_list = [ "x_reco", "y_reco", "z_reco",
-             "eta",
+             "eta_reco",
              "openang_reco", "sum_thetas_reco", "sum_phis_reco",
              "charge_near_trunk_reco",
              "nu_energy_reco",
