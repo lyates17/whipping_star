@@ -117,9 +117,9 @@ xml_str = """<?xml version="1.0" ?>
 postsel_dict = { "nbins": [ 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18 ],
                  "xlow": [ 15., -101.5, 15., 0., 0.6, 0., 0., 0., 300., 0., 0., 0., 0., 0., 0., 0., 0., 70., 50.,
                            -math.pi, 0., 5., 20., -1., -math.pi, 0., 5., 50., -1. ], 
-                 "xhigh": [ 241.25, 101.5, 1021.8, 0.6, 2.8, 6.3, 6.3, 800., 1200., math.pi, math.pi, 400., 0.4, 2., 8., 6e5, 2000., 600., 1000.,
+                 "xhigh": [ 241.25, 101.5, 1021.8, 0.6, 2.8, 6.3, 6.3, 800., 1200., 1., math.pi, 400., 0.4, 2., 0.8, 6e5, 2000., 600., 1000.,
                             math.pi, math.pi, 200., 600., 1., math.pi, math.pi, 150., 500., 1. ], 
-                 "file_name": "input_to_sbnfit_v40_sel1mu1p_run1_May13.root" }
+                 "file_name": "input_to_sbnfit_v40_1mu1p_run1_May13.root" }
 sel_dict = { "postsel": postsel_dict } 
 
 # 29 variables...
@@ -131,8 +131,8 @@ var_list = [ "x_reco", "y_reco", "z_reco",
              "phiT_reco", "alphaT_reco", "pT_reco", "pT_ratio_reco",
              "Bjx_reco", "Bjy_reco",
              "Q2_reco", "sph_reco", "Q0_reco", "Q3_reco",
-             "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
-             "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco" ]
+             "lepton_phi_reco", "lepton_theta_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
+             "proton_phi_reco", "proton_theta_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco" ]
 units = [ "cm", "cm", "cm", "", "rad", "rad", "rad", "ADC", "MeV", "", "", "MeV", "", "", "", "MeV^2", "", "MeV", "MeV",
           "rad", "rad", "cm", "MeV", "", "rad", "rad", "cm", "MeV", "" ]
 
