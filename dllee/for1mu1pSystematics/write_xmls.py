@@ -102,23 +102,27 @@ xml_str = """<?xml version="1.0" ?>
 
 
 # post-selection
-postsel_dict = { "nbins": [ 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18 ],
-                 "xlow": [ 15., -101.5, 15., 200., 0.5, 0., 0., 0., 0., 0., 70., 50., 0., -1*math.pi, 5., 20., 0., -1*math.pi, 5., 50., 0. ],
-                 "xhigh": [ 241.25, 101.5, 1021.8, 2000., math.pi, 850., math.pi, 2., 1., 6e5, 600., 1000., math.pi, math.pi, 200., 600., math.pi, math.pi, 150., 500., 1. ], 
-                 "file_name": "input_to_sbnfit_v40_Apr20.root" }
+postsel_dict = { "nbins": [ 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18, 18 ],
+                 "xlow": [ 15., -101.5, 15., 0., 0.5, 0., 0., 0., 200., 0., 0., 0., 0., 0., 0., 0., 0., 70., 50.,
+                           -math.pi, 0., 5., 20., -1., -math.pi, 0., 5., 50., -1. ], 
+                 "xhigh": [ 241.25, 101.5, 1021.8, 0.8, math.pi, 6.3, 6.3, 800., 2000., math.pi, math.pi, 850., 1., 2., 1., 6e5, 4000., 600., 1000.,
+                            math.pi, math.pi, 200., 600., 1., math.pi, math.pi, 150., 500., 1. ], 
+                 "file_name": "input_to_sbnfit_v40_Apr27.root" }
 sel_dict = { "postsel": postsel_dict } 
 
 # 21 variables...
 var_list = [ "x_reco", "y_reco", "z_reco",
+             "eta",
+             "openang_reco", "sum_thetas_reco", "sum_phis_reco",
+             "charge_near_trunk_reco",
              "nu_energy_reco",
-             "openang_reco",
-             "pT_reco", "alphaT_reco",
+             "phiT_reco", "alphaT_reco", "pT_reco", "pT_ratio_reco",
              "Bjx_reco", "Bjy_reco",
-             "Q2_reco","Q0_reco", "Q3_reco",
-             "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco",
-             "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco",
-             "pT_ratio_reco" ]
-units = [ "cm", "cm", "cm", "MeV", "rad", "MeV", "", "", "", "MeV^2", "MeV", "MeV", "rad", "rad", "cm", "MeV", "rad", "rad", "cm", "MeV", "" ]
+             "Q2_reco", "sph_reco", "Q0_reco", "Q3_reco",
+             "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
+             "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco" ]
+units = [ "cm", "cm", "cm", "", "rad", "rad", "rad", "ADC", "MeV", "", "", "MeV", "", "", "", "MeV^2", "", "MeV", "MeV",
+          "rad", "rad", "cm", "MeV", "", "rad", "rad", "cm", "MeV", "" ]
 
 # Loop over everything, write the xmls...
 for sel in sel_dict:

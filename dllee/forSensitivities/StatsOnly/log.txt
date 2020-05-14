@@ -1,0 +1,622 @@
+Note! No covariance root file with the  `--covariance  XX.SBNcovar.root` or `-c XX.SBNcovar.root`. was passed, running in stats only mode. 
+Loading signal file : sens.SBNspec.root with xml dllee_sens_Apr30.xml
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+SBNconfig::SBNconfig	||	Loaded XML configuration file: dllee_sens_Apr30.xml
+SBNconfig::SBnconfig	|| loading mode: nu with use_bool 1
+SBNconfig::SBnconfig	|| loading detector: uBooNE with use_bool 1
+SBNconfig::SBNconfig	||	Loading Channel : 1e1p with use_bool: 1
+SBNconfig::SBNconfig	||	--> Subchannel: nue with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: bnb with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: lee with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_nue
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_bnb
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight*lee_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_lee
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Whitelisting variation  expskin_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  horncurrent_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  kminus_PrimaryHadronNormalization
+SBNconfig::SBNconfig	||	 Whitelisting variation  kplus_PrimaryHadronFeynmanScaling
+SBNconfig::SBNconfig	||	 Whitelisting variation  kzero_PrimaryHadronSanfordWang
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleoninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleonqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piminus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  pioninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  pionqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piplus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  All_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  XSecShape_CCMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  RPA_CCQE_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  AxFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  VecFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  DecayAngMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fa3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fv3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormCCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormNCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  ThetaDelta2NRad_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  Theta_Delta2Npi_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piminus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piplus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_proton_Geant4
+SBNconfig::SBNconfig	||	 Loading WeightMaps Variation Pattern : _UBGenie
+SBNconfig::SBNconfig	||	 with associated WeightMaps Variation formula : 1./ub_tune_weight
+SBNconfig::SBNconfig	||	 No mode passed for this variation in WeightMaps'
+SBNconfig::SBNconfig	||	 Assuming its the default multisim;
+SBNconfig::SBNconfig	||	|| Calculating used things
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_nue 0 0 0 0
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_bnb 0 0 0 1
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_lee 0 0 0 2
+SBNconfig::SBNconfig	||	There are 3 used subchannel histograms
+SBNconfig::SBNconfig	||	Starting on MC file parameters
+SBNconfig::SBNconfig	||	Calculating Total Bins
+SBNconfig::SBNconfig	||	Checking number of XX
+SBNconfig::SBNconfig	||	--> num_modes: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_detectors: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_channels: 1 out of 1
+SBNconfig::SBNconfig	||	----> num_subchannels: 3 out of 3
+SBNconfig::SBNconfig	||	----> num_bins: 12
+SBNconfig::SBNconfig	||	--> num_bins_detector_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_detector_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_mode_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_mode_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_total: 36
+SBNconfig::SBNconfig	||	--> num_bins_total_compressed: 12
+SBNconfig::SBNconfig	||	Done!
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+Loading background file : leeless.SBNspec.root with xml dllee_sens_Apr30.xml
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+SBNconfig::SBNconfig	||	Loaded XML configuration file: dllee_sens_Apr30.xml
+SBNconfig::SBnconfig	|| loading mode: nu with use_bool 1
+SBNconfig::SBnconfig	|| loading detector: uBooNE with use_bool 1
+SBNconfig::SBNconfig	||	Loading Channel : 1e1p with use_bool: 1
+SBNconfig::SBNconfig	||	--> Subchannel: nue with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: bnb with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: lee with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_nue
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_bnb
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight*lee_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_lee
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Whitelisting variation  expskin_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  horncurrent_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  kminus_PrimaryHadronNormalization
+SBNconfig::SBNconfig	||	 Whitelisting variation  kplus_PrimaryHadronFeynmanScaling
+SBNconfig::SBNconfig	||	 Whitelisting variation  kzero_PrimaryHadronSanfordWang
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleoninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleonqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piminus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  pioninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  pionqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piplus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  All_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  XSecShape_CCMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  RPA_CCQE_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  AxFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  VecFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  DecayAngMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fa3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fv3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormCCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormNCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  ThetaDelta2NRad_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  Theta_Delta2Npi_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piminus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piplus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_proton_Geant4
+SBNconfig::SBNconfig	||	 Loading WeightMaps Variation Pattern : _UBGenie
+SBNconfig::SBNconfig	||	 with associated WeightMaps Variation formula : 1./ub_tune_weight
+SBNconfig::SBNconfig	||	 No mode passed for this variation in WeightMaps'
+SBNconfig::SBNconfig	||	 Assuming its the default multisim;
+SBNconfig::SBNconfig	||	|| Calculating used things
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_nue 0 0 0 0
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_bnb 0 0 0 1
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_lee 0 0 0 2
+SBNconfig::SBNconfig	||	There are 3 used subchannel histograms
+SBNconfig::SBNconfig	||	Starting on MC file parameters
+SBNconfig::SBNconfig	||	Calculating Total Bins
+SBNconfig::SBNconfig	||	Checking number of XX
+SBNconfig::SBNconfig	||	--> num_modes: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_detectors: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_channels: 1 out of 1
+SBNconfig::SBNconfig	||	----> num_subchannels: 3 out of 3
+SBNconfig::SBNconfig	||	----> num_bins: 12
+SBNconfig::SBNconfig	||	--> num_bins_detector_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_detector_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_mode_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_mode_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_total: 36
+SBNconfig::SBNconfig	||	--> num_bins_total_compressed: 12
+SBNconfig::SBNconfig	||	Done!
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+Loading fractional covariance matrix from EMPTY
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+SBNconfig::SBNconfig	||	Loaded XML configuration file: dllee_sens_Apr30.xml
+SBNconfig::SBnconfig	|| loading mode: nu with use_bool 1
+SBNconfig::SBnconfig	|| loading detector: uBooNE with use_bool 1
+SBNconfig::SBNconfig	||	Loading Channel : 1e1p with use_bool: 1
+SBNconfig::SBNconfig	||	--> Subchannel: nue with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: bnb with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: lee with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_nue
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_bnb
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight*lee_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_lee
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Whitelisting variation  expskin_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  horncurrent_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  kminus_PrimaryHadronNormalization
+SBNconfig::SBNconfig	||	 Whitelisting variation  kplus_PrimaryHadronFeynmanScaling
+SBNconfig::SBNconfig	||	 Whitelisting variation  kzero_PrimaryHadronSanfordWang
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleoninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleonqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piminus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  pioninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  pionqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piplus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  All_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  XSecShape_CCMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  RPA_CCQE_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  AxFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  VecFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  DecayAngMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fa3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fv3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormCCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormNCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  ThetaDelta2NRad_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  Theta_Delta2Npi_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piminus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piplus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_proton_Geant4
+SBNconfig::SBNconfig	||	 Loading WeightMaps Variation Pattern : _UBGenie
+SBNconfig::SBNconfig	||	 with associated WeightMaps Variation formula : 1./ub_tune_weight
+SBNconfig::SBNconfig	||	 No mode passed for this variation in WeightMaps'
+SBNconfig::SBNconfig	||	 Assuming its the default multisim;
+SBNconfig::SBNconfig	||	|| Calculating used things
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_nue 0 0 0 0
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_bnb 0 0 0 1
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_lee 0 0 0 2
+SBNconfig::SBNconfig	||	There are 3 used subchannel histograms
+SBNconfig::SBNconfig	||	Starting on MC file parameters
+SBNconfig::SBNconfig	||	Calculating Total Bins
+SBNconfig::SBNconfig	||	Checking number of XX
+SBNconfig::SBNconfig	||	--> num_modes: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_detectors: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_channels: 1 out of 1
+SBNconfig::SBNconfig	||	----> num_subchannels: 3 out of 3
+SBNconfig::SBNconfig	||	----> num_bins: 12
+SBNconfig::SBNconfig	||	--> num_bins_detector_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_detector_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_mode_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_mode_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_total: 36
+SBNconfig::SBNconfig	||	--> num_bins_total_compressed: 12
+SBNconfig::SBNconfig	||	Done!
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+SBNchi::ReloadCoreSpectrum	|| Begininning to reload core spec! First Set new core spec
+SBNchi::ReloadCoreSpectrum	||  || Clear all previous chi^2 data
+SBNchi::ReloadCoreSpectrum	||  Reseting matrix_systematics to matrix_fractional_covariance
+SBNchi::ReloadCoreSpectrum	|| Go from fracCovariance to fullCovariance. matrix_systematics.GetNcols(): 36 matrix_systematics.GetNrows(): 36 core->fullvec.size(): 36
+SBNchi::ReloadCoreSpectrum	|| Filling stats into cov matrix
+SBNchi::ReloadCoreSpectrum	|| Stat matrix is symmetric (it is just diagonal core)
+SBNchi::ReloadCoreSpectrum	|| Using stats only in covariance matrix
+SBNchi::ReloadCoreSpectrum	|| Mstat: 36 x 36
+SBNchi::ReloadCoreSpectrum	|| matrix_systematics: 36 x 36
+SBNchi::ReloadCoreSpectrum	|| Mtotal: 36 x 36
+SBNchi::ReloadCoreSpectrum	|| Total Mstat +matrix_systematics is symmetric
+SBNchi::ReloadCoreSpectrum	||  About to do a SVD decomposition
+SBNchi::ReloadCoreSpectrum	|| SUCCESS! Inverted.
+SBNchi::ReloadCoreSpectrum	|| Generated covariance matrix is also positive semi-definite.
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+SBNconfig::SBNconfig	||	Loaded XML configuration file: dllee_sens_Apr30.xml
+SBNconfig::SBnconfig	|| loading mode: nu with use_bool 1
+SBNconfig::SBnconfig	|| loading detector: uBooNE with use_bool 1
+SBNconfig::SBNconfig	||	Loading Channel : 1e1p with use_bool: 1
+SBNconfig::SBNconfig	||	--> Subchannel: nue with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: bnb with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	--> Subchannel: lee with use_bool 1 and osc_pattern 0
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_nue
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_bnb
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Setting eventweight branch name sys_weights
+SBNconfig::SBNconfig	||	No root file with unique systematic variation is provided
+SBNconfig::SBNconfig	||	Setting an additional weight for branch nu_energy_reco using the branch xsec_corr_weight*lee_weight as a reweighting.
+SBNconfig::SBNconfig	||	Setting double variable nu_energy_reco @ nu_uBooNE_1e1p_lee
+SBNconfig::SBNconfig	||	Setting Standard eventweight for this.
+SBNconfig::SBNconfig	||	Oscillations are Off. oscillate=false
+SBNconfig::SBNconfig	||	 Whitelisting variation  expskin_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  horncurrent_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  kminus_PrimaryHadronNormalization
+SBNconfig::SBNconfig	||	 Whitelisting variation  kplus_PrimaryHadronFeynmanScaling
+SBNconfig::SBNconfig	||	 Whitelisting variation  kzero_PrimaryHadronSanfordWang
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleoninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleonqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  nucleontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piminus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  pioninexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  pionqexsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piontotxsec_FluxUnisim
+SBNconfig::SBNconfig	||	 Whitelisting variation  piplus_PrimaryHadronSWCentralSplineVariation
+SBNconfig::SBNconfig	||	 Whitelisting variation  All_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  XSecShape_CCMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  RPA_CCQE_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  AxFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  VecFFCCQEshape_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  DecayAngMEC_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fa3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  xsr_scc_Fv3_SCC
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormCCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  NormNCCOH_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  ThetaDelta2NRad_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  Theta_Delta2Npi_UBGenie
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piminus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_piplus_Geant4
+SBNconfig::SBNconfig	||	 Whitelisting variation  reinteractions_proton_Geant4
+SBNconfig::SBNconfig	||	 Loading WeightMaps Variation Pattern : _UBGenie
+SBNconfig::SBNconfig	||	 with associated WeightMaps Variation formula : 1./ub_tune_weight
+SBNconfig::SBNconfig	||	 No mode passed for this variation in WeightMaps'
+SBNconfig::SBNconfig	||	 Assuming its the default multisim;
+SBNconfig::SBNconfig	||	|| Calculating used things
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_nue 0 0 0 0
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_bnb 0 0 0 1
+SBNconfig::SBNconfig	||	nu_uBooNE_1e1p_lee 0 0 0 2
+SBNconfig::SBNconfig	||	There are 3 used subchannel histograms
+SBNconfig::SBNconfig	||	Starting on MC file parameters
+SBNconfig::SBNconfig	||	Calculating Total Bins
+SBNconfig::SBNconfig	||	Checking number of XX
+SBNconfig::SBNconfig	||	--> num_modes: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_detectors: 1 out of 1
+SBNconfig::SBNconfig	||	--> num_channels: 1 out of 1
+SBNconfig::SBNconfig	||	----> num_subchannels: 3 out of 3
+SBNconfig::SBNconfig	||	----> num_bins: 12
+SBNconfig::SBNconfig	||	--> num_bins_detector_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_detector_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_mode_block: 36
+SBNconfig::SBNconfig	||	--> num_bins_mode_block_compressed: 12
+SBNconfig::SBNconfig	||	--> num_bins_total: 36
+SBNconfig::SBNconfig	||	--> num_bins_total_compressed: 12
+SBNconfig::SBNconfig	||	Done!
+SBNconfig::SBNconfig	||	---------------------------------------------------------------
+SBNchi::ReloadCoreSpectrum	|| Begininning to reload core spec! First Set new core spec
+SBNchi::ReloadCoreSpectrum	||  || Clear all previous chi^2 data
+SBNchi::ReloadCoreSpectrum	||  Reseting matrix_systematics to matrix_fractional_covariance
+SBNchi::ReloadCoreSpectrum	|| Go from fracCovariance to fullCovariance. matrix_systematics.GetNcols(): 36 matrix_systematics.GetNrows(): 36 core->fullvec.size(): 36
+SBNchi::ReloadCoreSpectrum	|| Filling stats into cov matrix
+SBNchi::ReloadCoreSpectrum	|| Stat matrix is symmetric (it is just diagonal core)
+SBNchi::ReloadCoreSpectrum	|| Using stats only in covariance matrix
+SBNchi::ReloadCoreSpectrum	|| Mstat: 36 x 36
+SBNchi::ReloadCoreSpectrum	|| matrix_systematics: 36 x 36
+SBNchi::ReloadCoreSpectrum	|| Mtotal: 36 x 36
+SBNchi::ReloadCoreSpectrum	|| Total Mstat +matrix_systematics is symmetric
+SBNchi::ReloadCoreSpectrum	||  About to do a SVD decomposition
+SBNchi::ReloadCoreSpectrum	|| SUCCESS! Inverted.
+SBNchi::ReloadCoreSpectrum	|| Generated covariance matrix is also positive semi-definite.
+SBNcls::SetTolerance || Set Tolerance of SBNchi's to 1e-12
+SBNcls::CalcCLS	|| Running in Poission sampling mode!
+SBNcls::CalcCLS	|| Central Value Chi is : 13.7927 and 0 should be 0
+SBNcls::CalcCLS	|| Starting H1 PDF generation 
+SBNchi::ReloadCoreSpectrum	||  Starting to generate 100000 Pseduo-Experiments.
+Pseudo-Experiment: 0/100000 DeltaChi: 17.6054 PoisLogLiki: 12.3094 CNP_chi: 13.8649
+Pseudo-Experiment: 1000/100000 DeltaChi: 17.9632 PoisLogLiki: 13.5861 CNP_chi: 14.8133
+Pseudo-Experiment: 2000/100000 DeltaChi: 25.7841 PoisLogLiki: 16.2468 CNP_chi: 19.9651
+Pseudo-Experiment: 3000/100000 DeltaChi: 6.60538 PoisLogLiki: 2.50483 CNP_chi: -1.91129
+Pseudo-Experiment: 4000/100000 DeltaChi: 22.2539 PoisLogLiki: 13.9229 CNP_chi: 16.6601
+Pseudo-Experiment: 5000/100000 DeltaChi: 8.40193 PoisLogLiki: 6.38137 CNP_chi: 6.77662
+Pseudo-Experiment: 6000/100000 DeltaChi: 7.2673 PoisLogLiki: 4.12883 CNP_chi: 4.3658
+Pseudo-Experiment: 7000/100000 DeltaChi: 15.9422 PoisLogLiki: 11.2037 CNP_chi: 12.6285
+Pseudo-Experiment: 8000/100000 DeltaChi: 12.5963 PoisLogLiki: 9.816 CNP_chi: 10.4267
+Pseudo-Experiment: 9000/100000 DeltaChi: 10.8627 PoisLogLiki: 4.33904 CNP_chi: 4.50033
+Pseudo-Experiment: 10000/100000 DeltaChi: 10.5309 PoisLogLiki: 6.81904 CNP_chi: 7.42741
+Pseudo-Experiment: 11000/100000 DeltaChi: 26.8225 PoisLogLiki: 17.3397 CNP_chi: 20.5321
+Pseudo-Experiment: 12000/100000 DeltaChi: 28.6061 PoisLogLiki: 20.5229 CNP_chi: 22.9919
+Pseudo-Experiment: 13000/100000 DeltaChi: 31.5159 PoisLogLiki: 22.5265 CNP_chi: 25.3542
+Pseudo-Experiment: 14000/100000 DeltaChi: 13.0331 PoisLogLiki: 7.15861 CNP_chi: 7.64134
+Pseudo-Experiment: 15000/100000 DeltaChi: 21.7726 PoisLogLiki: 15.4358 CNP_chi: 17.5148
+Pseudo-Experiment: 16000/100000 DeltaChi: 34.455 PoisLogLiki: 22.9744 CNP_chi: 27.081
+Pseudo-Experiment: 17000/100000 DeltaChi: 7.67785 PoisLogLiki: 5.76024 CNP_chi: 6.1175
+Pseudo-Experiment: 18000/100000 DeltaChi: 18.1537 PoisLogLiki: 12.164 CNP_chi: 13.5272
+Pseudo-Experiment: 19000/100000 DeltaChi: 14.1913 PoisLogLiki: 10.3308 CNP_chi: 11.2871
+Pseudo-Experiment: 20000/100000 DeltaChi: 10.3951 PoisLogLiki: 5.80381 CNP_chi: 6.5025
+Pseudo-Experiment: 21000/100000 DeltaChi: 17.3709 PoisLogLiki: 10.793 CNP_chi: 12.8196
+Pseudo-Experiment: 22000/100000 DeltaChi: 20.9603 PoisLogLiki: 13.7111 CNP_chi: 15.7513
+Pseudo-Experiment: 23000/100000 DeltaChi: 5.29731 PoisLogLiki: 2.39737 CNP_chi: 2.63929
+Pseudo-Experiment: 24000/100000 DeltaChi: 22.6979 PoisLogLiki: 14.2469 CNP_chi: 16.7504
+Pseudo-Experiment: 25000/100000 DeltaChi: 17.7461 PoisLogLiki: 12.9672 CNP_chi: 14.447
+Pseudo-Experiment: 26000/100000 DeltaChi: 11.5132 PoisLogLiki: 7.84344 CNP_chi: 8.74326
+Pseudo-Experiment: 27000/100000 DeltaChi: 14.115 PoisLogLiki: 10.4986 CNP_chi: 11.323
+Pseudo-Experiment: 28000/100000 DeltaChi: 7.78538 PoisLogLiki: 5.41388 CNP_chi: 5.80519
+Pseudo-Experiment: 29000/100000 DeltaChi: 26.7866 PoisLogLiki: 18.6801 CNP_chi: 21.3872
+Pseudo-Experiment: 30000/100000 DeltaChi: 14.2839 PoisLogLiki: 8.27156 CNP_chi: 10.058
+Pseudo-Experiment: 31000/100000 DeltaChi: 1.84447 PoisLogLiki: -0.99161 CNP_chi: -1.96022
+Pseudo-Experiment: 32000/100000 DeltaChi: 14.8719 PoisLogLiki: 11.4148 CNP_chi: 12.287
+Pseudo-Experiment: 33000/100000 DeltaChi: 23.0859 PoisLogLiki: 16.3163 CNP_chi: 18.495
+Pseudo-Experiment: 34000/100000 DeltaChi: 16.3817 PoisLogLiki: 11.8783 CNP_chi: 12.959
+Pseudo-Experiment: 35000/100000 DeltaChi: 30.2479 PoisLogLiki: 20.5197 CNP_chi: 23.9839
+Pseudo-Experiment: 36000/100000 DeltaChi: 30.2606 PoisLogLiki: 21.2254 CNP_chi: 24.1265
+Pseudo-Experiment: 37000/100000 DeltaChi: 2.88507 PoisLogLiki: 1.64715 CNP_chi: 1.71964
+Pseudo-Experiment: 38000/100000 DeltaChi: 35.8518 PoisLogLiki: 22.8228 CNP_chi: 27.7349
+Pseudo-Experiment: 39000/100000 DeltaChi: 13.992 PoisLogLiki: 10.6584 CNP_chi: 11.5219
+Pseudo-Experiment: 40000/100000 DeltaChi: 10.2143 PoisLogLiki: 7.23546 CNP_chi: 8.00512
+Pseudo-Experiment: 41000/100000 DeltaChi: -2.22654 PoisLogLiki: -3.41231 CNP_chi: -3.74438
+Pseudo-Experiment: 42000/100000 DeltaChi: 21.3211 PoisLogLiki: 14.1533 CNP_chi: 16.0229
+Pseudo-Experiment: 43000/100000 DeltaChi: 9.06394 PoisLogLiki: 7.08087 CNP_chi: 7.46892
+Pseudo-Experiment: 44000/100000 DeltaChi: -0.849184 PoisLogLiki: -4.05056 CNP_chi: -5.83696
+Pseudo-Experiment: 45000/100000 DeltaChi: 9.92742 PoisLogLiki: 7.06149 CNP_chi: 7.67997
+Pseudo-Experiment: 46000/100000 DeltaChi: 10.3438 PoisLogLiki: 6.22998 CNP_chi: 6.93715
+Pseudo-Experiment: 47000/100000 DeltaChi: 19.9514 PoisLogLiki: 9.70633 CNP_chi: 12.1795
+Pseudo-Experiment: 48000/100000 DeltaChi: 11.3437 PoisLogLiki: 9.03813 CNP_chi: 9.49381
+Pseudo-Experiment: 49000/100000 DeltaChi: 1.17986 PoisLogLiki: -0.182409 CNP_chi: -0.350046
+Pseudo-Experiment: 50000/100000 DeltaChi: 25.6712 PoisLogLiki: 18.6277 CNP_chi: 20.8016
+Pseudo-Experiment: 51000/100000 DeltaChi: 31.6213 PoisLogLiki: 21.1536 CNP_chi: 24.894
+Pseudo-Experiment: 52000/100000 DeltaChi: 0.0247951 PoisLogLiki: -0.61606 CNP_chi: -0.638361
+Pseudo-Experiment: 53000/100000 DeltaChi: 8.84173 PoisLogLiki: 6.81545 CNP_chi: 7.21113
+Pseudo-Experiment: 54000/100000 DeltaChi: 19.1931 PoisLogLiki: 14.1345 CNP_chi: 15.5943
+Pseudo-Experiment: 55000/100000 DeltaChi: 11.0688 PoisLogLiki: 8.28426 CNP_chi: 8.90267
+Pseudo-Experiment: 56000/100000 DeltaChi: 14.4072 PoisLogLiki: 8.31726 CNP_chi: 8.88387
+Pseudo-Experiment: 57000/100000 DeltaChi: 18.4521 PoisLogLiki: 12.4935 CNP_chi: 14.1453
+Pseudo-Experiment: 58000/100000 DeltaChi: 1.22239 PoisLogLiki: -0.0643196 CNP_chi: -0.228505
+Pseudo-Experiment: 59000/100000 DeltaChi: -1.72083 PoisLogLiki: -4.26275 CNP_chi: -4.9768
+Pseudo-Experiment: 60000/100000 DeltaChi: 24.3825 PoisLogLiki: 15.9486 CNP_chi: 18.7513
+Pseudo-Experiment: 61000/100000 DeltaChi: 37.884 PoisLogLiki: 25.7123 CNP_chi: 29.8923
+Pseudo-Experiment: 62000/100000 DeltaChi: 28.9525 PoisLogLiki: 20.0029 CNP_chi: 22.9153
+Pseudo-Experiment: 63000/100000 DeltaChi: 7.93684 PoisLogLiki: 6.32604 CNP_chi: 6.60998
+Pseudo-Experiment: 64000/100000 DeltaChi: 3.83793 PoisLogLiki: 2.64676 CNP_chi: 2.83937
+Pseudo-Experiment: 65000/100000 DeltaChi: 28.9483 PoisLogLiki: 17.9756 CNP_chi: 22.0759
+Pseudo-Experiment: 66000/100000 DeltaChi: 10.8726 PoisLogLiki: 8.04395 CNP_chi: 8.8408
+Pseudo-Experiment: 67000/100000 DeltaChi: 11.7633 PoisLogLiki: 8.5561 CNP_chi: 9.15512
+Pseudo-Experiment: 68000/100000 DeltaChi: 2.64484 PoisLogLiki: 1.6319 CNP_chi: 1.72527
+Pseudo-Experiment: 69000/100000 DeltaChi: 27.6871 PoisLogLiki: 17.9503 CNP_chi: 21.3063
+Pseudo-Experiment: 70000/100000 DeltaChi: 1.20143 PoisLogLiki: -0.553896 CNP_chi: -0.624706
+Pseudo-Experiment: 71000/100000 DeltaChi: 51.196 PoisLogLiki: 28.9177 CNP_chi: 38.0399
+Pseudo-Experiment: 72000/100000 DeltaChi: 33.3406 PoisLogLiki: 21.1964 CNP_chi: 25.4751
+Pseudo-Experiment: 73000/100000 DeltaChi: 11.9431 PoisLogLiki: 8.88477 CNP_chi: 9.57605
+Pseudo-Experiment: 74000/100000 DeltaChi: 19.3106 PoisLogLiki: 12.5892 CNP_chi: 14.6805
+Pseudo-Experiment: 75000/100000 DeltaChi: 41.2261 PoisLogLiki: 22.6122 CNP_chi: 30.2274
+Pseudo-Experiment: 76000/100000 DeltaChi: 29.8491 PoisLogLiki: 20.1583 CNP_chi: 23.177
+Pseudo-Experiment: 77000/100000 DeltaChi: 19.1429 PoisLogLiki: 13.7123 CNP_chi: 15.2178
+Pseudo-Experiment: 78000/100000 DeltaChi: 7.65413 PoisLogLiki: 6.31611 CNP_chi: 6.57483
+Pseudo-Experiment: 79000/100000 DeltaChi: 35.2478 PoisLogLiki: 23.7965 CNP_chi: 27.7692
+Pseudo-Experiment: 80000/100000 DeltaChi: 24.986 PoisLogLiki: 15.9723 CNP_chi: 17.4698
+Pseudo-Experiment: 81000/100000 DeltaChi: 40.5192 PoisLogLiki: 24.3647 CNP_chi: 30.6587
+Pseudo-Experiment: 82000/100000 DeltaChi: 8.69842 PoisLogLiki: 6.59165 CNP_chi: 7.07506
+Pseudo-Experiment: 83000/100000 DeltaChi: 5.77335 PoisLogLiki: 3.63806 CNP_chi: 3.77463
+Pseudo-Experiment: 84000/100000 DeltaChi: 37.7387 PoisLogLiki: 25.9015 CNP_chi: 29.9179
+Pseudo-Experiment: 85000/100000 DeltaChi: 2.3038 PoisLogLiki: 1.22379 CNP_chi: 1.24371
+Pseudo-Experiment: 86000/100000 DeltaChi: 8.92798 PoisLogLiki: 7.01582 CNP_chi: 7.4375
+Pseudo-Experiment: 87000/100000 DeltaChi: -1.22825 PoisLogLiki: -2.28867 CNP_chi: -2.34671
+Pseudo-Experiment: 88000/100000 DeltaChi: 9.67166 PoisLogLiki: 6.08246 CNP_chi: 5.73404
+Pseudo-Experiment: 89000/100000 DeltaChi: 5.88467 PoisLogLiki: 2.75127 CNP_chi: 3.17984
+Pseudo-Experiment: 90000/100000 DeltaChi: 21.0622 PoisLogLiki: 13.2029 CNP_chi: 15.2806
+Pseudo-Experiment: 91000/100000 DeltaChi: 22.4071 PoisLogLiki: 16.7217 CNP_chi: 18.4087
+Pseudo-Experiment: 92000/100000 DeltaChi: 39.5416 PoisLogLiki: 21.6523 CNP_chi: 22.8028
+Pseudo-Experiment: 93000/100000 DeltaChi: 2.4735 PoisLogLiki: 1.50946 CNP_chi: 1.58191
+Pseudo-Experiment: 94000/100000 DeltaChi: 23.7263 PoisLogLiki: 16.9267 CNP_chi: 19.1306
+Pseudo-Experiment: 95000/100000 DeltaChi: 12.9498 PoisLogLiki: 2.84884 CNP_chi: 5.20028
+Pseudo-Experiment: 96000/100000 DeltaChi: 22.1508 PoisLogLiki: 15.2351 CNP_chi: 17.3571
+Pseudo-Experiment: 97000/100000 DeltaChi: 41.3889 PoisLogLiki: 25.9445 CNP_chi: 31.6302
+Pseudo-Experiment: 98000/100000 DeltaChi: 13.6277 PoisLogLiki: 10.6404 CNP_chi: 11.3832
+Pseudo-Experiment: 99000/100000 DeltaChi: 25.9734 PoisLogLiki: 16.6327 CNP_chi: 18.535
+Res 0 86.2406 -11.1819
+Res 1 43.2328 -16.9356
+Res 2 62.4224 -53.6748
+Quantile @ 0.97725 is 42.2759 for Default
+Quantile @ 0.84135 is 27.3294 for Default
+Quantile @ 0.5 is 15.4343 for Default
+Quantile @ 0.15865 is 6.08014 for Default
+Quantile @ 0.02275 is -1.2219 for Default
+Quantile @ 0.97725 is 26.2561 for Default
+Quantile @ 0.84135 is 18.2694 for Default
+Quantile @ 0.5 is 10.7407 for Default
+Quantile @ 0.15865 is 3.64638 for Default
+Quantile @ 0.02275 is -3.04599 for Default
+Quantile @ 0.97725 is 32.1762 for Default
+Quantile @ 0.84135 is 21.2197 for Default
+Quantile @ 0.5 is 11.9363 for Default
+Quantile @ 0.15865 is 3.78868 for Default
+Quantile @ 0.02275 is -3.92792 for Default
+Quantile @ 0.97725 is 60.8259 for Default
+Quantile @ 0.84135 is 41.1135 for Default
+Quantile @ 0.5 is 26.5767 for Default
+Quantile @ 0.15865 is 16.4154 for Default
+Quantile @ 0.02275 is 9.48867 for Default
+Quantile @ 0.97725 is 24.7031 for Default
+Quantile @ 0.84135 is 16.7786 for Default
+Quantile @ 0.5 is 11.2224 for Default
+Quantile @ 0.15865 is 7.20138 for Default
+Quantile @ 0.02275 is 4.30311 for Default
+SBNcls::CalcCLS	|| Starting H0 PDF generation 
+SBNchi::ReloadCoreSpectrum	||  Starting to generate 100000 Pseduo-Experiments.
+Pseudo-Experiment: 0/100000 DeltaChi: -9.66508 PoisLogLiki: -13.2393 CNP_chi: -17.171
+Pseudo-Experiment: 1000/100000 DeltaChi: -11.5218 PoisLogLiki: -16.5878 CNP_chi: -25.8997
+Pseudo-Experiment: 2000/100000 DeltaChi: -8.78275 PoisLogLiki: -11.9605 CNP_chi: -14.6292
+Pseudo-Experiment: 3000/100000 DeltaChi: -6.99405 PoisLogLiki: -10.2157 CNP_chi: -15.7731
+Pseudo-Experiment: 4000/100000 DeltaChi: 3.0747 PoisLogLiki: 0.889856 CNP_chi: 0.874617
+Pseudo-Experiment: 5000/100000 DeltaChi: -7.03165 PoisLogLiki: -9.5108 CNP_chi: -11.3022
+Pseudo-Experiment: 6000/100000 DeltaChi: -7.35278 PoisLogLiki: -11.1131 CNP_chi: -16.9707
+Pseudo-Experiment: 7000/100000 DeltaChi: -7.5523 PoisLogLiki: -9.87338 CNP_chi: -11.1748
+Pseudo-Experiment: 8000/100000 DeltaChi: -4.88656 PoisLogLiki: -6.46063 CNP_chi: -7.0718
+Pseudo-Experiment: 9000/100000 DeltaChi: -10.7164 PoisLogLiki: -14.5156 CNP_chi: -18.64
+Pseudo-Experiment: 10000/100000 DeltaChi: -9.33806 PoisLogLiki: -11.4857 CNP_chi: -12.4977
+Pseudo-Experiment: 11000/100000 DeltaChi: -0.722939 PoisLogLiki: -5.36681 CNP_chi: -8.11517
+Pseudo-Experiment: 12000/100000 DeltaChi: 1.07128 PoisLogLiki: -0.0418892 CNP_chi: -0.0147705
+Pseudo-Experiment: 13000/100000 DeltaChi: -6.92707 PoisLogLiki: -11.1396 CNP_chi: -17.1555
+Pseudo-Experiment: 14000/100000 DeltaChi: -6.25916 PoisLogLiki: -7.79715 CNP_chi: -8.42148
+Pseudo-Experiment: 15000/100000 DeltaChi: -6.2599 PoisLogLiki: -10.7319 CNP_chi: -15.4266
+Pseudo-Experiment: 16000/100000 DeltaChi: -7.6765 PoisLogLiki: -9.63942 CNP_chi: -10.5269
+Pseudo-Experiment: 17000/100000 DeltaChi: -9.47899 PoisLogLiki: -12.8713 CNP_chi: -15.4805
+Pseudo-Experiment: 18000/100000 DeltaChi: -3.44403 PoisLogLiki: -5.5935 CNP_chi: -6.84202
+Pseudo-Experiment: 19000/100000 DeltaChi: -6.11721 PoisLogLiki: -9.85903 CNP_chi: -10.028
+Pseudo-Experiment: 20000/100000 DeltaChi: -7.75692 PoisLogLiki: -10.534 CNP_chi: -12.3081
+Pseudo-Experiment: 21000/100000 DeltaChi: -4.28465 PoisLogLiki: -8.75785 CNP_chi: -11.6538
+Pseudo-Experiment: 22000/100000 DeltaChi: -6.53016 PoisLogLiki: -11.6263 CNP_chi: -19.2492
+Pseudo-Experiment: 23000/100000 DeltaChi: -7.20894 PoisLogLiki: -9.21375 CNP_chi: -10.5601
+Pseudo-Experiment: 24000/100000 DeltaChi: -5.99828 PoisLogLiki: -9.04785 CNP_chi: -11.1433
+Pseudo-Experiment: 25000/100000 DeltaChi: -0.563744 PoisLogLiki: -3.78996 CNP_chi: -4.855
+Pseudo-Experiment: 26000/100000 DeltaChi: -8.71444 PoisLogLiki: -12.9796 CNP_chi: -15.2851
+Pseudo-Experiment: 27000/100000 DeltaChi: -4.57142 PoisLogLiki: -6.20034 CNP_chi: -6.68399
+Pseudo-Experiment: 28000/100000 DeltaChi: -7.94006 PoisLogLiki: -10.7189 CNP_chi: -12.8459
+Pseudo-Experiment: 29000/100000 DeltaChi: 0.00353622 PoisLogLiki: -0.722677 CNP_chi: -0.75524
+Pseudo-Experiment: 30000/100000 DeltaChi: -5.87974 PoisLogLiki: -9.01141 CNP_chi: -14.2728
+Pseudo-Experiment: 31000/100000 DeltaChi: -10.3374 PoisLogLiki: -13.4001 CNP_chi: -15.6108
+Pseudo-Experiment: 32000/100000 DeltaChi: -6.35348 PoisLogLiki: -8.50056 CNP_chi: -9.95236
+Pseudo-Experiment: 33000/100000 DeltaChi: -3.54505 PoisLogLiki: -4.21097 CNP_chi: -4.37309
+Pseudo-Experiment: 34000/100000 DeltaChi: -11.6898 PoisLogLiki: -16.5166 CNP_chi: -21.7372
+Pseudo-Experiment: 35000/100000 DeltaChi: -3.50394 PoisLogLiki: -5.34184 CNP_chi: -6.16023
+Pseudo-Experiment: 36000/100000 DeltaChi: -2.86194 PoisLogLiki: -4.77591 CNP_chi: -5.95563
+Pseudo-Experiment: 37000/100000 DeltaChi: -1.87399 PoisLogLiki: -3.145 CNP_chi: -3.3857
+Pseudo-Experiment: 38000/100000 DeltaChi: -3.90059 PoisLogLiki: -4.74424 CNP_chi: -4.9108
+Pseudo-Experiment: 39000/100000 DeltaChi: -7.48108 PoisLogLiki: -10.437 CNP_chi: -13.6564
+Pseudo-Experiment: 40000/100000 DeltaChi: -11.7961 PoisLogLiki: -17.4937 CNP_chi: -29.6792
+Pseudo-Experiment: 41000/100000 DeltaChi: -7.3344 PoisLogLiki: -10.108 CNP_chi: -15.3278
+Pseudo-Experiment: 42000/100000 DeltaChi: -6.25383 PoisLogLiki: -7.67739 CNP_chi: -8.196
+Pseudo-Experiment: 43000/100000 DeltaChi: -0.529287 PoisLogLiki: -3.2984 CNP_chi: -4.67112
+Pseudo-Experiment: 44000/100000 DeltaChi: -1.69167 PoisLogLiki: -3.88561 CNP_chi: -4.95492
+Pseudo-Experiment: 45000/100000 DeltaChi: -3.32201 PoisLogLiki: -7.34742 CNP_chi: -7.39011
+Pseudo-Experiment: 46000/100000 DeltaChi: -6.74804 PoisLogLiki: -9.2732 CNP_chi: -10.8839
+Pseudo-Experiment: 47000/100000 DeltaChi: -5.76403 PoisLogLiki: -12.3759 CNP_chi: -28.7565
+Pseudo-Experiment: 48000/100000 DeltaChi: -7.86995 PoisLogLiki: -12.4949 CNP_chi: -20.0911
+Pseudo-Experiment: 49000/100000 DeltaChi: -5.07728 PoisLogLiki: -8.11021 CNP_chi: -10.0497
+Pseudo-Experiment: 50000/100000 DeltaChi: 3.05007 PoisLogLiki: -0.303371 CNP_chi: -0.901749
+Pseudo-Experiment: 51000/100000 DeltaChi: -0.304881 PoisLogLiki: -1.17928 CNP_chi: -1.29062
+Pseudo-Experiment: 52000/100000 DeltaChi: -1.6319 PoisLogLiki: -2.34041 CNP_chi: -2.48385
+Pseudo-Experiment: 53000/100000 DeltaChi: -2.21428 PoisLogLiki: -5.55606 CNP_chi: -6.5764
+Pseudo-Experiment: 54000/100000 DeltaChi: 2.49429 PoisLogLiki: 1.00943 CNP_chi: 1.12212
+Pseudo-Experiment: 55000/100000 DeltaChi: -6.62855 PoisLogLiki: -9.39386 CNP_chi: -11.2865
+Pseudo-Experiment: 56000/100000 DeltaChi: -3.23077 PoisLogLiki: -4.12247 CNP_chi: -4.37498
+Pseudo-Experiment: 57000/100000 DeltaChi: -7.7789 PoisLogLiki: -10.0637 CNP_chi: -11.6743
+Pseudo-Experiment: 58000/100000 DeltaChi: -2.21528 PoisLogLiki: -3.25564 CNP_chi: -3.51404
+Pseudo-Experiment: 59000/100000 DeltaChi: -9.81565 PoisLogLiki: -14.2927 CNP_chi: -19.2111
+Pseudo-Experiment: 60000/100000 DeltaChi: -12.291 PoisLogLiki: -17.8239 CNP_chi: -26.4063
+Pseudo-Experiment: 61000/100000 DeltaChi: -10.7271 PoisLogLiki: -16.0783 CNP_chi: -21.498
+Pseudo-Experiment: 62000/100000 DeltaChi: -10.012 PoisLogLiki: -13.5264 CNP_chi: -19.1823
+Pseudo-Experiment: 63000/100000 DeltaChi: -1.40989 PoisLogLiki: -3.70525 CNP_chi: -4.67813
+Pseudo-Experiment: 64000/100000 DeltaChi: 2.15661 PoisLogLiki: 1.21953 CNP_chi: 1.22606
+Pseudo-Experiment: 65000/100000 DeltaChi: -8.37918 PoisLogLiki: -11.5295 CNP_chi: -13.9088
+Pseudo-Experiment: 66000/100000 DeltaChi: -9.85196 PoisLogLiki: -13.6343 CNP_chi: -16.3359
+Pseudo-Experiment: 67000/100000 DeltaChi: -6.33274 PoisLogLiki: -9.19395 CNP_chi: -10.6492
+Pseudo-Experiment: 68000/100000 DeltaChi: -12.9258 PoisLogLiki: -18.9963 CNP_chi: -26.7653
+Pseudo-Experiment: 69000/100000 DeltaChi: -11.2605 PoisLogLiki: -15.3373 CNP_chi: -19.6102
+Pseudo-Experiment: 70000/100000 DeltaChi: -7.36275 PoisLogLiki: -11.167 CNP_chi: -14.7738
+Pseudo-Experiment: 71000/100000 DeltaChi: -3.81065 PoisLogLiki: -4.95699 CNP_chi: -5.31802
+Pseudo-Experiment: 72000/100000 DeltaChi: -8.66721 PoisLogLiki: -11.1487 CNP_chi: -12.8724
+Pseudo-Experiment: 73000/100000 DeltaChi: -2.8866 PoisLogLiki: -6.19074 CNP_chi: -9.25043
+Pseudo-Experiment: 74000/100000 DeltaChi: 1.49009 PoisLogLiki: -0.235196 CNP_chi: -0.350138
+Pseudo-Experiment: 75000/100000 DeltaChi: -4.29076 PoisLogLiki: -7.53763 CNP_chi: -9.13848
+Pseudo-Experiment: 76000/100000 DeltaChi: -7.89805 PoisLogLiki: -12.5181 CNP_chi: -16.0106
+Pseudo-Experiment: 77000/100000 DeltaChi: 6.95494 PoisLogLiki: 3.27776 CNP_chi: 3.26869
+Pseudo-Experiment: 78000/100000 DeltaChi: -6.54642 PoisLogLiki: -11.0838 CNP_chi: -13.4825
+Pseudo-Experiment: 79000/100000 DeltaChi: -4.46911 PoisLogLiki: -9.53362 CNP_chi: -13.3562
+Pseudo-Experiment: 80000/100000 DeltaChi: -9.6389 PoisLogLiki: -12.0742 CNP_chi: -13.4777
+Pseudo-Experiment: 81000/100000 DeltaChi: -9.96494 PoisLogLiki: -15.6568 CNP_chi: -17.7444
+Pseudo-Experiment: 82000/100000 DeltaChi: 18.1183 PoisLogLiki: 8.50139 CNP_chi: 10.9664
+Pseudo-Experiment: 83000/100000 DeltaChi: -1.09948 PoisLogLiki: -4.93504 CNP_chi: -5.74716
+Pseudo-Experiment: 84000/100000 DeltaChi: -11.2978 PoisLogLiki: -15.2478 CNP_chi: -18.2001
+Pseudo-Experiment: 85000/100000 DeltaChi: -6.34108 PoisLogLiki: -7.61688 CNP_chi: -8.04379
+Pseudo-Experiment: 86000/100000 DeltaChi: -9.38811 PoisLogLiki: -14.5935 CNP_chi: -20.4152
+Pseudo-Experiment: 87000/100000 DeltaChi: -6.90184 PoisLogLiki: -8.54502 CNP_chi: -9.11901
+Pseudo-Experiment: 88000/100000 DeltaChi: -10.1896 PoisLogLiki: -14.3251 CNP_chi: -20.4961
+Pseudo-Experiment: 89000/100000 DeltaChi: -11.8163 PoisLogLiki: -18.4705 CNP_chi: -35.345
+Pseudo-Experiment: 90000/100000 DeltaChi: -8.68016 PoisLogLiki: -11.1443 CNP_chi: -12.7021
+Pseudo-Experiment: 91000/100000 DeltaChi: -13.628 PoisLogLiki: -20.0086 CNP_chi: -30.774
+Pseudo-Experiment: 92000/100000 DeltaChi: -6.56266 PoisLogLiki: -9.43746 CNP_chi: -12.6944
+Pseudo-Experiment: 93000/100000 DeltaChi: -6.43346 PoisLogLiki: -9.63901 CNP_chi: -15.2552
+Pseudo-Experiment: 94000/100000 DeltaChi: -6.4125 PoisLogLiki: -7.96517 CNP_chi: -8.51373
+Pseudo-Experiment: 95000/100000 DeltaChi: -7.58015 PoisLogLiki: -9.48693 CNP_chi: -10.332
+Pseudo-Experiment: 96000/100000 DeltaChi: -5.36517 PoisLogLiki: -8.36702 CNP_chi: -9.57119
+Pseudo-Experiment: 97000/100000 DeltaChi: -1.55705 PoisLogLiki: -5.75309 CNP_chi: -11.9089
+Pseudo-Experiment: 98000/100000 DeltaChi: -7.40223 PoisLogLiki: -9.84769 CNP_chi: -11.498
+Pseudo-Experiment: 99000/100000 DeltaChi: -3.68307 PoisLogLiki: -5.71937 CNP_chi: -7.0364
+Res 0 24.499 -16.6838
+Res 1 17.4425 -27.8293
+Res 2 19.3505 -80.3289
+0 100000 100000
+We have 99999 integral of H1 and 99999 integral of H0 for metric Default
+1 100000 100000
+We have 99999 integral of H1 and 99999 integral of H0 for metric Default
+2 100000 100000
+We have 99999 integral of H1 and 99999 integral of H0 for metric Default
+3 100000 100000
+We have 99999 integral of H1 and 99999 integral of H0 for metric Default
+4 100000 100000
+We have 99999 integral of H1 and 99999 integral of H0 for metric Default
+Total wall time: 21 Secs.
+SBNcls::CalcCLS() || Minimum value: 0 Maximum value: 0.0967341
+SBNcls::CalcCLS() || Minimum Bin: -16.6838 Maximum bin: 129.361
+#splitline{-2#sigma}{1-#beta(0.0227500000) #alpha(0.0000000000 | 0.0#sigma) CL_{s}(0.0000000000)}
+#splitline{-1#sigma}{1-#beta(0.1586500000) #alpha(0.0000000000 | 0.0#sigma) CL_{s}(0.0000000000)}
+#splitline{Median}{1-#beta(0.5000000000) #alpha(0.0005800000 | 3.2#sigma) CL_{s}(0.0011600000)}
+#splitline{+1#sigma}{1-#beta(0.8413500000) #alpha(0.0158700000 | 2.1#sigma) CL_{s}(0.0188625423)}
+#splitline{+2#sigma}{1-#beta(0.9772500000) #alpha(0.1514500000 | 1.0#sigma) CL_{s}(0.1549756971)}
+SBNcls::CalcCLS() || Minimum value: 0 Maximum value: 0.0756378
+SBNcls::CalcCLS() || Minimum Bin: -27.8293 Maximum bin: 64.8492
+#splitline{-2#sigma}{1-#beta(0.0227500000) #alpha(0.0000000000 | 0.0#sigma) CL_{s}(0.0000000000)}
+#splitline{-1#sigma}{1-#beta(0.1586500000) #alpha(0.0000000000 | 0.0#sigma) CL_{s}(0.0000000000)}
+#splitline{Median}{1-#beta(0.5000000000) #alpha(0.0004000000 | 3.4#sigma) CL_{s}(0.0008000000)}
+#splitline{+1#sigma}{1-#beta(0.8413500000) #alpha(0.0140100000 | 2.2#sigma) CL_{s}(0.0166518096)}
+#splitline{+2#sigma}{1-#beta(0.9772500000) #alpha(0.1396900000 | 1.1#sigma) CL_{s}(0.1429419289)}
+SBNcls::CalcCLS() || Minimum value: 0 Maximum value: 0.0558597
+SBNcls::CalcCLS() || Minimum Bin: -80.3289 Maximum bin: 93.6337
+#splitline{-2#sigma}{1-#beta(0.0227500000) #alpha(0.0000000000 | 0.0#sigma) CL_{s}(0.0000000000)}
+#splitline{-1#sigma}{1-#beta(0.1586500000) #alpha(0.0000000000 | 0.0#sigma) CL_{s}(0.0000000000)}
+#splitline{Median}{1-#beta(0.5000000000) #alpha(0.0004200000 | 3.3#sigma) CL_{s}(0.0008400000)}
+#splitline{+1#sigma}{1-#beta(0.8413500000) #alpha(0.0142000000 | 2.2#sigma) CL_{s}(0.0168776371)}
+#splitline{+2#sigma}{1-#beta(0.9772500000) #alpha(0.1494100000 | 1.0#sigma) CL_{s}(0.1528882067)}
+SBNcls::CalcCLS() || Minimum value: 0 Maximum value: 0.0903139
+SBNcls::CalcCLS() || Minimum Bin: 0.615993 Maximum bin: 97.0297
+SBNcls::CalcCLS() || Minimum value: 0 Maximum value: 0.0890418
+SBNcls::CalcCLS() || Minimum Bin: 0.633238 Maximum bin: 190.965
