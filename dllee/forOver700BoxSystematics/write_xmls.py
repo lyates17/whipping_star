@@ -116,8 +116,8 @@ for sel in sel_dict:
         
         var_xml_str = xml_str
         
-        xlow  = bin_list[i][0]
-        xhigh = bin_list[i][1]
+        xlow  = float(bin_list[i][0])
+        xhigh = float(bin_list[i][1])
         nbins = N_bins
         edges = [ xlow + ((xhigh - xlow)/nbins)*j for j in range(nbins+1) ]
         edges_str = ''

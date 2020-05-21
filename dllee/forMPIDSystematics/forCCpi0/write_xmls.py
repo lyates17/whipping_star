@@ -11,54 +11,32 @@ xml_str = """<?xml version="1.0" ?>
 <mode name="nu"/>
 <detector name="uBooNE"/>
 
-<channel name="1mu1p" unit="UNIT">
+<channel name="CCpi0" unit="UNIT">
   <bins
       edges="BIN_EDGES"
       />
-  <subchannel name="bnb"   />
-  <subchannel name="nue"   />
-  <subchannel name="dirt"  />
+  <subchannel name="bnb"/>
   <subchannel name="extbnb"/>
 </channel>
 
-<plotpot value=4.4e+19/>
+<plotpot value=6.42e+20/>
 
 
-<MultisimFile treename="sel1mu1p_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.093367" maxevents="100000" pot="4.4e19">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.242493" maxevents="100000" pot="6.42e20">
   <branch
       name="VAR_NAME"
       type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      associated_subchannel="nu_uBooNE_CCpi0_bnb"
       additional_weight="ADDITIONAL_WEIGHT"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel1mu1p_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.000449" maxevents="100000" pot="4.4e19">
+<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.429679" maxevents="100000" pot="6.42e20">
   <branch
       name="VAR_NAME"
       type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_nue"
-      additional_weight="ADDITIONAL_WEIGHT"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel1mu1p_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.168087" maxevents="100000" pot="4.4e19">
-  <branch
-      name="VAR_NAME"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_dirt"
-      additional_weight="ADDITIONAL_WEIGHT"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel1mu1p_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="0.435017" maxevents="100000" pot="4.4e19">
-  <branch
-      name="VAR_NAME"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_extbnb"
+      associated_subchannel="nu_uBooNE_CCpi0_extbnb"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
@@ -79,7 +57,7 @@ xml_str = """<?xml version="1.0" ?>
   <whitelist>piontotxsec_FluxUnisim</whitelist>
   <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
   <whitelist>All_UBGenie</whitelist>
-  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
+  <!-- <whitelist>XSecShape_CCMEC_UBGenie</whitelist> -->
   <whitelist>RPA_CCQE_UBGenie</whitelist>
   <whitelist>AxFFCCQEshape_UBGenie</whitelist>
   <whitelist>VecFFCCQEshape_UBGenie</whitelist>
@@ -102,14 +80,14 @@ xml_str = """<?xml version="1.0" ?>
 
 
 # post-selection
-postsel_dict = { "nbins": [ 20, 20, 20, 20, 20 ],
+postsel_dict = { "nbins": [ 40, 40, 40, 40, 40 ],
                  "xlow": [ 0., 0., 0., 0., 0. ],
                  "xhigh": [ 1., 1., 1., 1., 1. ],
-                 "file_name": "input_to_sbnfit_v40_forMPID_Apr27.root" }
+                 "file_name": "input_to_sbnfit_v40_forMPID_CCpi0_May18.root" }
 sel_dict = { "postsel": postsel_dict } 
 
 # 21 variables...
-var_list = [ "proton_score", "eminus_score", "gamma_score", "muon_score", "pion_score" ]
+var_list = [ "proton_score", "electron_score", "gamma_score", "muon_score", "pion_score" ]
 units = [ "", "", "", "", "" ]
 
 # Loop over everything, write the xmls...

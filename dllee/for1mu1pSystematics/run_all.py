@@ -17,7 +17,8 @@ var_list = [ "x_reco", "y_reco", "z_reco",
 os.chdir(autodir)
 
 #for sel in ["presel", "postsel"]:
-for sel in ["postsel"]:
+for sel in ["postsel", "gevcut"]:
+#for sel in ["postsel"]:
     #for plot_set in ["set1", "set2", "set3"]:
     for var in var_list:
         tag = "%s__%s" % (sel, var)
