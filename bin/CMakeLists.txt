@@ -18,6 +18,9 @@ target_link_libraries (sbnfit_NCdelta_fit SBNfitlib tinyxmllib EventWeight)
 add_executable (sbnfit_lee_simultaneous_fit sbnfit_lee_simultaneous_fit.cxx)
 target_link_libraries (sbnfit_lee_simultaneous_fit SBNfitlib tinyxmllib EventWeight)
 
+add_executable (sbnfit_lee_simultaneous_1para sbnfit_lee_simultaneous_1para.cxx)
+target_link_libraries (sbnfit_lee_simultaneous_1para SBNfitlib tinyxmllib EventWeight)
+
 add_executable (sbnfit_uboone_scaling_fc sbnfit_uboone_scaling_fc.cxx)
 target_link_libraries (sbnfit_uboone_scaling_fc SBNfitlib tinyxmllib EventWeight)
 

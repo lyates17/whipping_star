@@ -16,6 +16,7 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     subchannel_names.resize(100);
     subchannel_plotnames.resize(100);
     subchannel_bool.resize(100);
+    subchannel_used.resize(100);
     subchannel_osc_patterns.resize(100);
     char *end;
 
@@ -575,6 +576,7 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     std::string tempn;
     int indexcount = 0;
 
+
     for(int im = 0; im < num_modes; im++){
 
         for(int id =0; id < num_detectors; id++){
@@ -624,7 +626,12 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
 
     for(int i=0; i< num_channels; i++){
         num_subchannels.at(i) = 0;
-        for(bool j: subchannel_bool[i]){ if(j) num_subchannels[i]++;}
+        for(int j=0; j<subchannel_bool[i].size(); j++){ 
+		if(subchannel_bool[i][j]){
+			 num_subchannels[i]++;
+			 subchannel_used[i].push_back(j);	
+		}
+	}
     }
     //This needs to be above num_channel recalculation;
 
@@ -672,6 +679,7 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     auto temp_num_bins= num_bins;
     auto temp_subchannel_names = subchannel_names;
     auto temp_channel_names = channel_names;
+    auto temp_channel_units = channel_units;
     auto temp_bin_edges = bin_edges;
     auto temp_bin_widths = bin_widths;
     auto temp_detector_names = detector_names;
@@ -681,11 +689,15 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     auto temp_detector_bool = detector_bool;
     auto temp_subchannel_bool = subchannel_bool;
     auto temp_subchannel_osc_patterns = subchannel_osc_patterns;
+    auto temp_subchannel_plotnames = subchannel_plotnames;
+    subchannel_plotnames.clear();
+    subchannel_plotnames.resize(num_channels);
 
     num_subchannels.clear();
     num_bins.clear();
     subchannel_names.clear();
     channel_names.clear();
+    channel_units.clear();
     bin_edges.clear();
     bin_widths.clear();
     detector_names.clear();
@@ -699,18 +711,25 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
     subchannel_osc_patterns.clear();
 
 
+    int ic=0;
     for(int c: channel_used){
         //if(is_verbose){std::cout<<otag<<"Adding channel: "<<c<<std::endl;}
         num_subchannels.push_back( temp_num_subchannels.at(c));
         num_bins.push_back( temp_num_bins.at(c));
         subchannel_names.push_back( temp_subchannel_names.at(c));
         channel_names.push_back( temp_channel_names.at(c));
+	channel_units.push_back(temp_channel_units.at(c));
         bin_edges.push_back( temp_bin_edges.at(c));
         bin_widths.push_back( temp_bin_widths.at(c));
 
         channel_bool.push_back(temp_channel_bool.at(c));
         subchannel_bool.push_back(temp_subchannel_bool.at(c));
         subchannel_osc_patterns.push_back(temp_subchannel_osc_patterns.at(c));
+
+	for(int sc: subchannel_used[c]){
+		subchannel_plotnames[ic].push_back(temp_subchannel_plotnames[c][sc]);
+	}
+	ic++;
     }
     for(int d: detector_used){
         detector_names.push_back(temp_detector_names.at(d));

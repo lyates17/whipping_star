@@ -2,6 +2,7 @@
 #define SBNSPEC_H_
 
 #include <cmath>
+#include <map>
 #include <vector>
 #include <iostream>
 #include "SBNconfig.h"
@@ -13,6 +14,7 @@
 #include <TLegend.h>
 #include <TCanvas.h>
 #include <TLine.h>
+#include <TColor.h>
 #include <TStyle.h>
 
 //#include <TROOT.h>

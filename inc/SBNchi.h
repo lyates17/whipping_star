@@ -89,7 +89,7 @@ class SBNchi : public SBNconfig{
 
 
 
-
+	double CalcChi_statonlyCNP(std::vector<double>&, std::vector<double>&);
 	int ReloadCoreSpectrum(SBNspec *bkgin);
 
 	//load up systematic covariabnce matrix from a rootfile, location in xml
@@ -113,6 +113,7 @@ class SBNchi : public SBNconfig{
     TMatrixT<double> InvertMatrix(TMatrixT<double> &M);
     TMatrixT<double> CalcCovarianceMatrix(TMatrixT<double>*M, TVectorT<double>& spec);
     TMatrixT<double> CalcCovarianceMatrix(TMatrixT<double>*M, std::vector<double>& spec);
+    TMatrixT<double> SplitCovarianceMatrix(TMatrixT<double>*M, std::vector<double>& spec, int m);
     TMatrixT<double> CalcCovarianceMatrixCNP(TMatrixT<double> &M, std::vector<double>& spec, std::vector<double>& spec_collapse, const std::vector<double>& datavec );
     TMatrixT<double> CalcCovarianceMatrixCNP(TMatrixT<double>* M, std::vector<double>& spec, std::vector<double>& spec_collapse, const std::vector<float>& datavec );
     TMatrixT<double> CalcCovarianceMatrixCNP(TMatrixT<double>* M, std::vector<double>& spec, const std::vector<float>& datavec );

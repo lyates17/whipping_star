@@ -15,6 +15,7 @@
 #include "TFile.h"
 #include "TTree.h"
 #include "TH1F.h"
+#include "TH1D.h"
 #include "TH2D.h"
 #include "TH3.h"
 #include "TMultiGraph.h"
@@ -73,10 +74,9 @@ int main(int argc, char* argv[])
         {"stat", 		no_argument, 		0, 's'},
         {"montecarlo", 		required_argument,	0, 'm'},
         {"data", 		required_argument,	0, 'd'},
-	{"central_value",       required_argument,      0, 'b'},
-	{"interpolation",       required_argument,      0, 'i'},
+	{"background",          required_argument,      0, 'b'},
 	{"covarmatrix",         required_argument,      0, 'c'},
-	{"geniematrix",         required_argument,      0, 'g'},
+	{"tag",                 required_argument,      0, 't'},
 	{"flat",        required_argument, 0 ,'f'},
         {"randomseed",        required_argument, 0 ,'r'},
         {"help", 		no_argument,	0, 'h'},
@@ -92,21 +92,19 @@ int main(int argc, char* argv[])
     bool bool_stat_only = false;
     int interpolation_number = -99;  //number of points for chi2 value interpolation
     double random_number_seed = -1;
+    double f_central = -100.0;
 
-    double f_central = -1000.0;
     bool input_data = false;
     std::string data_filename;  //root file containing data/mc spectra
     std::string mc_filename;
     std::string covmatrix_file;  //root file containing covariance matrix
-    std::string genie_matrix_file;  //root file containing covariance matrix
 
-    bool has_genie_file = false;
     bool bool_flat_det_sys = false;
     double flat_det_sys_percent = 0.0;
 
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "d:x:m:r:c:g:b:p:i:f:sh", longopts, &index);
+        iarg = getopt_long(argc,argv, "d:x:m:r:c:p:t:b:f:sh", longopts, &index);
 
         switch(iarg)
         {
@@ -123,20 +121,16 @@ int main(int argc, char* argv[])
 	    case 'b':
 		f_central = (double)strtod(optarg, NULL);
 		break;
-	    case 'i':
-		interpolation_number = (int)strtod(optarg, NULL);
-		break;
 	    case 'c':
 		covmatrix_file = optarg;
-		break;
-	    case 'g':
-		has_genie_file=true;
-		genie_matrix_file = optarg;
 		break;
             case 'f':
                 bool_flat_det_sys = true;
                 flat_det_sys_percent = (double)strtod(optarg,NULL);
                 break;
+	    case 't':
+		tag = optarg;
+		break;
             case 'r':
                 random_number_seed = (double)strtod(optarg,NULL);
                 std::cout<<"Reading in random seed argument: "<<random_number_seed<<std::endl;
@@ -177,11 +171,27 @@ int main(int argc, char* argv[])
     NGrid mygrid;
 
     //now only available for 3 subchannels only
-    mygrid.AddDimension("NCPi0Coh", 0, 4, 0.1);   //method A
-    mygrid.AddDimension("NCPi0NotCoh", 0.5, 1.1, 0.05);   //method A
-    //mygrid.AddDimension("NCPi0Coh", 0.5, 3.0, 0.05);   //method B
-    //mygrid.AddDimension("NCPi0NotCoh", 0.5, 1.0, 0.04);   //method B
-    mygrid.AddDimension("NCDeltaRadOverlaySM", 0., 4, 0.02);   //0.1 FULL
+    mygrid.AddDimension("NCDeltaRadOverlaySM", 0., 4, 0.01);   //0.1 FULL
+
+   std::cout<< "Fraction Fit||" << "\tGrab info of the grid"<< std::endl;
+   //check grid size
+   std::vector<std::vector<double>> grid = mygrid.GetGrid();
+   if(grid.size() != mygrid.f_num_total_points){
+	std::cout <<  "the number of points don't match: something wrong with the grid setup!!" << std::endl;
+	return 1;
+   }
+
+
+   //collect the name of dimensions: subchannels you want to vary; and the range
+   std::vector<std::string> dimension_name;
+   const double range_x_low = mygrid.f_dimensions.at(0).f_min;
+   const double range_x_up = mygrid.f_dimensions.at(0).f_max;
+   int nbin_x = mygrid.f_dimensions.at(0).f_N;  
+ 
+   dimension_name.clear(); 
+   for(int i=0; i< mygrid.f_num_dimensions ; i++){
+	dimension_name.push_back(mygrid.f_dimensions.at(i).f_name);
+   }
 
 
     std::cout << "Fraction Fit|| "<< "\tStart initializing MC and data spectrum" << std::endl;
@@ -189,38 +199,39 @@ int main(int argc, char* argv[])
     //initialize the MC spectrum
     SBNspec mc_spec(mc_filename, xml);
     mc_spec.Scale("NCDeltaRadOverlayLEE", 0.0);
-    //for method B
-    //mc_spec.Scale("NCPi0Coh", 1.55);
-    //mc_spec.Scale("NCPi0NotCoh", 0.78);
-    if(f_central >=0){
-	std::cout<< "Scaling NCDeltaRadOverlaySM by " << f_central << std::endl;
-	mc_spec.Scale("NCDeltaRadOverlaySM", f_central); 
+    //method B
+    mc_spec.Scale("NCPi0Coh", 1.55);
+    mc_spec.Scale("NCPi0NotCoh", 0.78);
+    if(f_central >=0 ){
+		mc_spec.Scale(dimension_name[0], f_central);
+		std::cout << "Subchannel " << dimension_name[0] << " is scaled by " << f_central << " in CV spectrum" << std::endl;
     }
     mc_spec.CollapseVector();
 
     //initlaize the data spectrum
     SBNspec data_spec;
     if(input_data){
-    	SBNspec data_temp(data_filename, xml);
+ 	std::cout << "Fraction Fit||\t Fitting to real data file: " << data_filename << std::endl; 
+        SBNspec data_temp(data_filename, xml);
 	data_spec = data_temp;
-    }else{
-	std::cout << "No input data provided; gonna do sensitivity study" << std::endl;
+    }
+    else{
+	std::cout << "Fraction Fit||\t No real data provided, gonna be sensitivity study" << std::endl;
 	data_spec = mc_spec;
     }
     data_spec.CollapseVector();  //collapse full vector
     
     //compare plots before the fit
-    if(input_data){
-    tag = "before_fit";
-    mc_spec.CompareSBNspecs(&data_spec, tag);
-    tag.clear();
-    }
+   // if(input_data){
+        tag = "before_fit";
+        mc_spec.CompareSBNspecs(&data_spec, tag);
+        tag.clear();
+   // }
+
 
     std::cout << "Fraction Fit||" <<  "\tInitialize fractional systematric covariance matrix" << std::endl;
     //initialize covariance matrix
     TMatrixT<double> frac_syst_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);
-    TMatrixT<double> frac_genie_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);
-    TMatrixT<double> frac_gtotal_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);
 
 
     if(bool_stat_only){
@@ -241,85 +252,30 @@ int main(int argc, char* argv[])
 	std::cout << "Open covariance matrix root file: " << covmatrix_file << std::endl;
 	TFile* f_covar = new TFile(covmatrix_file.c_str(), "read");
 	TMatrixT<double>* m_temp;
-	m_temp = (TMatrixD*)f_covar->Get("frac_covariance");
+	m_temp = (TMatrixT<double>*)f_covar->Get("frac_covariance");
 	frac_syst_matrix = *m_temp;
+	std::cout << "size of covariance matrix: " << m_temp->GetNcols() << "|| full vector size: " << mc_spec.num_bins_total << std::endl;
+	f_covar->Close();	
 
-/*	for(int i=0 ; i< mc_spec.num_bins_total; i++){
-		for(int j=0;j<mc_spec.num_bins_total; j++){
+
+/*	for(int i =0; i< mc_spec.num_bins_total; i++){
+		for(int j=0; j<mc_spec.num_bins_total ; j++){
 		if(i != j) frac_syst_matrix(i,j)=0.0;
 		}
 	}
-*/
-	bool subtract_xsec = false;
-	bool subtract_flux = true;
-	if(has_genie_file){
-		TFile* f_genie = new TFile(genie_matrix_file.c_str(), "read");
-		TMatrixT<double>* genie_temp;
-		genie_temp = (TMatrixT<double>*)f_genie->Get("frac_covariance");
-		frac_gtotal_matrix = *genie_temp;
-
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/All_UBGenie_frac_covariance");
-		frac_genie_matrix = *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/AxFFCCQEshape_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/DecayAngMEC_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/NormCCCOH_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/NormNCCOH_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/RPA_CCQE_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/Theta_Delta2Npi_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/VecFFCCQEshape_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-		genie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/XSecShape_CCMEC_UBGenie_frac_covariance");	
-		frac_genie_matrix += *genie_temp;	
-
-		if(subtract_xsec) frac_syst_matrix -= frac_genie_matrix;
-		else if(subtract_flux) frac_syst_matrix = frac_syst_matrix -frac_gtotal_matrix + frac_genie_matrix;
-		f_genie->Close();
-	}
-
-	f_covar->Close();	
+  */
     }
 
 
 
-   std::cout<< "Fraction Fit||" << "\tGrab info of the grid"<< std::endl;
-   //check grid size
-   std::vector<std::vector<double>> grid = mygrid.GetGrid();
-   if(grid.size() != mygrid.f_num_total_points){
-	std::cout <<  "the number of points don't match: something wrong with the grid setup!!" << std::endl;
-	return 1;
-   }
-
-
-   //collect the name of dimensions: subchannels you want to vary; and the range
-   std::vector<std::string> dimension_name;
-   const double range_x_low = mygrid.f_dimensions.at(0).f_min;
-   const double range_x_up = mygrid.f_dimensions.at(0).f_max;
-   const double range_y_low = mygrid.f_dimensions.at(1).f_min;
-   const double range_y_up = mygrid.f_dimensions.at(1).f_max;
-   const double range_z_low = mygrid.f_dimensions.at(2).f_min;
-   const double range_z_up = mygrid.f_dimensions.at(2).f_max;
-   int nbin_x = mygrid.f_dimensions.at(0).f_N;  //number of point in x axis
-   int nbin_y = mygrid.f_dimensions.at(1).f_N;  
-   int nbin_z = mygrid.f_dimensions.at(2).f_N;  
- 
-   dimension_name.clear(); 
-   for(int i=0; i< mygrid.f_num_dimensions ; i++){
-	dimension_name.push_back(mygrid.f_dimensions.at(i).f_name);
-   }
-
 
 
    //*********************loop over grid points, calc chi square********************************
-   TFile* f_output = new TFile(Form("chi_contour_CV_%f.root", f_central), "recreate");
-   TH3D* h_chi2_raw = new TH3D("h_chi2_raw", Form("h_chi2_raw;%s;%s;%s", dimension_name[0].c_str(), dimension_name[1].c_str(), dimension_name[2].c_str()), nbin_x, range_x_low,range_x_up, nbin_y, range_y_low, range_y_up, nbin_z, range_z_low, range_z_up);
-   TH3D* h_chi2_delta = new TH3D("h_chi2_delta", Form("h_chi2_delta;%s;%s;%s", dimension_name[0].c_str(), dimension_name[1].c_str(), dimension_name[2].c_str()), nbin_x, range_x_low,range_x_up, nbin_y, range_y_low, range_y_up, nbin_z, range_z_low, range_z_up);
-   TH3D* h_chi2_inter=NULL;  
+   TFile* f_output = new TFile(Form("chi_contour_xDelta_%f.root",f_central), "recreate");
+   TH1D* h_chi2_raw = new TH1D("h_chi2_raw", Form("h_chi2_raw;%s;#Delta#chi^2", dimension_name[0].c_str()), nbin_x+1, range_x_low,range_x_up);
+   TH1D* h_chi2_delta = new TH1D("h_chi2_delta", Form("h_chi2_delta;%s;#chi{2}", dimension_name[0].c_str()), nbin_x+1, range_x_low,range_x_up);
+   TH1D* h_chi2_stat = new TH1D("h_chi2_stat", Form("h_chi2_stat;%s;#chi{2}", dimension_name[0].c_str()), nbin_x+1, range_x_low,range_x_up);
+   //TH3D* h_chi2_inter=NULL;  
 
 
    std::cout << "Fraction Fit||"<<  "\tStart GLOBAL SCAN" <<std::endl;
@@ -341,97 +297,88 @@ int main(int argc, char* argv[])
    TMatrixT<double> collapsed_syst(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);	
    TMatrixT<double> collapsed_temp(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
    TMatrixT<double> invert_collapsed_temp(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
-   //stats only
-   std::vector<double> chi_stat; 
+
+   std::vector<double> stat_chi;  //vector to save chi square values.
    double best_stat_chi;
    TMatrixT<double> collapsed_stat(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
    TMatrixT<double> invert_collapsed_stat(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
 
-  input_data = true;
    for(int n_iter = 0; n_iter < iterative_number ; n_iter++){
-
-
+	if(input_data){
 	   //construct collapsed covariance matrix
-	 if(input_data){
-	   collapsed_stat.Zero();	
-	   if(n_iter == 0 ){
-			collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, mc_spec.full_vector, true);
-	   		collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, mc_spec.collapsed_vector, data_spec.collapsed_vector);	   
-			//stats only covariance matrix
-	   		collapsed_stat = chi_temp.AddStatMatrixCNP(&collapsed_stat, mc_spec.collapsed_vector, data_spec.collapsed_vector);	   
+	   if(n_iter == 0){
+
+		
+		collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, mc_spec.full_vector, true);
+	   	collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, mc_spec.collapsed_vector, data_spec.collapsed_vector);	   
+
 			tag = "Syst_MC";
 			mc_spec.CompareSBNspecs(collapsed_syst, &data_spec, tag);
 		
 	   }
 	   else{
 		SBNspec last_best_spec(mc_filename, xml, false);
-		last_best_spec.Scale("NCDeltaRadOverlayLEE", 0.0);
 		std::vector<double> last_best_point = grid[last_best_fit];
 		for(int j=0; j< last_best_point.size(); j++ ){
                         last_best_spec.Scale(dimension_name[j], last_best_point[j]);
                 }
 		collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, last_best_spec.full_vector, true);
-
 	   	collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, last_best_spec.collapsed_vector, data_spec.collapsed_vector);	   
-	   	collapsed_stat = chi_temp.AddStatMatrixCNP(&collapsed_stat, last_best_spec.collapsed_vector, data_spec.collapsed_vector);	   
 	   }
-		//invert covariance matrix
-		invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_temp);
-		invert_collapsed_stat = chi_temp.InvertMatrix(collapsed_stat);
-
-		f_output->cd();
-	   	collapsed_syst.Write(Form("syst_collapsed_matrix_%d", n_iter));
-		collapsed_stat.Write(Form("stat_collapsed_matrix_%d", n_iter));
-		collapsed_temp.Write(Form("full_collapsed_matrix_%d", n_iter));
+	
+	   //invert covariance matrix
+	   invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_temp);
 	}
-
 	   best_chi = DBL_MAX;
 	   chi.clear();
 	   best_stat_chi = DBL_MAX;
 	   SBNspec spec_cv(mc_filename, xml, false);
 	   spec_cv.Scale("NCDeltaRadOverlayLEE", 0.0);
+	   spec_cv.Scale("NCPi0Coh", 1.55);
+    	   spec_cv.Scale("NCPi0NotCoh", 0.78);
 	   SBNspec spec_temp;
 	   for(int i =0; i< grid.size() ;i++){
-		std::cout << i << std::endl;	
+
 		//set a temperary SBNspec, assume there is already a MC CV root file with corresponding sequence defined in xml	
 		spec_temp = spec_cv;
-
 		//access grid point
 		std::vector<double> point = grid[i];
 
+		std::cout << "On point " << i<< "/" << grid.size();
 		//scale chosen subchannels
 		for(int j=0; j< point.size(); j++ ){
 			spec_temp.Scale(dimension_name[j], point[j]);
+			std::cout << " " << point[j];
 		}
 
-		
 		if(!input_data){
-		      collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, spec_temp.full_vector, true);
-		      collapsed_stat.Zero();
-	   	      collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, spec_temp.collapsed_vector, data_spec.collapsed_vector);
-	      	      collapsed_stat = chi_temp.AddStatMatrixCNP(&collapsed_stat, spec_temp.collapsed_vector, data_spec.collapsed_vector);	   
-	   	      //invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_syst);
-	   	      invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_temp);
-	   	      invert_collapsed_stat = chi_temp.InvertMatrix(collapsed_stat);
-			
+			collapsed_stat.Zero();
+			collapsed_syst = chi_temp.FillSystMatrix(frac_syst_matrix, spec_temp.full_vector, true);
+			collapsed_temp = chi_temp.AddStatMatrixCNP(&collapsed_syst, spec_temp.collapsed_vector, data_spec.collapsed_vector); 
+			collapsed_stat = chi_temp.AddStatMatrixCNP(&collapsed_stat, spec_temp.collapsed_vector, data_spec.collapsed_vector); 
+	   		invert_collapsed_temp = chi_temp.InvertMatrix(collapsed_temp);
+	   		invert_collapsed_stat = chi_temp.InvertMatrix(collapsed_stat);
+		
 		}
 
 		//calculate chi2
 		double chi_value = chi_temp.CalcChi(invert_collapsed_temp, spec_temp.collapsed_vector, data_spec.collapsed_vector);
-		//chi_value += log(collapsed_temp.Determinant());
+		chi_value += log(collapsed_temp.Determinant());
 		chi.push_back(chi_value);
-		double chi_stat_value = chi_temp.CalcChi(invert_collapsed_stat, spec_temp.collapsed_vector, data_spec.collapsed_vector);
-		//chi_stat_value += log(collapsed_stat.Determinant());
-		chi_stat.push_back(chi_stat_value);
+		double chi_value_stat = chi_temp.CalcChi(invert_collapsed_stat, spec_temp.collapsed_vector, data_spec.collapsed_vector);
+		chi_value_stat += log(collapsed_stat.Determinant());
+		stat_chi.push_back(chi_value_stat);
+		std::cout << " ln(det(M)) for syst: " << log(collapsed_temp.Determinant()) << " and for stat: " << log(collapsed_stat.Determinant()) << std::endl;
 		//chi.push_back(chi_temp.CalcChi(data_spec.collapsed_vector));
 
 		if(chi_value < best_chi){
 			best_chi = chi_value;
 			best_fit = i;
 		}
-		if(chi_stat_value < best_stat_chi){
-			best_stat_chi = chi_stat_value;
-		}
+
+		if(chi_value_stat < best_stat_chi){
+                        best_stat_chi = chi_value_stat;
+                }
 	   }
 	   std::cout << "Iteration " << n_iter << " finished, with best fit point at " << best_fit << " and minimum chi2 " << best_chi;
 	   
@@ -448,43 +395,54 @@ int main(int argc, char* argv[])
    }
    std::cout << std::endl;
 
+   input_data = true;
 
    //compare spectrum between data and the best fit point
-   std::vector<double> best_point = grid[best_fit];
    if(input_data){
-	SBNspec best_spec(mc_filename, xml, false);
-   	best_spec.Scale("NCDeltaRadOverlayLEE", 0.0);
-   	for(int i=0; i< best_point.size(); i++ ){
-                best_spec.Scale(dimension_name[i], best_point[i]);
-   	}
-   	tag = "best_fit";
-   	best_spec.CompareSBNspecs(collapsed_syst, &data_spec, tag);
+	   SBNspec best_spec(mc_filename, xml, false);
+	   std::vector<double> best_point = grid[best_fit];
+	   for(int i=0; i< best_point.size(); i++ ){
+			best_spec.Scale(dimension_name[i], best_point[i]);
+	   }
+	   tag = "best_fit";
+	   best_spec.CompareSBNspecs(collapsed_syst, &data_spec, tag);
+	   std::cout << "Fraction Fit||" <<  "\tBest Fit Point: " << best_point[0]<<std::endl;
    }
-   std::cout << "Fraction Fit||" <<  "\tBest Fit Point: (" << best_point[0] << ", " << best_point[1] << ", " << best_point[2] << ")"<<std::endl;
-
 
    std::cout << "Fraction Fit||\tPrint out delta chi square for grid points now" << std::endl;
    //delta chi2;
    for(int i=0; i< grid.size(); i++){
 
 	 std::vector<double> point = grid[i];
-	 h_chi2_raw->Fill(point[0], point[1], point[2], chi[i]);
-	 //chi[i] -= best_chi;
-	 //chi_stat[i] -= best_stat_chi;
-	 //h_chi2_delta->Fill(point[0], point[1], point[2], chi[i]);	 
-	 double temp_chi = chi[i] - best_chi;
-	 h_chi2_delta->Fill(point[0], point[1], point[2], temp_chi);	 
-	 std::cout << "DeltaChi: " << i ;
+	 h_chi2_raw->Fill(point[0], chi[i]);
+	 chi[i] -= best_chi;
+	 stat_chi[i] -= best_stat_chi;
+	 h_chi2_delta->Fill(point[0], chi[i]);	 
+	 h_chi2_stat->Fill(point[0], stat_chi[i]);	 
+	 std::cout << "DeltaChi: " << i << " Syst:" << chi[i] << "|| Stat: "<< stat_chi[i];
 	 for(int j =0;j <point.size(); j++) std::cout << " " << point[j];
-	 std::cout <<" || Syst chi:" << chi[i] << " || Stat chi:" << chi_stat[i] << std::endl;
+	 std::cout << std::endl;
+
    }
-   h_chi2_delta->SetMinimum(-1);  // to show the zero z values
+   //h_chi2_delta->SetMinimum(-1);  // to show the zero z values
    f_output->cd();
-   h_chi2_raw->Write();   
+   collapsed_syst.Write("collapsed_syst_covariance");
+   collapsed_temp.Write("full_covariance");
+   invert_collapsed_temp.Write("inverted_full_covar");
+   h_chi2_raw->Write();  
    h_chi2_delta->Write();
+   h_chi2_stat->Write();
    std::cout << "Fraction Fit||" <<  "\t End of Global Scan--Chi2 calculation" << std::endl;
 
-   std::cout << "Fraction Fit||" <<  "\t Start projecting on 2D plots" << std::endl;
+
+  TCanvas* c = new TCanvas("c", "c");
+  //TLegend* leg= new TLegend( 0.1,0.7,0.9,0.9, "chi2");
+  //leg->Add(h_chi2_raw, "")
+   h_chi2_raw->SetLineColor(kRed);
+   h_chi2_raw->Draw("hist ");
+   c->BuildLegend();
+   c->Write("overlay_chi");
+   /*std::cout << "Fraction Fit||" <<  "\t Start projecting on 2D plots" << std::endl;
 
    //histograms saving delta chi values with one parameter being marginalized
    TH2D* h_mchi2_xy = new TH2D("h_mchi2_xy", Form("h_mchi2_xy; %s;%s",dimension_name[0].c_str(), dimension_name[1].c_str()),nbin_x, range_x_low,range_x_up, nbin_y, range_y_low, range_y_up);
@@ -496,19 +454,15 @@ int main(int argc, char* argv[])
    TH2D* h_gchi2_xz = new TH2D("h_gchi2_xz", Form("h_gchi2_xz; %s;%s",dimension_name[0].c_str(), dimension_name[2].c_str()),nbin_x, range_x_low,range_x_up, nbin_z, range_z_low, range_z_up);
    TH2D* h_gchi2_yz = new TH2D("h_gchi2_yz", Form("h_gchi2_yz; %s;%s",dimension_name[1].c_str(), dimension_name[2].c_str()),nbin_y, range_y_low,range_y_up, nbin_z, range_z_low, range_z_up);
 
-   TH1D* h_chi_delta = new TH1D("h_chi_delta", Form("h_chi_delta; %s;#Delta#chi^{2}",dimension_name[2].c_str()), nbin_z, range_z_low, range_z_up);
-   TH1D* h_chi_stat = new TH1D("h_chi_stat", Form("h_chi_stat; %s;#Delta#chi^{2}",dimension_name[2].c_str()), nbin_z, range_z_low, range_z_up);
 
+   double max_bin=*std::max_element(chi.begin(), chi.end());;
    //set the bin content to DBL_MAX
    for(int ix=1;ix <= nbin_x; ix++){
-	for(int iy=1; iy <= nbin_y; iy++) h_mchi2_xy->SetBinContent(ix, iy, DBL_MAX);
-	for(int iz=1; iz <= nbin_z; iz++) h_mchi2_xz->SetBinContent(ix, iz, DBL_MAX);
+	for(int iy=1; iy <= nbin_y; iy++) h_mchi2_xy->SetBinContent(ix, iy, max_bin);
+	for(int iz=1; iz <= nbin_z; iz++) h_mchi2_xz->SetBinContent(ix, iz, max_bin);
    }
-
-   for(int iz=1; iz <= nbin_z; iz++){
-        for(int iy=1; iy <= nbin_y; iy++)  h_mchi2_yz->SetBinContent(iy, iz, DBL_MAX);
-        h_chi_delta->SetBinContent(iz, DBL_MAX);
-        h_chi_stat->SetBinContent(iz, DBL_MAX);
+   for(int iy=1; iy <= nbin_y; iy++){
+	for(int iz=1; iz <= nbin_z; iz++) h_mchi2_yz->SetBinContent(iy, iz, max_bin);
    }
 
 
@@ -535,10 +489,6 @@ int main(int argc, char* argv[])
 		if(point[2] == best_point[2]) h_gchi2_xy->Fill(point[0], point[1], chi[ip]);
 		if(point[1] == best_point[1]) h_gchi2_xz->Fill(point[0], point[2], chi[ip]);
 		if(point[0] == best_point[0]) h_gchi2_yz->Fill(point[1], point[2], chi[ip]);
-
-		//marginalize two parameters
-		if(chi[ip] < h_chi_delta->GetBinContent(iz+1)) h_chi_delta->SetBinContent(iz+1, chi[ip]);
-		if(chi_stat[ip] < h_chi_stat->GetBinContent(iz+1)) h_chi_stat->SetBinContent(iz+1, chi_stat[ip]);
 	   }
 	}
    } 
@@ -550,10 +500,8 @@ int main(int argc, char* argv[])
   h_mchi2_xy->Write();
   h_mchi2_yz->Write();
   h_mchi2_xz->Write();
-  h_chi_delta->Write();
-  h_chi_stat->Write();
 
-   /*std::cout << "DeltaChi:" <<std::endl;
+   std::cout << "DeltaChi:" <<std::endl;
    for(int i =0; i< chi.size(); i++) std::cout << " " << chi[i];
    std::cout<< std::endl;
    */

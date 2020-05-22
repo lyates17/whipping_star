@@ -74,7 +74,9 @@ int main(int argc, char* argv[])
         {"montecarlo", 		required_argument,	0, 'm'},
         {"data", 		required_argument,	0, 'd'},
 	{"interpolation",       required_argument,      0, 'i'},
-	{"covarmatrix",         required_argument,      0, 'c'},
+	{"totcovarmatrix",      required_argument,      0, 't'},
+	{"detmatrix",           required_argument,      0, 'c'},
+	{"geniematrix",         required_argument,      0, 'g'},
 	{"flat",        required_argument, 0 ,'f'},
         {"randomseed",        required_argument, 0 ,'r'},
         {"help", 		no_argument,	0, 'h'},
@@ -94,14 +96,16 @@ int main(int argc, char* argv[])
     bool input_data = false;
     std::string data_filename;
     std::string mc_filename;
-    std::string covmatrix_file;  //root file containing covariance matrix
+    std::string totcovmatrix_file;  //root file containing total covariance matrix
+    std::string genie_matrix_file;  //root file containing flux/XS covariance matrix
+    std::string det_matrix_file; //root file containing each det syst covar matrix;
 
     bool bool_flat_det_sys = false;
     double flat_det_sys_percent = 0.0;
 
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "d:x:m:r:c:p:i:f:sh", longopts, &index);
+        iarg = getopt_long(argc,argv, "d:x:m:r:t:c:g:p:i:f:sh", longopts, &index);
 
         switch(iarg)
         {
@@ -118,8 +122,14 @@ int main(int argc, char* argv[])
 	    case 'i':
 		interpolation_number = (int)strtod(optarg, NULL);
 		break;
+	    case 't':
+		totcovmatrix_file = optarg;
+		break;
 	    case 'c':
-		covmatrix_file = optarg;
+		det_matrix_file = optarg;
+		break;
+	    case 'g':
+		genie_matrix_file = optarg;
 		break;
             case 'f':
                 bool_flat_det_sys = true;
@@ -143,6 +153,7 @@ int main(int argc, char* argv[])
                 std::cout<<"\t-m\t--montecarlo\t\tInput monte carlo for global scan"<<std::endl;
 		std::cout<<"\t-i\t--interpolation\t\tInput number of points for interpolation"<< std::endl;
 		std::cout<<"\t-c\t--covariance matrix\t\tInput syst covariance matrix for global scan"<< std::endl;
+		std::cout<<"\t-g\t--FluxXS covariance matrix\t\tInput FluxXS covariance matrix to extract genie matrix"<< std::endl;
                 std::cout<<"\t-f\t--flat\t\t Input flat systematic fractional covariance matrix"<<std::endl;
                 std::cout<<"--- Optional arguments: ---"<<std::endl;
                 std::cout<<"\t-s\t--stat\t\tStat only runs"<<std::endl;
@@ -218,10 +229,11 @@ int main(int argc, char* argv[])
     std::cout << "Fraction Fit||" <<  "\tInitialize fractional systematric covariance matrix" << std::endl;
     //initialize covariance matrix
     TMatrixT<double> frac_GENIE_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);  //fractional genie covariance matrix
-    TMatrixT<double> frac_syst_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);    //fractional flux/other covariance matrix
-    TMatrixT<double> frac_det_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);  //fractional covariance matrix
-    frac_det_matrix.Zero();   // detetor systematic used now.
+    TMatrixT<double> frac_det_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);  // one det syst covariance matrix
+    TMatrixT<double> frac_syst_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);    //fractional covariance matrix other than genie
+    TMatrixT<double> frac_total_matrix(mc_spec.num_bins_total, mc_spec.num_bins_total);  //fractional total covariance matrix
     frac_GENIE_matrix.Zero();
+    frac_det_matrix.Zero();
 
     if(bool_stat_only){
     	frac_syst_matrix.Zero();
@@ -239,21 +251,67 @@ int main(int argc, char* argv[])
 	frac_syst_matrix.Zero();
 
 
-	std::cout << "Open covariance matrix root file: " << covmatrix_file << std::endl;
-	TFile* f_covar = new TFile(covmatrix_file.c_str(), "read");
+	std::cout << "Open covariance matrix root file: " << totcovmatrix_file << std::endl;
+	TFile* f_covar = new TFile(totcovmatrix_file.c_str(), "read");
 	TMatrixT<double>* frac_temp=(TMatrixT<double>*)f_covar->Get("frac_covariance");
+	frac_total_matrix = *frac_temp;
 
-	//if we can directly use the full fractional covariance matrix
-	frac_syst_matrix = *frac_temp;
+
+/*	TFile* f_det = new TFile(det_matrix_file.c_str(), "read");
+	frac_temp = (TMatrixT<double>*)f_det->Get("frac_covariance");
+	frac_det_matrix = *frac_temp;
+        f_det->Close();
+*/	
+/*	for(int i=0; i<mc_spec.num_bins_total; i++){
+	 for(int j=0; j<mc_spec.num_bins_total;j++){
+		//zero out off-diagonal elements
+		if(i !=j ) frac_total_matrix(i,j)=0.0;
+
+		//zero out correlation between 1p and 0p component
+		//if((i < mc_spec.num_bins_total/2) && (j >= mc_spec.num_bins_total/2)){
+		//	frac_total_matrix(i,j)=0.0;
+		//	frac_total_matrix(j,i)=0.0;
+		//}
+	 }
+	}
+*/	
 	
 
 	//in case we want to move some parts of a covariance matrix
 	//as in NC pi0 fit, where we want to remove cross section error of NC pi0 COH and non-COH
-	TMatrixT<double>* UBGenie_temp = (TMatrixT<double>*)f_covar->Get("individualDir/All_UBGenie_frac_covariance");
-	frac_GENIE_matrix = *UBGenie_temp;
-	frac_syst_matrix -= frac_GENIE_matrix;	
+	TFile* f_genie = new TFile(genie_matrix_file.c_str(), "read");
 
-	
+        TMatrixT<double>* UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/All_UBGenie_frac_covariance");
+        frac_GENIE_matrix = *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/AxFFCCQEshape_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/DecayAngMEC_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/NormCCCOH_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/NormNCCOH_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/RPA_CCQE_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/Theta_Delta2Npi_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/VecFFCCQEshape_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+        UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/XSecShape_CCMEC_UBGenie_frac_covariance");
+        frac_GENIE_matrix += *UBGenie_temp;
+
+	//fix the nan in genie matrix
+	for(int i=0; i<mc_spec.num_bins_total; i++){
+         for(int j=0; j<mc_spec.num_bins_total;j++){
+		if(std::isnan(frac_GENIE_matrix(i,j))) frac_GENIE_matrix(i,j) = 0.0;
+ 	 }
+	}
+
+	frac_syst_matrix = frac_total_matrix - frac_det_matrix - frac_GENIE_matrix;
+
+        //UBGenie_temp = (TMatrixT<double>*)f_genie->Get("individualDir/NormNCCOH_UBGenie_frac_covariance");
+        //frac_GENIE_matrix -= *UBGenie_temp;
+
 	//start of simply subtracting GENIE part of NC pi0
 	//locate any bin related to grid
 	/*std::vector<bool> xsec_bin;
@@ -290,13 +348,13 @@ int main(int argc, char* argv[])
 	}
 	//end of simply subtracting GENIE part of NC pi0
 */	
-	f_covar->Close();	
+	f_covar->Close();
+	f_genie->Close();	
     }
 
    f_output->cd();
    frac_syst_matrix.Write("frac_other_syst_matrix");
    frac_GENIE_matrix.Write("frac_GENIE_matrix");
-   frac_det_matrix.Write("frac_det_matrix");
 
    std::cout << "Fraction Fit||"<<  "\tStart GLOBAL SCAN" <<std::endl;
    std::vector<double> chi_CNP;  //vector to save CNP chi square values.
@@ -314,7 +372,6 @@ int main(int argc, char* argv[])
    //covariance matrix
    TMatrixT<double> full_syst(mc_spec.num_bins_total, mc_spec.num_bins_total);
    TMatrixT<double> genie_syst(mc_spec.num_bins_total, mc_spec.num_bins_total);
-   TMatrixT<double> full_detector(mc_spec.num_bins_total, mc_spec.num_bins_total);
    TMatrixT<double> collapsed_temp(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
    TMatrixT<double> collapsed_syst(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
    TMatrixT<double> invert_collapsed_temp(mc_spec.num_bins_total_compressed, mc_spec.num_bins_total_compressed);
@@ -329,10 +386,7 @@ int main(int argc, char* argv[])
 		SBNspec mc_copy(mc_filename, xml, false);
 		mc_copy.Scale("NCDeltaRadOverlayLEE", 0.0);  //do not included 2x NCdelta in the mc ---> null hypothesis
 
-		full_detector = chi_CNP_temp.FillSystMatrix(frac_det_matrix, mc_copy.full_vector);
 
-		SBNspec mc_copy_temp = mc_copy;
-		//mc_copy.Scale("BNBOther", 0.0);  //get rid of the big spike in BNBother bin
 		full_syst = chi_CNP_temp.FillSystMatrix(frac_syst_matrix, mc_copy.full_vector);
 
 		for(int i=0; i< mygrid.f_num_dimensions; i++){
@@ -354,13 +408,10 @@ int main(int argc, char* argv[])
 		genie_syst = chi_CNP_temp.FillSystMatrix(frac_GENIE_matrix, mc_bkg.full_vector);
 		full_syst += genie_syst;
 
-		full_syst += full_detector;   //full shape-only covariance matrix
-
 		chi_CNP_temp.CollapseModes(full_syst, collapsed_syst);
 
 		//CNP chi square
-		collapsed_temp = chi_CNP_temp.AddStatMatrixCNP(&collapsed_syst, mc_copy_temp.collapsed_vector, data_spec.collapsed_vector);	
-		//collapsed_temp = chi_CNP_temp.AddStatMatrixCNP(&collapsed_syst, mc_copy.collapsed_vector, data_spec.collapsed_vector);	
+		collapsed_temp = chi_CNP_temp.AddStatMatrixCNP(&collapsed_syst, mc_copy.collapsed_vector, data_spec.collapsed_vector);	
 
 		//Neyman Chi square
 		//collapsed_temp = chi_CNP_temp.AddStatMatrix(&collapsed_syst,data_spec.collapsed_vector);
@@ -382,10 +433,7 @@ int main(int argc, char* argv[])
 			last_best_fit_spec.Scale(dimension_name[j], best_fit_point[j]);			
 		}
 
-		full_detector = chi_CNP_temp.FillSystMatrix(frac_det_matrix, last_best_fit_spec.full_vector);
                 
-		SBNspec last_best_fit_spec_temp = last_best_fit_spec;	
-		//last_best_fit_spec.Scale("BNBOther", 0.0);
                 full_syst = chi_CNP_temp.FillSystMatrix(frac_syst_matrix, last_best_fit_spec.full_vector);
                 
                 for(int i=0; i< mygrid.f_num_dimensions; i++){
@@ -406,12 +454,10 @@ int main(int argc, char* argv[])
 		full_syst += genie_syst;                
 
 		
-		full_syst += full_detector; 
 		chi_CNP_temp.CollapseModes(full_syst, collapsed_syst);
 
 		//CNPchi	
-		collapsed_temp = chi_CNP_temp.AddStatMatrixCNP(&collapsed_syst, last_best_fit_spec_temp.collapsed_vector, data_spec.collapsed_vector); 
-		//collapsed_temp = chi_CNP_temp.AddStatMatrixCNP(&collapsed_syst, last_best_fit_spec.collapsed_vector, data_spec.collapsed_vector); 
+		collapsed_temp = chi_CNP_temp.AddStatMatrixCNP(&collapsed_syst, last_best_fit_spec.collapsed_vector, data_spec.collapsed_vector); 
 
 		//Neyman Chi
 		//collapsed_temp = chi_CNP_temp.AddStatMatrix(&collapsed_syst, data_spec.collapsed_vector);
@@ -429,10 +475,11 @@ int main(int argc, char* argv[])
 
 	   best_chi = DBL_MAX;
 	   chi_CNP.clear();
+	   SBNspec spec_temp;
 	   for(int i =0; i< grid.size() ;i++){
 
 		//set a temperary SBNspec, assume there is already a MC CV root file with corresponding sequence defined in xml	
-		SBNspec spec_temp(mc_filename, xml, false);
+		spec_temp=mc_spec;
 		spec_temp.Scale("NCDeltaRadOverlayLEE", 0.0);
 
 		

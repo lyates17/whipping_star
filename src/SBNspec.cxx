@@ -361,8 +361,53 @@ int SBNspec::WriteOut(std::string tag){
 	//kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
 	//kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
 
-	std::vector<int> mycol = {kGreen+1, kRed-7, kBlue-4, kOrange-3, kMagenta+1, kCyan-3,kYellow, kGreen-3 };
+	std::vector<int> mycol = {kAzure -9, kRed-7, kGreen-3, kBlue-6, kMagenta-3, kYellow-7,  kOrange-3, kBlue, kBlue+2,  kGreen+1,kBlue-7, kPink, kViolet, kCyan,kMagenta,kAzure};
 	int colindex =0;
+
+
+	bool gLEE_plot = true;  //control the style of the stacked histograms
+	if(gLEE_plot){
+		mycol.clear();
+
+		std::map<std::string, int> color_channel_map;
+		std::map<std::string, std::vector<double>> rgb_channel_map={
+			{"NCDeltaRadOverlaySM", {255./255.,255./255.,153./255.}},
+			{"NCDeltaRadOverlayLEE", {0.97,0.75,0}},
+			{"NCPi0Coh", {255./255,189./255.,189./255.}},
+			{"NCPi0NotCoh", {1,0.4,0.4}},
+			{"NCMultiPi0", {0.9,0.9,1.0}},
+			{"CC1Pi0", {0.4,0.4,1.0}},
+			{"BNBOther", {0.6,0.8,1.0}},
+			{"NueOverlays",{0.9,0.5,0.9}},
+			{"Dirt", {0.6,0.4,0.2}},
+			{"BNBext", {0.2,0.8,0.2}}
+		};
+
+		std::map<std::string, std::vector<double>>::iterator iter;
+		std::map<std::string, int>::iterator iter_int;
+		TColor* t_col = NULL;
+		for(iter = rgb_channel_map.begin(); iter!= rgb_channel_map.end(); ++iter){
+			int color_index = TColor::GetFreeColorIndex();
+			t_col = new TColor(color_index, iter->second.at(0),iter->second.at(1),iter->second.at(2));	
+			color_channel_map.insert({iter->first, t_col->GetNumber()});
+		}
+		
+		for(int is = 0; is <subchannel_names[0].size(); is++){
+			std::string isubchannel_name = subchannel_names[0][is];
+			iter_int = color_channel_map.find(isubchannel_name);
+			if(iter_int == color_channel_map.end()){
+				std::cout << "Color of " << isubchannel_name << " is not defined, choose a random color" << std::endl;
+				mycol.push_back(is);
+			}
+			else{
+				std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
+				mycol.push_back(iter_int->second);
+			}
+		}
+		
+	} 
+
+
 	TFile *f2 = new TFile((tag+".SBNspec.root").c_str(),"recreate");
     f2->cd();
     std::cout<<"This file has "<<hist.size()<<" histograms and "<<fullnames.size()<<" fullnames "<<std::endl;
@@ -416,6 +461,7 @@ int SBNspec::WriteOut(std::string tag){
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
 						h.SetFillColor(mycol[n]);
+						if(gLEE_plot & (test.find("BNBext")!=std::string::npos)) h.SetFillStyle(3333);
 						h.SetLineColor(kBlack);
 						h.SetTitle(h.GetName());
 						//h.Write();
@@ -426,10 +472,11 @@ int SBNspec::WriteOut(std::string tag){
 						}
 
 						std::ostringstream out;
-						out <<std::fixed<< std::setprecision(3) << total_events;
+						out <<std::fixed<< std::setprecision(2) << total_events;
 						std::string hmm = " \t ";
-						std::string tmp =h.GetName() +hmm+ out.str();
-						//std::string tmp = map_subchannel_plotnames.at(h.GetName()) +hmm+ out.str();
+						//std::string tmp =h.GetName() +hmm+ out.str();
+						std::string tmp_name = h.GetName();
+						std::string tmp = map_subchannel_plotnames[tmp_name] +hmm+ out.str();
 						//legStack.AddEntry(&h, tmp.c_str() , "f");
 						hsum->Add(&h);
 						//hs->Add(&h);
@@ -441,14 +488,20 @@ int SBNspec::WriteOut(std::string tag){
 						l_to_sort.push_back(tmp);
 						integral_sorter.push_back(total_events);
 
+						if(gLEE_plot){
+							hs->Add(&h);
+							legStack.AddEntry(&h, tmp.c_str(),"f");
+						}
 					}
 				}
+	
 				//Sort!
-				for (int i: SortIndexes(integral_sorter)) {
-					hs->Add(to_sort.at(i));
-					legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+				if(!gLEE_plot){
+					for (int i: SortIndexes(integral_sorter)) {
+						hs->Add(to_sort.at(i));
+						legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+					}
 				}
-
 
 
 				if(this_run){
@@ -466,12 +519,13 @@ int SBNspec::WriteOut(std::string tag){
 					Cstack->cd();
 					hs->Draw();
 
-					hs->GetYaxis()->SetTitle(("Events/"+channel_units.at(ic)).c_str());
+					//hs->GetYaxis()->SetTitle(("Events/"+channel_units.at(ic)).c_str());
+					hs->GetYaxis()->SetTitle("Events");
 					hs->GetXaxis()->SetTitle(channel_units.at(ic).c_str());
 
 
 					//hcomp->Draw("hist same");
-					hs->SetMaximum(hs->GetMaximum()*1.1);
+					hs->SetMaximum(hs->GetMaximum()*1.3);
 					hs->SetMinimum(0.001);
 
 					Cstack->Update();
@@ -513,6 +567,48 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 	}
 
 
+	bool gLEE_plot = true;  //control the style of the stacked histograms
+	if(gLEE_plot){
+		mycol.clear();
+
+		std::map<std::string, int> color_channel_map;
+		std::map<std::string, std::vector<double>> rgb_channel_map={
+			{"NCDeltaRadOverlaySM", {255./255.,255./255.,153./255.}},
+			{"NCDeltaRadOverlayLEE", {0.97,0.75,0}},
+			{"NCPi0Coh", {255./255,189./255.,189./255.}},
+			{"NCPi0NotCoh", {1,0.4,0.4}},
+			{"NCMultiPi0", {0.9,0.9,1.0}},
+			{"CC1Pi0", {0.4,0.4,1.0}},
+			{"BNBOther", {0.6,0.8,1.0}},
+			{"NueOverlays",{0.9,0.5,0.9}},
+			{"Dirt", {0.6,0.4,0.2}},
+			{"BNBext", {0.2,0.8,0.2}}
+		};
+
+		std::map<std::string, std::vector<double>>::iterator iter;
+		std::map<std::string, int>::iterator iter_int;
+		TColor* t_col = NULL;
+		for(iter = rgb_channel_map.begin(); iter!= rgb_channel_map.end(); ++iter){
+			int color_index = TColor::GetFreeColorIndex();
+			t_col = new TColor(color_index, iter->second.at(0),iter->second.at(1),iter->second.at(2));	
+			color_channel_map.insert({iter->first, t_col->GetNumber()});
+		}
+		
+		for(int is = 0; is <subchannel_names[0].size(); is++){
+			std::string isubchannel_name = subchannel_names[0][is];
+			iter_int = color_channel_map.find(isubchannel_name);
+			if(iter_int == color_channel_map.end()){
+				std::cout << "Color of " << isubchannel_name << " is not defined, choose a random color" << std::endl;
+				mycol.push_back(is);
+			}
+			else{
+				std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
+				mycol.push_back(iter_int->second);
+			}
+		}
+		
+	} 
+
 
 	TFile *f = new TFile(("SBNfit_compare_plots_"+tag+".root").c_str(),"RECREATE");
 	f->cd();
@@ -552,11 +648,11 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 
 	int error_bin=0;
 
-	for(auto m: mode_names){
-		for(auto d: detector_names){
-			for(auto c: channel_names){
-
-				std::string canvas_name = m+"_"+d+"_"+c;
+         for(int im = 0; im <mode_names.size(); im++){
+                for(int id = 0; id <detector_names.size(); id++){
+                        for(int ic = 0; ic <channel_names.size(); ic++){
+		
+				std::string canvas_name = mode_names.at(im)+"_"+detector_names.at(id)+"_"+channel_names.at(ic);
 
 				bool this_run = false;
 				bool this_run_comp = false;
@@ -567,7 +663,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				Cstack->cd();
 				THStack * hs = new THStack(canvas_name.c_str(),  canvas_name.c_str());
 				//TLegend legStack(0.50, 0.5, 0.89, 0.89);
-				TLegend legStack(0.11, 0.7, 0.80, 0.89);
+				TLegend legStack(0.11, 0.69, 0.89, 0.89);
 				legStack.SetNColumns(2);
 				legStack.SetLineWidth(0);
 				legStack.SetLineColor(kWhite);
@@ -600,7 +696,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 						}
 
 						std::ostringstream out;
-						out << std::setprecision(3) << total_events;
+						out << std::setprecision(2) << total_events;
 						std::string hmm = "\t";
 						std::string tmp = h.GetName() +hmm+ out.str();
 
@@ -630,6 +726,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
 						h.SetFillColor(mycol[n]);
+						if(gLEE_plot & (test.find("BNBext")!=std::string::npos)) h.SetFillStyle(3333);
 						h.SetLineColor(kBlack);
 						h.SetTitle(h.GetName());
 						//h.Write();
@@ -640,10 +737,11 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 						}
 
 						std::ostringstream out;
-						out <<std::fixed<< std::setprecision(0) << total_events;
+						out <<std::fixed<< std::setprecision(2) << total_events;
 						std::string hmm = " | ";
-						std::string tmp = h.GetName()+hmm+ out.str();
-						//std::string tmp = map_subchannel_plotnames.at(h.GetName()) +hmm+ out.str(); //fix this
+						//std::string tmp = h.GetName()+hmm+ out.str();
+						std::string tmp_name = h.GetName();
+						std::string tmp = map_subchannel_plotnames[tmp_name] +hmm+ out.str();
 						//legStack.AddEntry(&h, tmp.c_str() , "f");
 						hsum->Add(&h);
 						//hs->Add(&h);
@@ -655,15 +753,23 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 						l_to_sort.push_back(tmp);
 						integral_sorter.push_back(total_events);
 
+						if(gLEE_plot){
+							hs->Add(&h, "HIST");
+							legStack.AddEntry(&h, tmp.c_str(),"f");
+						}
+
 					}
 				}
+
+				if(!gLEE_plot){
 				//Sort!
 				for (int i: SortIndexes(integral_sorter)) {
 					hs->Add(to_sort.at(i), "HIST");
 					legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
 				}
+				}
 
-				legStack.AddEntry(hcomp, "Compared Point", "fl");
+
 
 
 				//set the error of 'this' spec according to the covariance matrix
@@ -674,6 +780,8 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				}
 				error_bin +=hsum->GetNbinsX();
 
+				legStack.AddEntry(hsum, "MC Error", "fl");
+				legStack.AddEntry(hcomp, "Compared Point", "flp");
 
 				/****Not sure why but this next line seg faults...******
 				 *	hs->GetYaxis()->SetTitle("Events/GeV");
@@ -693,16 +801,18 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 
 					Cstack->cd();
 					gStyle->SetErrorX(0);
-					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.35, 1, 1.0);
+					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.30, 1, 1.0);
 					pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 					pad0top->Draw();             // Draw the upper pad: pad2top
 					pad0top->cd();               // pad2top becomes the current pad
+					gStyle->SetHatchesLineWidth(1);
 					hs->Draw();
 					//draw error bar for 'this' SBNspec
 					hsum->SetFillColor(kBlack);
-					hsum->SetFillStyle(3008);
+					hsum->SetFillStyle(3354);
+					hsum->SetLineWidth(3);
 					hsum->Draw("E2 same");
-					//hs->GetYaxis()->SetTitle("Events/GeV");
+					//hs->GetYaxis()->SetTitle(("Events/"+channel_units.at(ic)).c_str());
 					hs->GetYaxis()->SetTitle("Events");
 					
 					//draw rectangular and dashed line for compared spectrum
@@ -729,7 +839,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					hcomp->Draw("EP same");
 
 					//hcomp->Draw("hist same");
-					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.3);
+					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.45);
 					//hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
 					hs->SetMinimum(0.001);
 
@@ -738,7 +848,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 
 					Cstack->cd();
 					gStyle->SetOptStat(0);
-					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.35);
+					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.30);
 					pad0bot->SetTopMargin(0);
 					pad0bot->SetBottomMargin(0.351);
 					pad0bot->SetGridx(); // vertical grid
@@ -768,7 +878,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
 					ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
 					//ratpre->GetXaxis()->SetTitle("Reconstructed Energy [GeV]");
-					ratpre->GetXaxis()->SetTitle("cos(#theta_{#pi})"); // for NC pi0 fit
+					ratpre->GetXaxis()->SetTitle(channel_units.at(ic).c_str()); 
 
 					Cstack->Write(canvas_name.c_str() );
                     Cstack->SaveAs((canvas_name+".pdf").c_str(),"pdf");
@@ -790,6 +900,48 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 	//kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
 	//kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
 	std::vector<int> mycol = {kAzure -9, kRed-7, kGreen-3, kBlue-6, kMagenta-3, kYellow-7,  kOrange-3, kBlue, kBlue+2,  kGreen+1,kBlue-7, kPink, kViolet, kCyan,kMagenta,kAzure};
+
+	bool gLEE_plot = true;  //control the style of the stacked histograms
+	if(gLEE_plot){
+		mycol.clear();
+
+		std::map<std::string, int> color_channel_map;
+		std::map<std::string, std::vector<double>> rgb_channel_map={
+			{"NCDeltaRadOverlaySM", {255./255.,255./255.,153./255.}},
+			{"NCDeltaRadOverlayLEE", {0.97,0.75,0}},
+			{"NCPi0Coh", {255./255,189./255.,189./255.}},
+			{"NCPi0NotCoh", {1,0.4,0.4}},
+			{"NCMultiPi0", {0.9,0.9,1.0}},
+			{"CC1Pi0", {0.4,0.4,1.0}},
+			{"BNBOther", {0.6,0.8,1.0}},
+			{"NueOverlays",{0.9,0.5,0.9}},
+			{"Dirt", {0.6,0.4,0.2}},
+			{"BNBext", {0.2,0.8,0.2}}
+		};
+
+		std::map<std::string, std::vector<double>>::iterator iter;
+		std::map<std::string, int>::iterator iter_int;
+		TColor* t_col = NULL;
+		for(iter = rgb_channel_map.begin(); iter!= rgb_channel_map.end(); ++iter){
+			int color_index = TColor::GetFreeColorIndex();
+			t_col = new TColor(color_index, iter->second.at(0),iter->second.at(1),iter->second.at(2));	
+			color_channel_map.insert({iter->first, t_col->GetNumber()});
+		}
+		
+		for(int is = 0; is <subchannel_names[0].size(); is++){
+			std::string isubchannel_name = subchannel_names[0][is];
+			iter_int = color_channel_map.find(isubchannel_name);
+			if(iter_int == color_channel_map.end()){
+				std::cout << "Color of " << isubchannel_name << " is not defined, choose a random color" << std::endl;
+				mycol.push_back(is);
+			}
+			else{
+				std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
+				mycol.push_back(iter_int->second);
+			}
+		}
+		
+	} 
 
 
 	TFile *f = new TFile(("SBNfit_compare_plots_"+tag+".root").c_str(),"RECREATE");
@@ -827,13 +979,11 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 	}
 
 
+	for(int im = 0; im <mode_names.size(); im++){
+                for(int id = 0; id <detector_names.size(); id++){
+                        for(int ic = 0; ic <channel_names.size(); ic++){
 
-
-	for(auto m: mode_names){
-		for(auto d: detector_names){
-			for(auto c: channel_names){
-
-				std::string canvas_name = m+"_"+d+"_"+c;
+                                std::string canvas_name = mode_names.at(im)+"_"+detector_names.at(id)+"_"+channel_names.at(ic);
 
 				bool this_run = false;
 				bool this_run_comp = false;
@@ -844,7 +994,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 				Cstack->cd();
 				THStack * hs = new THStack(canvas_name.c_str(),  canvas_name.c_str());
 				//TLegend legStack(0.50, 0.5, 0.89, 0.89);
-				TLegend legStack(0.11, 0.7, 0.80, 0.89);
+				TLegend legStack(0.11, 0.69, 0.89, 0.89);
 				legStack.SetNColumns(2);
 				legStack.SetLineWidth(0);
 				legStack.SetLineColor(kWhite);
@@ -877,7 +1027,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 						}
 
 						std::ostringstream out;
-						out << std::setprecision(3) << total_events;
+						out << std::setprecision(2) << total_events;
 						std::string hmm = "\t";
 						std::string tmp = h.GetName() +hmm+ out.str();
 
@@ -907,6 +1057,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
 						h.SetFillColor(mycol[n]);
+						if(gLEE_plot & (test.find("BNBext")!=std::string::npos)) h.SetFillStyle(3333);
 						h.SetLineColor(kBlack);
 						h.SetTitle(h.GetName());
 						//h.Write();
@@ -917,10 +1068,11 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 						}
 
 						std::ostringstream out;
-						out <<std::fixed<< std::setprecision(0) << total_events;
+						out <<std::fixed<< std::setprecision(2) << total_events;
 						std::string hmm = " | ";
-						std::string tmp = h.GetName()+hmm+ out.str();
-						//std::string tmp = map_subchannel_plotnames.at(h.GetName()) +hmm+ out.str(); //fix this
+						//std::string tmp = h.GetName()+hmm+ out.str();
+						std::string tmp_name = h.GetName();
+						std::string tmp = map_subchannel_plotnames[tmp_name] +hmm+ out.str();
 						//legStack.AddEntry(&h, tmp.c_str() , "f");
 						hsum->Add(&h);
 						//hs->Add(&h);
@@ -932,14 +1084,22 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 						l_to_sort.push_back(tmp);
 						integral_sorter.push_back(total_events);
 
+						if(gLEE_plot){
+							hs->Add(&h, "HIST");
+							legStack.AddEntry(&h, tmp.c_str(),"f");
+						}
+
 					}
 				}
-				//Sort!
-				for (int i: SortIndexes(integral_sorter)) {
-					hs->Add(to_sort.at(i), "HIST");
-					legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
-				}
 
+				if(!gLEE_plot){
+					//Sort!
+					for (int i: SortIndexes(integral_sorter)) {
+						hs->Add(to_sort.at(i), "HIST");
+						legStack.AddEntry(to_sort.at(i), l_to_sort.at(i).c_str(),"f");
+					}
+				}
+	
 				legStack.AddEntry(hcomp, "Compared Point", "fl");
 
 
@@ -963,14 +1123,14 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 
 					Cstack->cd();
 					gStyle->SetErrorX(0);
-					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.35, 1, 1.0);
+					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.30, 1, 1.0);
 					pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 					pad0top->Draw();             // Draw the upper pad: pad2top
 					pad0top->cd();               // pad2top becomes the current pad
 					hs->Draw();
 					//draw error bar for 'this' SBNspec
 					hsum->SetFillColor(kBlack);
-					hsum->SetFillStyle(3008);
+					hsum->SetFillStyle(3354);
 					hsum->Draw("E2 same");
 					//hs->GetYaxis()->SetTitle("Events/GeV");
 					hs->GetYaxis()->SetTitle("Events");
@@ -999,7 +1159,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					hcomp->Draw("EP same");
 
 					//hcomp->Draw("hist same");
-					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.3);
+					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.4);
 					//hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
 					hs->SetMinimum(0.001);
 
@@ -1008,7 +1168,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 
 					Cstack->cd();
 					gStyle->SetOptStat(0);
-					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.35);
+					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.30);
 					pad0bot->SetTopMargin(0);
 					pad0bot->SetBottomMargin(0.351);
 					pad0bot->SetGridx(); // vertical grid
@@ -1038,7 +1198,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
 					ratpre->GetXaxis()->SetLabelSize(label_size_ratio);
 					//ratpre->GetXaxis()->SetTitle("Reconstructed Energy [GeV]");
-					ratpre->GetXaxis()->SetTitle("cos(#theta_{#pi})"); // for NC pi0 fit
+					ratpre->GetXaxis()->SetTitle(channel_units.at(ic).c_str()); 
 
 					Cstack->Write(canvas_name.c_str() );
                     Cstack->SaveAs((canvas_name+".pdf").c_str(),"pdf");

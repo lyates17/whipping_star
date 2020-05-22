@@ -57,6 +57,7 @@ int SBNcls::CalcCLS(int numMC, std::string tag){
 	TH1D h1_pdf;
 
     if(which_mode==0){
+	//distribution of chi2 values (from fake experiments), given a cv spectra
         if(which_sample == 0) h1_pdf = chi_h0.SamplePoissonVaryInput(h1, numMC, central_value_chi*50);
         else if(which_sample==1) h1_pdf = chi_h0.SampleCovarianceVaryInput(h1, numMC, central_value_chi*50);
     }else if (which_mode ==1){

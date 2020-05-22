@@ -747,6 +747,70 @@ TMatrixT<double> SBNchi::CalcCovarianceMatrix(TMatrixT<double>*M, std::vector<do
     return Mout;
 }
 
+
+//split covariance matrix into shape-only, normalizatoin-only, mixed covariance matrix
+TMatrixT<double> SBNchi::SplitCovarianceMatrix(TMatrixT<double>* frac_covar, std::vector<double>& spec, int which_process){
+	
+	int matrix_bins = frac_covar->GetNcols();
+	if(matrix_bins != spec.size()){
+		std::cout << "SBNchi::SplitCovarianceMatrix||\t Dimension of vector "<< spec.size() << " doesn't match dimension of covariance matrix " << matrix_bins << std::endl;
+		exit(EXIT_FAILURE);
+	}
+
+	TMatrixT<double> full_covar(matrix_bins, matrix_bins);
+	TMatrixT<double> Mout(matrix_bins, matrix_bins);
+
+	for(int i=0; i<matrix_bins; i++){
+		for(int j=0; j< matrix_bins; j++){
+			if( std::isnan( (*frac_covar)(i,j)  )) full_covar(i,j) =0;
+			else full_covar(i,j) = (*frac_covar)(i,j)*spec[i]*spec[j]; 
+		}
+	}	
+
+	double N_T = std::accumulate(spec.begin(), spec.end(), 0.0);
+	double f_1 = full_covar.Sum()/pow(N_T, 2.0);
+	std::vector<double> P_sum;
+	for(int i=0; i< matrix_bins; i++){
+                double P_temp = 0;
+                for(int j=0; j< matrix_bins; j++) P_temp += full_covar(i,j);
+                P_sum.push_back(P_temp);
+        }
+
+	switch(which_process)
+	{
+		case 1:
+		//get shape-only covariance matrix
+		    std::cout << "SBNchi::SplitCovarianceMatrix||\tGet shape-only covariance matrix" << std::endl;
+		    for(int i=0; i<matrix_bins; i++){
+			for(int j=0 ;j<matrix_bins; j++)
+		 	    Mout(i,j) = full_covar(i,j) - (spec[j]*P_sum[i]+spec[i]*P_sum[j])/N_T + spec[i]*spec[j]*f_1;
+		    }
+		    break;
+		case 2:
+		//get mixed covariance matrix
+		     std::cout << "SBNchi::SplitCovarianceMatrix||\tGet mixed covariance matrix" << std::endl;
+		     for(int i=0; i<matrix_bins; i++){
+                        for(int j=0 ;j<matrix_bins; j++)
+			    Mout(i,j) = (spec[j]*P_sum[i]+spec[i]*P_sum[j])/N_T - 2.0*spec[i]*spec[j]*f_1;
+		     } 
+		     break;
+		case 3:
+		//get normalization only covariance matrix
+		    std::cout << "SBNchi::SplitCovarianceMatrix||\tGet normalization-only covariance matrix" << std::endl;
+		    for(int i=0; i<matrix_bins; i++){
+                        for(int j=0 ;j<matrix_bins; j++)
+			    Mout(i,j) = spec[i]*spec[j]*f_1;
+		    }
+		    break;			
+		default:
+		//return full_covariance matrix 
+		     break;
+	}
+	
+	return Mout;
+}
+
+
 //given fractional covariance matrix, MC predicted spctrum, bkgd spectrum
 //return  shape only systematic covariance matrix
 TMatrixT<double> SBNchi::CalcShapeOnlyCovarianceMatrix(TMatrixT<double> &M, SBNspec *mc, SBNspec* bkg){
@@ -796,7 +860,19 @@ TMatrixT<double> SBNchi::CalcShapeOnlyCovarianceMatrix(TMatrixT<double> &M, SBNs
 }
 
 
-
+double SBNchi::CalcChi_statonlyCNP(std::vector<double> &pred, std::vector<double>& data){
+      std::vector<double> diag(pred.size());
+      for(int j =0; j<pred.size(); j++)
+       {   
+          //diag[j] =  ( data[j] >0.001 ? 3.0/(1.0/data[j] +  2.0/pred[j])  : pred[j]/2.0 );
+          diag[j] =  data[j];
+      }
+      double tchi = 0.0;
+      for(int i =0; i<pred.size(); i++){
+              tchi += pow(pred[i]-data[i],2)/diag[i];
+      }   
+      return tchi;
+}
 
 
 //here spec is full vector of MC, spec_collapse is collapsed vector of MC, datavec is collapsed vector of data
@@ -1924,6 +2000,7 @@ TH1D SBNchi::SamplePoisson_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi & chi_h1, 
             }
         }
 
+	//vector "collapsed" is varied h1 spectrum
         float val_chi_h0  = chi_h0.CalcChi(h0_vec_matrix_inverted, h0_corein, collapsed);
         float val_chi_h1  = chi_h1.CalcChi(h1_vec_matrix_inverted, h1_corein, collapsed);
         a_vec_chis[i] = val_chi_h0-val_chi_h1;
