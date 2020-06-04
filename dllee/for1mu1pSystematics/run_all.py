@@ -4,7 +4,6 @@ autodir = "auto"
 topdir = os.getcwd()
 
 var_list = [ "x_reco", "y_reco", "z_reco",
-             "eta_reco",
              "openang_reco", "sum_thetas_reco", "sum_phis_reco",
              "charge_near_trunk_reco",
              "nu_energy_reco",
@@ -16,10 +15,7 @@ var_list = [ "x_reco", "y_reco", "z_reco",
 
 os.chdir(autodir)
 
-#for sel in ["presel", "postsel"]:
-for sel in ["postsel", "gevcut"]:
-#for sel in ["postsel"]:
-    #for plot_set in ["set1", "set2", "set3"]:
+for sel in ["run1", "run3"]:
     for var in var_list:
         tag = "%s__%s" % (sel, var)
         cmd = "/uboone/app/users/yatesla/sbnfit/whipping_star/build/bin/sbnfit_make_covariance --xml %s.xml --tag %s" % (tag, tag)
