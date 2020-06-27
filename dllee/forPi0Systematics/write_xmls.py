@@ -20,7 +20,7 @@ xml_str = """<?xml version="1.0" ?>
   <subchannel name="extbnb"/>
 </channel>
 
-<plotpot value=7.0e+20/>
+<plotpot value=4.403e19/>
 
 
 <MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="4.72e20">
