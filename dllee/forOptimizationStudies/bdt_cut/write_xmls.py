@@ -3,7 +3,7 @@
 import math
 import subprocess
 
-outdir = "auto"
+outdir = "auto3"
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 
 xml_str = """<?xml version="1.0" ?>
@@ -232,11 +232,13 @@ xml_str = """<?xml version="1.0" ?>
 """
 
 # step scan information
-cut_values = [ 0.5, 0.6, 0.7, 0.8, 0.9 ]
+#cut_values = [ 0.5, 0.6, 0.7, 0.8, 0.9 ]
+cut_values = [ 0.5+0.01*i for i in range(50) ]
+#print cut_values
 
 # input file information
-sel1e1p_run1_file_name = "input_to_sbnfit_v40_1e1p_run1_Jul01_opt.root"
-sel1e1p_run3_file_name = "input_to_sbnfit_v40_1e1p_run3_Jul01_opt.root"
+sel1e1p_run1_file_name = "input_to_sbnfit_v40_1e1p_run1_Jul02_opt3.root"
+sel1e1p_run3_file_name = "input_to_sbnfit_v40_1e1p_run3_Jul02_opt3.root"
 sel1mu1p_run1_file_name = "input_to_sbnfit_v40_1mu1p_run1_Jun29.root"
 sel1mu1p_run3_file_name = "input_to_sbnfit_v40_1mu1p_run3_Jun29.root"
 
@@ -251,7 +253,7 @@ for i in range(len(cut_values)):
         var_xml_str = var_xml_str.replace("SEL1MU1P_RUN3_FILE_NAME", sel1mu1p_run3_file_name)
         var_xml_str = var_xml_str.replace("BDT_CUT_VALUE", "{:0.2f}".format(cut_values[i]) )
             
-        output = "./auto/%s.xml" % ("opt{:02d}".format( int(cut_values[i]*100.) ))
+        output = "./%s/%s.xml" % (outdir, "opt{:02d}".format( int(cut_values[i]*100.) ))
         with open(output, 'w') as f:
             f.write(var_xml_str)
         

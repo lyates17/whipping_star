@@ -1,10 +1,10 @@
 import os,subprocess
 
-autodir = "auto"
+autodir = "auto3"
 topdir = os.getcwd()
 
-cut_values = [ 0.5, 0.6, 0.7, 0.8, 0.9 ]
-
+#cut_values = [ 0.5, 0.6, 0.7, 0.8, 0.9 ]
+cut_values = [ 0.5+0.01*i for i in range(50) ]
 
 os.chdir(autodir)
 

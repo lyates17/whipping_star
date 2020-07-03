@@ -1,11 +1,12 @@
 import subprocess
 from ROOT import TFile
 
-autodir = "auto"
+autodir = "auto2"
 outdir = "output"
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 
-cut_values = [ 0.5, 0.6, 0.7, 0.8, 0.9 ]
+#cut_values = [ 0.5, 0.6, 0.7, 0.8, 0.9 ]
+cut_values = [ 0.5+0.01*i for i in range(50) ]
 
 with open("%s/opt.txt" % outdir, "w") as out:
     for i in range(len(cut_values)):
