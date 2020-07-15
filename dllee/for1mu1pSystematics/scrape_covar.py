@@ -10,12 +10,12 @@ var_list = [ "x_reco", "y_reco", "z_reco",
              "charge_near_trunk_reco",
              "nu_energy_reco",
              "phiT_reco", "alphaT_reco", "pT_reco", "pT_ratio_reco",
-             "Bjx_reco", "Bjy_reco",
-             "Q2_reco", "sph_reco", "Q0_reco", "Q3_reco",
+             "Bjx_reco", "Bjy_reco", "BjxB_reco", "BjyB_reco",
+             "Q2_reco", "sph_reco", "Q0_reco", "Q3_reco", "sphB_reco",
              "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
              "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco" ]
 
-for sel in ["run1", "run3"]:
+for sel in ["sel"]:
     for var in var_list:
         
         tag = "%s__%s" % (sel, var)

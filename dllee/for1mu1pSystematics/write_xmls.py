@@ -16,15 +16,14 @@ xml_str = """<?xml version="1.0" ?>
       edges="BIN_EDGES"
       />
   <subchannel name="bnb"     />
-  <subchannel name="nue"     />
   <subchannel name="dirt"    />
   <subchannel name="extbnb"  />
 </channel>
 
-<plotpot value=1e19/>
+<plotpot value=6.82e20/>
 
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="BNB_POT">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="0.256" maxevents="100000" pot="4.715e+20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -34,7 +33,7 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_lowE_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="BNB_LOWE_POT">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="0.744" maxevents="100000" pot="8.988e+20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -44,17 +43,47 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="NUE_POT">
+<MultisimFile treename="sel_bnb_lowE_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="0.256" maxevents="100000" pot="1.631e+21">
   <branch
       name="VAR_NAME"
       type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_nue"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
       additional_weight="ADDITIONAL_WEIGHT"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="DIRT_POT">
+<MultisimFile treename="sel_bnb_lowE_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="0.744" maxevents="100000" pot="1.512e+21">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="0.256" maxevents="100000" pot="9.803e+22">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="0.744" maxevents="100000" pot="4.707e+22">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_dirt_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="1.0" maxevents="100000" pot="2.619e+20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -64,7 +93,17 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/FILE_NAME" scale="1.0" maxevents="100000" pot="EXT_POT">
+<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="0.256" maxevents="100000" pot="1.012e+20">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_extbnb"
+      additional_weight="1"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000" pot="1.536e+20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -112,55 +151,41 @@ xml_str = """<?xml version="1.0" ?>
 """
 
 
-# post-selection
-xlow = [ 15., -101.5, 15., 0.6, 0., 1.5, 0., 300., 0., 0., 0., 0., 0.2, 0.05, 0., 0., 70., 200.,
+# binning information
+xlow = [ 15., -101.5, 15., 0.6, 0., 1.5, 0., 200., 0., 0., 0., 0., 0.2, 0.05, 0.2, 0.05, 0., 70., 200., 0., 0., 
          -math.pi, 0.2, 20., 50., -1., -math.pi, 0., 5., 50., -1. ]
-xhigh = [ 241.25, 101.5, 1021.8, 2.8, 6.3, 4., 800., 1000., 1., math.pi, 320., 0.4, 1.8, 0.75, 6e5, 2000., 600., 1000.,
+xhigh = [ 241.25, 101.5, 1021.8, 2.8, 6.3, 4., 600., 1200., 1., math.pi, 320., 0.4, 1.8, 0.75, 1.8, 0.75, 6e5, 600., 1000., 4000., 4000., 
           math.pi, 2.8, 200., 600., 1., math.pi, 2., 100., 500., 1. ]
 nbins = [ 14 for i in range(len(xlow)) ]
+nbins[7] = 20   # using 20 bins for energy reco
+
+# file name information
+run1_file_name = "input_to_sbnfit_v40_1mu1p_run1_Jul15.root"
+run3_file_name = "input_to_sbnfit_v40_1mu1p_run3_Jul15.root"
+
+# weighting information
 weight_str = "xsec_corr_weight"
 
-# Run-specific information
-run1_dict = { "file_name": "input_to_sbnfit_v40_1mu1p_run1_May27.root",
-              "bnb_pot": 4.71579e+20,
-              "bnb_lowE_pot": 1.63103516179e+21,
-              "nue_pot": 9.80259e+22,
-              "dirt_pot": 2.61947e+20,
-              "extbnb_pot": 1.0121450159021741e+20
-}
-run3_dict = { "file_name": "input_to_sbnfit_v40_1mu1p_run3_May27.root",
-              "bnb_pot": 8.98773223801e+20,
-              "bnb_lowE_pot": 1.51234621011e+21,
-              "nue_pot": 4.70704675581e+22,
-              "dirt_pot": 2.61947e+20,  # there isn't actually a Run 3 dirt sample, this is just a dummy value...
-              "extbnb_pot": 1.5357641809380714e+20
-}
-sel_dict = { "run1": run1_dict, "run3": run3_dict } 
-
-# 29 variables...
+# 31 variables...
 var_list = [ "x_reco", "y_reco", "z_reco",
              "openang_reco", "sum_thetas_reco", "sum_phis_reco",
              "charge_near_trunk_reco",
              "nu_energy_reco",
              "phiT_reco", "alphaT_reco", "pT_reco", "pT_ratio_reco",
-             "Bjx_reco", "Bjy_reco",
-             "Q2_reco", "sph_reco", "Q0_reco", "Q3_reco",
+             "Bjx_reco", "Bjy_reco", "BjxB_reco", "BjyB_reco",
+             "Q2_reco", "Q0_reco", "Q3_reco", "sph_reco", "sphB_reco",
              "lepton_phi_reco", "lepton_theta_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
              "proton_phi_reco", "proton_theta_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco" ]
-units = [ "cm", "cm", "cm", "rad", "rad", "rad", "ADC", "MeV", "", "", "MeV", "", "", "", "MeV^2", "", "MeV", "MeV",
+units = [ "cm", "cm", "cm", "rad", "rad", "rad", "ADC", "MeV", "", "", "MeV", "", "", "", "", "", "MeV^2", "MeV", "MeV", "MeV^2", "MeV^2",
           "rad", "rad", "cm", "MeV", "", "rad", "rad", "cm", "MeV", "" ]
+
+# dummy sel_dict
+sel_dict = { 'sel': [] }
 
 # Loop over everything, write the xmls...
 for sel in sel_dict:
 
-    # Set the input file name and POT information based on the Run
-    file_name    = sel_dict[sel]["file_name"]
-    bnb_pot      = sel_dict[sel]["bnb_pot"]
-    bnb_lowE_pot = sel_dict[sel]["bnb_lowE_pot"]
-    nue_pot      = sel_dict[sel]["nue_pot"]
-    dirt_pot     = sel_dict[sel]["dirt_pot"]
-    extbnb_pot   = sel_dict[sel]["extbnb_pot"]
-    # Also set the weight string
+    # Set the weight string
     additional_weight = weight_str
 
     # Loop over the variables...
@@ -178,14 +203,10 @@ for sel in sel_dict:
         
         var_xml_str = var_xml_str.replace("UNIT", units[i])
         var_xml_str = var_xml_str.replace("BIN_EDGES", edges_str)
-        var_xml_str = var_xml_str.replace("FILE_NAME", file_name)
+        var_xml_str = var_xml_str.replace("RUN1_FILE_NAME", run1_file_name)
+        var_xml_str = var_xml_str.replace("RUN3_FILE_NAME", run3_file_name)
         var_xml_str = var_xml_str.replace("VAR_NAME", var_list[i])
         var_xml_str = var_xml_str.replace("ADDITIONAL_WEIGHT", additional_weight)
-        var_xml_str = var_xml_str.replace("BNB_POT", str(bnb_pot))
-        var_xml_str = var_xml_str.replace("BNB_LOWE_POT", str(bnb_lowE_pot))
-        var_xml_str = var_xml_str.replace("NUE_POT", str(nue_pot))
-        var_xml_str = var_xml_str.replace("DIRT_POT", str(dirt_pot))
-        var_xml_str = var_xml_str.replace("EXT_POT", str(extbnb_pot))
             
         output = "./auto/%s__%s.xml" % (sel, var_list[i])
         with open(output, 'w') as f:
