@@ -46,6 +46,7 @@ int main(int argc, char* argv[])
     int iarg = 0;
     opterr=1;
     int index;
+    bool sample_with_gaussian = false;
     bool sample_from_covariance = true;
     bool sample_from_collapsed = false;
     bool remove_correlations = false;
@@ -67,6 +68,9 @@ int main(int argc, char* argv[])
     bool tester=false;
     double epsilon = 1e-12;
 
+    bool reverse_colors = false;
+    std::string legends = "H_{0}|H_{1}";
+
     const struct option longopts[] =
     {
         {"xml", 		required_argument, 	0, 'x'},
@@ -77,9 +81,12 @@ int main(int argc, char* argv[])
         {"background", 	required_argument,	0,'b'},
         {"tag", 	    required_argument,	0,'t'},
         {"epsilon", required_argument,0,'e'},
+        {"legend",required_argument,0,'l'},
         {"cnp",no_argument,0,'a'},
         {"zero",no_argument,0,'z'},
+        {"gaussian",no_argument,0,'g'},
         {"tester",no_argument,0,'k'},
+        {"reverse",no_argument,0,'r'},
         {"poisson", no_argument,0,'p'},
         {"flat", required_argument,0,'f'},
         {"help",no_argument,0,'h'},
@@ -88,7 +95,7 @@ int main(int argc, char* argv[])
 
     while(iarg != -1)
     {
-        iarg = getopt_long(argc,argv, "m:a:x:n:s:e:b:c:f:t:pjkzh", longopts, &index);
+        iarg = getopt_long(argc,argv, "m:a:x:n:s:e:b:c:l:f:t:u:q:pjgrkzh", longopts, &index);
 
         switch(iarg)
         {
@@ -103,6 +110,12 @@ int main(int argc, char* argv[])
                 break;
             case 'm':
                 which_mode = (int)strtod(optarg,NULL);
+                break;
+            case 'l':
+                legends = optarg;
+                break;
+            case 'r':
+                reverse_colors = true;
                 break;
             case 'x':
                 xml = optarg;
@@ -129,6 +142,9 @@ int main(int argc, char* argv[])
             case 'c':
                 covariance_file = optarg;
                 break;
+            case 'g':
+                sample_with_gaussian  = true;
+                break;
             case 'n':
                 num_MC_events = (int)strtod(optarg,NULL);
                 break;
@@ -152,6 +168,7 @@ int main(int argc, char* argv[])
                 std::cout<<"\t-z\t--zero\t\tZero out all off diagonal elements of the systematics covariance matrix (default false, experimental!)"<<std::endl;
                 std::cout<<"\t-e\t--epsilon\t\tEpsilon tolerance by which to add back to diagonal of covariance matrix if determinant is 0 (default 1e-12)"<<std::endl;
                 std::cout<<"\t-n\t--number\t\tNumber of MC events for frequentist studies (default 100k)"<<std::endl;
+                std::cout<<"\t-g\t--gaussian\t\tSample by adding sqrt(N) to covariance rather than 2-step Poisson sampling (default: false)"<<std::endl;
                 std::cout<<"\t-m\t--mode\t\tMode for test statistics 0: absolute chi^2, 1: delta chi^2 (default Delta Chi| obsolete, runs all concurrently)"<<std::endl;
                 std::cout<<"\t-p\t--poisson\t\tUse Poissonian draws for pseudo experiments instead of from covariance matrix"<<std::endl;
                 std::cout<<"\t-h\t--help\t\t\tThis help menu."<<std::endl;
@@ -181,6 +198,8 @@ int main(int argc, char* argv[])
 
     std::cout<<"Loading background file : "<<background_file<<" with xml "<<xml<<std::endl;
     SBNspec bkg(background_file,xml);
+
+    std::cout<<"Legends are being set to "<<legends<<std::endl;
 
     std::cout<<"Loading fractional covariance matrix from "<<covariance_file<<std::endl;
 
@@ -224,6 +243,10 @@ int main(int argc, char* argv[])
         cls_factory.SetTolerance(epsilon);
         if(sample_from_collapsed)  cls_factory.SetSampleFromCollapsed();
         if(sample_from_covariance) cls_factory.SetSampleCovariance();
+        if(sample_with_gaussian) cls_factory.SetGaussianSampling();
+        if(reverse_colors)cls_factory.ReverseColours();
+        cls_factory.SetLegends(legends);
+
         cls_factory.setMode(which_mode);
         if(tester){cls_factory.runConstraintTest();return 0;}
         cls_factory.CalcCLS(num_MC_events, tag);
@@ -231,8 +254,13 @@ int main(int argc, char* argv[])
         SBNcls cls_factory(&bkg, &sig);
         cls_factory.SetTolerance(epsilon);
         if(sample_from_collapsed)  cls_factory.SetSampleFromCollapsed();
+        if(sample_with_gaussian) cls_factory.SetGaussianSampling();
+        if(reverse_colors)cls_factory.ReverseColours();
         cls_factory.setMode(which_mode);
+        
         if(tester){cls_factory.runConstraintTest();return 0;}
+
+        cls_factory.SetLegends(legends);
         cls_factory.CalcCLS(num_MC_events, tag);
     }
 
