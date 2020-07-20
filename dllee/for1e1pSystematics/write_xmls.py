@@ -1,4 +1,4 @@
-# Write the 30 xml files
+# Write the N xml files
 
 import math
 import subprocess
@@ -128,7 +128,7 @@ var_list = [ 'nu_energy_reco', 'eta_reco', 'pT_reco', 'alphaT_reco', 'sphB_reco'
              'pT_ratio_reco', 'proton_theta_reco', 'proton_phi_reco', 'min_shr_frac_reco', 'max_shr_frac_reco', 'BjxB_reco', 'BjyB_reco', 'proton_KE_reco', 'lepton_KE_reco',
              'lepton_theta_reco', 'lepton_phi_reco', 'openang_reco', 'x_reco', 'y_reco', 'z_reco', 'bdt_score', 'mpid_muon_score', 'mpid_proton_score', 'mpid_electron_score' ]
 N_bins = [ 10 for x in var_list ]
-N_bins[0] = 12
+N_bins[0] = 12  # using 12 bins for energy
 bin_list = [ (0,1200),(0,0.6),(0,800),(0,math.pi),(0,5000),(-1500,300),(0,800),(100,700),(0,1400),(0,2*math.pi),(0,2*math.pi),
              (0,1),(0,math.pi),(-math.pi,math.pi),(0,1),(0,1),(0,3),(0,1),(60,500),(0,1000),(math.pi/5,math.pi),
              (-math.pi,math.pi),(0,math.pi),(0,256),(-117,117),(0,1036),(0,1),(0,1),(0,1),(0,1) ]
@@ -138,24 +138,32 @@ run1_file_name = "input_to_sbnfit_v40_1e1p_run1_Jul15.root"
 run3_file_name = "input_to_sbnfit_v40_1e1p_run3_Jul15.root"
 
 # set the CV weights
-additional_weight = "xsec_corr_weight"
 
 # selection-specific information
 final_dict = {}
 final_dict['run1_scale'] = 0.242  # for Run 1, using standard numbers from Pawel
 final_dict['run3_scale'] = 0.758  # for Run 2+3, again using standard numbers from Pawel
+final_dict['weight'] = "xsec_corr_weight"
 highE_dict = {}
 highE_dict['run1_scale'] = 1.56 / (1.56 + 1.63 + 1.70)           # for Run 1, using numbers from Jarrett  (July 16th)
 highE_dict['run3_scale'] = (1.63 + 1.70) / (1.56 + 1.63 + 1.70)  # for Run 2+3, using numbers from Jarrett (July 16th)
-sel_dict = { "final": final_dict, "highE": highE_dict }
+highE_dict['weight'] = "xsec_corr_weight * (nu_energy_reco>700)"
+blind_dict = {}
+blind_dict['run1_scale'] = 25 / float(15+39+35)       # for Run 1, using numbers from Jarrett (July 19th)
+blind_dict['run3_scale'] = (39+35) / float(15+39+35)  # for Run 2+3, using numbers from Jarrett (July 19th)
+blind_dict['weight'] = "xsec_corr_weight"
+sel_dict = { "final": final_dict, "highE": highE_dict, "blind": blind_dict }
 
 
 # Loop over everything, write the xmls...
-for sel in sel_dict:
+#for sel in sel_dict:
+for sel in ["blind"]:
 
     # Set the POT scale factors
     run1_scale = sel_dict[sel]['run1_scale']
     run3_scale = sel_dict[sel]['run3_scale']
+    # Set additional weight
+    additional_weight = sel_dict[sel]['weight']
 
     # Loop over the variables...
     for i in range(len(var_list)):

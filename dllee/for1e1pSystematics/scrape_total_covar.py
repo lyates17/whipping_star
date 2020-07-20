@@ -7,8 +7,8 @@ subprocess.call("mkdir -p %s" % outdir, shell=True)
 
 var_list = ['Enu_1e1p','Eta','PT_1e1p','AlphaT_1e1p','SphB_1e1p','PzEnu_1e1p','ChargeNearTrunk','Q0_1e1p','Q3_1e1p','Thetas','Phis',
             'PTRat_1e1p','Proton_ThetaReco','Proton_PhiReco','MinShrFrac','MaxShrFrac','BjXB_1e1p','BjYB_1e1p',
-            'Proton_Edep','Electron_Edep','Lepton_ThetaReco','Lepton_PhiReco','OpenAng','Xreco','Yreco','Zreco','BDTscore_1e1p']
-            #'MuonPID_int_v[2]','ProtonPID_int_v[2]','EminusPID_int_v[2]']  # not doing MPID yet
+            'Proton_Edep','Electron_Edep','Lepton_ThetaReco','Lepton_PhiReco','OpenAng','Xreco','Yreco','Zreco','BDTscore_1e1p',
+            'MPIDY_muon','MPIDY_proton','MPIDY_eminus']
 var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'Eta': 'eta_reco',
             'PT_1e1p': 'pT_reco',
@@ -35,11 +35,15 @@ var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'Xreco': 'x_reco',
             'Yreco': 'y_reco',
             'Zreco': 'z_reco',
-            'BDTscore_1e1p': 'bdt_score' }
-            #'MuonPID_int_v[2]','ProtonPID_int_v[2]','EminusPID_int_v[2]'  # not doing MPID yet
+            'BDTscore_1e1p': 'bdt_score',
+            'MPIDY_muon': 'mpid_muon_score',
+            'MPIDY_proton': 'mpid_proton_score',
+            'MPIDY_eminus': 'mpid_electron_score'
+}
 
 
-for sel in ["final", "highE"]:
+#for sel in ["final", "highE", "blind"]:
+for sel in ["blind"]:
     for var in var_list:
         
         # Get reweightable covariance matrix
@@ -50,24 +54,16 @@ for sel in ["final", "highE"]:
 
         # Get detsys covariance matrix
         # ... flat is the only thing that works for now...
-        detsys_input_file = "detsys/flat/frac_covar_detsys__%s.txt" % var
-        detsys_covar = []
+        detsys_input_file = "detsys/flat_fixed/frac_covar_detsys__%s.txt" % var
         with open(detsys_input_file, "r") as detsys:
-            for l in detsys:
-                l = l.strip()
-                row = l.split()
-                for i in range(len(row)):
-                    x = float(row[i])
-                    #if ( math.isinf(x) or math.isnan(x) ): x = 1.
-                    row[i] = x
-                detsys_covar.append(row)
-        #print detsys_covar
+            detsys_covar = float(detsys.readlines()[0].strip())
+            print var, detsys_covar
 
         # Add them together
         covar = rewght_covar
         for i in range(covar.GetNrows()):
             for j in range(covar.GetNcols()):
-                covar[i][j] += detsys_covar[i][j]
+                covar[i][j] += detsys_covar
 
         # Write everything out...
         outtag = "%s__%s" % (sel, var)
