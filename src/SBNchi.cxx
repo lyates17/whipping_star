@@ -798,8 +798,10 @@ TMatrixT<double> SBNchi::SplitCovarianceMatrix(TMatrixT<double>* frac_covar, std
 		//get normalization only covariance matrix
 		    std::cout << "SBNchi::SplitCovarianceMatrix||\tGet normalization-only covariance matrix" << std::endl;
 		    for(int i=0; i<matrix_bins; i++){
-                        for(int j=0 ;j<matrix_bins; j++)
-			    Mout(i,j) = spec[i]*spec[j]*f_1;
+                        for(int j=0 ;j<matrix_bins; j++){
+			    //Mout(i,j) = spec[i]*spec[j]*f_1;
+			    Mout(i,j) = f_1;  //fractional normalization only matrix
+			}
 		    }
 		    break;			
 		default:

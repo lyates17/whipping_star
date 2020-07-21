@@ -21,6 +21,7 @@
 #include "TText.h"
 #include "TMath.h"
 #include "TGraph.h"
+#include "TSystem.h"
 
 #include "TMath.h"
 #include <ctime>
@@ -65,7 +66,7 @@ namespace sbn{
 
 	int m_total_gridpoints;  //total number of grid points 
 
-        std::vector<SBNspec*> m_scaled_spec_grid;  
+        std::vector<SBNspec> m_scaled_spec_grid;  
 
         TMatrixT<double> * m_full_fractional_covariance_matrix; //full systematic( include detector) covariance matrix
         TMatrixT<double> * m_full_but_genie_fractional_covariance_matrix;   //full systematic covariance matrix other than genie
@@ -75,6 +76,8 @@ namespace sbn{
 	SBNspec* m_data_spectrum; // data spectra
         SBNchi *m_chi;
 
+	double m_cv_delta_scaling;   //NCdelta scaling,should only be applied to FAKE DATA for sensitivity study!
+	bool m_bool_modify_cv;  //if CV is modified for systematic covar matrix calculation
 	bool m_bool_cv_spectrum_generated;   //if CV spec is generated
 	bool m_bool_cv_spectrum_loaded;   //if CV spec is loaded, for fit purposes
 	bool m_bool_data_spectrum_loaded;  //if data spec is loaded
@@ -129,11 +132,14 @@ namespace sbn{
 	int SaveHistogram(std::map<int, std::vector<double>>& );
 	TH2D* Do2DInterpolation(int, std::vector<double>& x, std::vector<double>& y, std::vector<double>& value);
 	int RemoveNan(TMatrixT<double>*); //remove the nan's from matrix
+	
+	int ModifyCV(double factor);
+	int ModifyCV(double, std::vector<double> param);
 
 	protected:
 
 	int OpenFiles();
-	
+	int CloseFiles();	
         /*//Member Functions
         
          int UpdateInverseCovarianceMatrixCNP(size_t best_grid_point, const std::vector<float> &datavec, TMatrixT<double>& inverse_collapsed, SBNchi * helper);

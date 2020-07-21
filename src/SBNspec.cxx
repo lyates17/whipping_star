@@ -602,7 +602,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				mycol.push_back(is);
 			}
 			else{
-				std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
+				//std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
 				mycol.push_back(iter_int->second);
 			}
 		}
@@ -657,7 +657,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				bool this_run = false;
 				bool this_run_comp = false;
 
-				TCanvas* Cstack= new TCanvas((tag+"_"+canvas_name).c_str(),canvas_name.c_str(),1200,1200);
+				TCanvas* Cstack= new TCanvas((tag+"_"+canvas_name).c_str(),canvas_name.c_str(),800,800);
 				//Cstack->SetFixedAspectRatio();
 
 				Cstack->cd();
@@ -671,16 +671,17 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				int nc=0;
 				TH1D * hcomp;
 				TH1D *hsum;
-
-
+				double hcomp_sum=0;
+				double hsum_sum=0;
 
 				for(auto &h : temp_comp){
 					std::string test = h.GetName();
 					if(test.find(canvas_name)!=std::string::npos){
 						double total_events = h.GetSumOfWeights();
-
+						hcomp_sum += total_events;
 
 						//h.Sumw2(false);
+						h.Scale(1,"width");
 						//h.Scale(1,"width,nosw2");
 						//h.GetYaxis()->SetTitle("Events/GeV");
 						//h.SetMarkerStyle(20);
@@ -720,8 +721,11 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					if(test.find(canvas_name)!=std::string::npos ){
 
 						double total_events = h.GetSumOfWeights();
+						hsum_sum += total_events;
+
 						//h.Sumw2(false);
 						//h.Scale(1,"width,nosw2");
+						h.Scale(1,"width");
 						h.GetYaxis()->SetTitle("Events/GeV");
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
@@ -774,14 +778,17 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 
 				//set the error of 'this' spec according to the covariance matrix
 				for(int i=0; i<hsum->GetNbinsX(); i++){
-					double error = hsum->GetBinError(i+1) + sqrt(collapse_covar(error_bin+i, error_bin+i));
-					std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
+					double xbin_width = hsum->GetXaxis()->GetBinWidth(i+1);
+					double error = sqrt(pow(hsum->GetBinError(i+1), 2.0) + collapse_covar(error_bin+i, error_bin+i)/pow(xbin_width, 2.0));
+					//double error = hsum->GetBinError(i+1) + sqrt(collapse_covar(error_bin+i, error_bin+i));
+					//std::cout << collapse_covar(error_bin+i, error_bin+i) << std::endl;
+					//std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
 					hsum->SetBinError(i+1, error);
 				}
 				error_bin +=hsum->GetNbinsX();
 
-				legStack.AddEntry(hsum, "MC Error", "fl");
-				legStack.AddEntry(hcomp, "Compared Point", "flp");
+				legStack.AddEntry(hsum, Form("MC Stack | %.2f", hsum_sum), "fl");
+				legStack.AddEntry(hcomp, Form("Compared Point | %.2f", hcomp_sum), "flp");
 
 				/****Not sure why but this next line seg faults...******
 				 *	hs->GetYaxis()->SetTitle("Events/GeV");
@@ -789,19 +796,18 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				if(this_run && this_run_comp){
 					double plot_pot=5e19;
 
-					double title_size_ratio=0.1;
-					double label_size_ratio=0.1;
-					double title_offSet_ratioY = 0.3 ;
-					double title_offSet_ratioX = 1.1;
+					double title_size_ratio=0.11;
+                                        double label_size_ratio=0.11;
+                                        double title_offSet_ratioY = 0.38;
+                                        double title_offSet_ratioX = 1.1;
 
-					double title_size_upper=0.15;
-					double label_size_upper=0.05;
-					double title_offSet_upper = 1.45;
-
+                                        double title_size_upper=0.048;
+                                        double label_size_upper=0.05;
+                                        double title_offSet_upper = 0.85;
 
 					Cstack->cd();
 					gStyle->SetErrorX(0);
-					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.30, 1, 1.0);
+					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.35, 1, 1.0);
 					pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 					pad0top->Draw();             // Draw the upper pad: pad2top
 					pad0top->cd();               // pad2top becomes the current pad
@@ -812,8 +818,11 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					hsum->SetFillStyle(3354);
 					hsum->SetLineWidth(3);
 					hsum->Draw("E2 same");
-					//hs->GetYaxis()->SetTitle(("Events/"+channel_units.at(ic)).c_str());
-					hs->GetYaxis()->SetTitle("Events");
+					hs->GetYaxis()->SetTitle(("Events/"+channel_units.at(ic)).c_str());
+					hs->GetYaxis()->SetTitleSize(title_size_upper);
+                                        hs->GetYaxis()->SetLabelSize(label_size_upper);
+                                        hs->GetYaxis()->SetTitleOffset(title_offSet_upper);
+					//hs->GetYaxis()->SetTitle("Events");
 					
 					//draw rectangular and dashed line for compared spectrum
 					/*hcomp->SetLineColor(kBlack);
@@ -839,7 +848,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					hcomp->Draw("EP same");
 
 					//hcomp->Draw("hist same");
-					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.45);
+					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.6);
 					//hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
 					hs->SetMinimum(0.001);
 
@@ -848,17 +857,29 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 
 					Cstack->cd();
 					gStyle->SetOptStat(0);
-					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.30);
+					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.35);
 					pad0bot->SetTopMargin(0);
 					pad0bot->SetBottomMargin(0.351);
 					pad0bot->SetGridx(); // vertical grid
 					pad0bot->Draw();
 					pad0bot->cd();       // pad0bot becomes the current pad
 
+
 					TH1* ratpre = (TH1*)hcomp->Clone(("ratio_"+canvas_name).c_str());
 					ratpre->Divide(hsum);
 					ratpre->SetStats(false);
-					ratpre->Draw("hist");
+					//to draw the 1 sigma error band on the ratio plot
+					TH1* h_err = (TH1*)hsum->Clone("error_band");
+                                        h_err->Divide(hsum);
+					for(int i=0; i<h_err->GetNbinsX(); i++){
+                                                h_err->SetBinError(i+1, hsum->GetBinError(i+1)/hsum->GetBinContent(i+1));
+						ratpre->SetBinError(i+1, hcomp->GetBinError(i+1)/hsum->GetBinContent(i+1));
+                                        }
+
+
+					ratpre->Draw("E");
+					//ratpre->Draw("hist");
+					h_err->Draw("E2 same");
 					ratpre->SetFillColor(kWhite);
 					ratpre->SetFillStyle(0);
 					ratpre->SetLineWidth(2);
@@ -871,8 +892,11 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					ratpre->GetYaxis()->SetTitle("Ratio");
 					ratpre->GetXaxis()->SetTitleOffset(title_offSet_ratioX);
 					ratpre->GetYaxis()->SetTitleOffset(title_offSet_ratioY);
-					ratpre->SetMinimum(ratpre->GetMinimum()*0.97);
-					ratpre->SetMaximum(ratpre->GetMaximum()*1.03);
+					ratpre->SetMinimum(std::min(0.5, ratpre->GetMinimum())*0.8);
+					//ratpre->SetMinimum(ratpre->GetMinimum()*0.97);
+					ratpre->SetMaximum(std::max(1.5, ratpre->GetMaximum())*1.2);
+					//ratpre->SetMaximum(ratpre->GetMaximum()*1.03);
+					ratpre->GetYaxis()->SetNdivisions(505, kTRUE);   //change the label division in y axis
 					ratpre->GetYaxis()->SetTitleSize(title_size_ratio);
 					ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
 					ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
@@ -936,7 +960,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 				mycol.push_back(is);
 			}
 			else{
-				std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
+				//std::cout << "Successfully find the color predefined for "<< isubchannel_name << std::endl;
 				mycol.push_back(iter_int->second);
 			}
 		}
@@ -1002,16 +1026,18 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 				int nc=0;
 				TH1D * hcomp;
 				TH1D *hsum;
-
+				double hcomp_sum=0;
+                                double hsum_sum=0;
 
 
 				for(auto &h : temp_comp){
 					std::string test = h.GetName();
 					if(test.find(canvas_name)!=std::string::npos){
 						double total_events = h.GetSumOfWeights();
+						hcomp_sum += total_events;
 
-
-						h.Sumw2(false);
+						//h.Sumw2(false);
+						h.Scale(1,"width");
 						//h.Scale(1,"width,nosw2");
 						//h.GetYaxis()->SetTitle("Events/GeV");
 						//h.SetMarkerStyle(20);
@@ -1051,8 +1077,11 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					if(test.find(canvas_name)!=std::string::npos ){
 
 						double total_events = h.GetSumOfWeights();
+						hsum_sum += total_events;
+
 						//h.Sumw2(false);
 						//h.Scale(1,"width,nosw2");
+						h.Scale(1,"width");
 						h.GetYaxis()->SetTitle("Events/GeV");
 						h.SetMarkerStyle(20);
 						h.SetMarkerColor(mycol[n]);
@@ -1100,8 +1129,8 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					}
 				}
 	
-				legStack.AddEntry(hcomp, "Compared Point", "fl");
-
+				legStack.AddEntry(hsum, Form("MC Stack | %.2f", hsum_sum), "fl");
+                                legStack.AddEntry(hcomp, Form("Compared Point | %.2f", hcomp_sum), "flp");
 
 
 

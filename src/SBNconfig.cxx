@@ -432,8 +432,14 @@ SBNconfig::SBNconfig(std::string whichxml, bool isverbose, bool useuniverse): xm
                 if(is_verbose)std::cout<<otag<<"Setting Oscillate! "<<oscillate<<std::endl;
                 TEMP_branch_variables.back()->SetOscillate(true);
                 TEMP_branch_variables.back()->true_param_name = pBranch->Attribute("true_param_name");
-                TEMP_branch_variables.back()->true_L_name = pBranch->Attribute("true_L_name");
-                if(is_verbose)std::cout<<otag<<"Set Oscillate! "<<pBranch->Attribute("true_param_name")<<" "<<pBranch->Attribute("true_L_name")<<std::endl;
+		if(pBranch->Attribute("true_L_name") != NULL){
+		    //for oscillation that needs both E and L
+		    TEMP_branch_variables.back()->true_L_name = pBranch->Attribute("true_L_name");
+                    if(is_verbose)std::cout<<otag<<"Set Oscillate! "<<pBranch->Attribute("true_param_name")<<" "<<pBranch->Attribute("true_L_name")<<std::endl;
+		}else{
+		    //for oscillations that only needs E, such as an energy-dependent scaling for single photon NCpi0!
+                    if(is_verbose)std::cout<<otag<<"Set Oscillate! Energy only dependent oscillation ( or shift/normalization)! "<<pBranch->Attribute("true_param_name")<<std::endl;
+		}
             }else{
                 if(is_verbose)std::cout<<otag<<"Do Not Oscillate "<<oscillate<<std::endl;
                 TEMP_branch_variables.back()->SetOscillate(false);
