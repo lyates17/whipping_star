@@ -815,14 +815,74 @@ int SBNsinglephoton::SaveHistogram(std::map<int, std::vector<double>>& inmap){
 
 	   h_dchi->Write();
 	   fout->Close();
-	}
+	}//end of 1 dimension case
 	else{
 
 	   TFile* fout = new TFile("NCdelta_fit_output.root", "UPDATE");
 	   if(!m_bool_poly_grid){
 		if(is_verbose) std::cout<< "SBNsinglephoton::SaveHistogram\t|| Case: NC delta and pi0 combined fit, no energy/momentum dependent scaling!" << std::endl;
-			
-	   }
+		auto grid_x = m_grid.f_dimensions.at(0);
+		auto grid_y = m_grid.f_dimensions.at(1);
+		auto grid_z = m_grid.f_dimensions.at(2);
+		std::vector<double> temp_best_point = m_vec_grid[best_point];
+
+		//marginalize over 1 parameter	
+		TH2D* h_mchi2_xy = new TH2D("h_mchi2_xy", Form("h_mchi2_xy; %s;%s", grid_x.f_name.c_str(), grid_y.f_name.c_str()), grid_x.f_N, grid_x.f_min, grid_x.f_max, grid_y.f_N, grid_y.f_min, grid_y.f_max);
+		TH2D* h_mchi2_yz = new TH2D("h_mchi2_yz", Form("h_mchi2_yz; %s;%s", grid_y.f_name.c_str(), grid_z.f_name.c_str()), grid_y.f_N, grid_y.f_min, grid_y.f_max, grid_z.f_N, grid_z.f_min, grid_z.f_max);
+		TH2D* h_mchi2_xz = new TH2D("h_mchi2_xz", Form("h_mchi2_xz; %s;%s", grid_x.f_name.c_str(), grid_z.f_name.c_str()), grid_x.f_N, grid_x.f_min, grid_x.f_max, grid_z.f_N, grid_z.f_min, grid_z.f_max);
+		//global minimum
+		TH2D* h_gchi2_xy = new TH2D("h_gchi2_xy", Form("h_gchi2_xy; %s;%s", grid_x.f_name.c_str(), grid_y.f_name.c_str()), grid_x.f_N, grid_x.f_min, grid_x.f_max, grid_y.f_N, grid_y.f_min, grid_y.f_max);
+		TH2D* h_gchi2_yz = new TH2D("h_gchi2_yz", Form("h_gchi2_yz; %s;%s", grid_y.f_name.c_str(), grid_z.f_name.c_str()), grid_y.f_N, grid_y.f_min, grid_y.f_max, grid_z.f_N, grid_z.f_min, grid_z.f_max);
+		TH2D* h_gchi2_xz = new TH2D("h_gchi2_xz", Form("h_gchi2_xz; %s;%s", grid_x.f_name.c_str(), grid_z.f_name.c_str()), grid_x.f_N, grid_x.f_min, grid_x.f_max, grid_z.f_N, grid_z.f_min, grid_z.f_max);
+
+		//minimize over two parameters
+		TH1D* h_chi_delta = new TH1D("h_chi_delta", Form("h_chi_delta; %s;#Delta#chi^{2}",grid_z.f_name.c_str()), grid_z.f_N, grid_z.f_min, grid_z.f_max);
+
+		for(int ix=1;ix <= grid_x.f_N; ix++){
+		        for(int iy=1; iy <= grid_y.f_N; iy++) h_mchi2_xy->SetBinContent(ix, iy, DBL_MAX);
+        		for(int iz=1; iz <= grid_z.f_N; iz++) h_mchi2_xz->SetBinContent(ix, iz, DBL_MAX);
+   		}
+
+   		for(int iz=1; iz <= grid_z.f_N; iz++){
+        		for(int iy=1; iy <= grid_y.f_N; iy++)  h_mchi2_yz->SetBinContent(iy, iz, DBL_MAX);
+        		h_chi_delta->SetBinContent(iz, DBL_MAX);
+   		}
+
+
+		for(int ix=0; ix < grid_x.f_N; ix++){
+       		    for(int iy=0; iy < grid_y.f_N; iy++){
+           		for(int iz=0 ; iz< grid_z.f_N; iz++){
+                	    int ip = ix*grid_y.f_N*grid_z.f_N + iy*grid_z.f_N + iz; // index of grid point
+		            std::vector<double> point = m_vec_grid[ip];
+
+
+                            //marginalized minimum
+                            //conditional operator, saver the smaller chi.
+                	    if(vec_chi[ip]< h_mchi2_xy->GetBinContent(ix+1, iy+1)){
+                        	 h_mchi2_xy->SetBinContent(ix+1, iy+1, vec_chi[ip]);
+                         	//std::cout << "chi2 value: " << chi[ip] << std::endl;
+
+		 	    }
+                	    if(vec_chi[ip]< h_mchi2_xz->GetBinContent(ix+1, iz+1)) h_mchi2_xz->SetBinContent(ix+1, iz+1, vec_chi[ip]);
+                	    if(vec_chi[ip]< h_mchi2_yz->GetBinContent(iy+1, iz+1)) h_mchi2_yz->SetBinContent(iy+1, iz+1, vec_chi[ip]);
+
+
+               		    //global minimum
+                	    if(point[2] == temp_best_point[2]) h_gchi2_xy->Fill(point[0], point[1], vec_chi[ip]);
+                	    if(point[1] == temp_best_point[1]) h_gchi2_xz->Fill(point[0], point[2], vec_chi[ip]);
+               		    if(point[0] == temp_best_point[0]) h_gchi2_yz->Fill(point[1], point[2], vec_chi[ip]);
+
+                 	    //marginalize two parameters
+                	    if(vec_chi[ip] < h_chi_delta->GetBinContent(iz+1)) h_chi_delta->SetBinContent(iz+1, vec_chi[ip]);
+           		}
+        	    }
+   		}
+		
+		h_mchi2_xy->Write(); h_mchi2_xz->Write(); h_mchi2_yz->Write();
+		h_gchi2_xy->Write(); h_gchi2_xz->Write(); h_gchi2_yz->Write();
+		h_chi_delta->Write();
+
+	   } //end of the m_bool_poly_grid loop
 	   fout->Close();
 	}//end of 3 dimension case
     } //end of map check

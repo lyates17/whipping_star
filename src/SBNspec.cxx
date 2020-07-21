@@ -657,7 +657,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				bool this_run = false;
 				bool this_run_comp = false;
 
-				TCanvas* Cstack= new TCanvas((tag+"_"+canvas_name).c_str(),canvas_name.c_str(),800,800);
+				TCanvas* Cstack= new TCanvas((tag+"_"+canvas_name).c_str(),canvas_name.c_str(),1200,1200);
 				//Cstack->SetFixedAspectRatio();
 
 				Cstack->cd();
@@ -782,7 +782,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					double error = sqrt(pow(hsum->GetBinError(i+1), 2.0) + collapse_covar(error_bin+i, error_bin+i)/pow(xbin_width, 2.0));
 					//double error = hsum->GetBinError(i+1) + sqrt(collapse_covar(error_bin+i, error_bin+i));
 					//std::cout << collapse_covar(error_bin+i, error_bin+i) << std::endl;
-					//std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
+					std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
 					hsum->SetBinError(i+1, error);
 				}
 				error_bin +=hsum->GetNbinsX();
@@ -1140,19 +1140,19 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 				if(this_run && this_run_comp){
 					double plot_pot=5e19;
 
-					double title_size_ratio=0.1;
-					double label_size_ratio=0.1;
-					double title_offSet_ratioY = 0.3 ;
-					double title_offSet_ratioX = 1.1;
+					double title_size_ratio=0.11;
+                                        double label_size_ratio=0.11;
+                                        double title_offSet_ratioY = 0.38;
+                                        double title_offSet_ratioX = 1.1;
 
-					double title_size_upper=0.15;
-					double label_size_upper=0.05;
-					double title_offSet_upper = 1.45;
+                                        double title_size_upper=0.048;
+                                        double label_size_upper=0.05;
+                                        double title_offSet_upper = 0.85;
 
 
 					Cstack->cd();
 					gStyle->SetErrorX(0);
-					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.30, 1, 1.0);
+					TPad *pad0top = new TPad(("pad0top_"+canvas_name).c_str(), ("pad0top_"+canvas_name).c_str(), 0, 0.35, 1, 1.0);
 					pad0top->SetBottomMargin(0); // Upper and lower plot are joined
 					pad0top->Draw();             // Draw the upper pad: pad2top
 					pad0top->cd();               // pad2top becomes the current pad
@@ -1163,7 +1163,10 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					hsum->Draw("E2 same");
 					//hs->GetYaxis()->SetTitle("Events/GeV");
 					hs->GetYaxis()->SetTitle("Events");
-					
+				        hs->GetYaxis()->SetTitleSize(title_size_upper);
+                                        hs->GetYaxis()->SetLabelSize(label_size_upper);
+                                        hs->GetYaxis()->SetTitleOffset(title_offSet_upper);
+	
 					//draw rectangular and dashed line for compared spectrum
 					/*hcomp->SetLineColor(kBlack);
 					hcomp->SetLineWidth(2);
@@ -1197,7 +1200,7 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 
 					Cstack->cd();
 					gStyle->SetOptStat(0);
-					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.30);
+					TPad *pad0bot = new TPad(("padbot_"+canvas_name).c_str(),("padbot_"+canvas_name).c_str(), 0, 0.05, 1, 0.35);
 					pad0bot->SetTopMargin(0);
 					pad0bot->SetBottomMargin(0.351);
 					pad0bot->SetGridx(); // vertical grid
@@ -1220,8 +1223,11 @@ int SBNspec::CompareSBNspecs(SBNspec * compsec, std::string tag){
 					ratpre->GetYaxis()->SetTitle("Ratio");
 					ratpre->GetXaxis()->SetTitleOffset(title_offSet_ratioX);
 					ratpre->GetYaxis()->SetTitleOffset(title_offSet_ratioY);
-					ratpre->SetMinimum(ratpre->GetMinimum()*0.97);
-					ratpre->SetMaximum(ratpre->GetMaximum()*1.03);
+					ratpre->SetMinimum(std::min(0.5, ratpre->GetMinimum())*0.8);
+					//ratpre->SetMinimum(ratpre->GetMinimum()*0.97);
+					ratpre->SetMaximum(std::max(1.5, ratpre->GetMaximum())*1.2);
+					//ratpre->SetMaximum(ratpre->GetMaximum()*1.03);
+					ratpre->GetYaxis()->SetNdivisions(505, kTRUE);   //change the label division in y axis
 					ratpre->GetYaxis()->SetTitleSize(title_size_ratio);
 					ratpre->GetXaxis()->SetTitleSize(title_size_ratio);
 					ratpre->GetYaxis()->SetLabelSize(label_size_ratio);
