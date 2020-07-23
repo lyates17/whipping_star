@@ -103,7 +103,7 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000" pot="1.536e+20">
+<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="0.744" maxevents="100000" pot="1.536e+20">
   <branch
       name="VAR_NAME"
       type="double"

@@ -1,7 +1,7 @@
 from ROOT import TFile,TMatrixD
 
 # Get reweightable covariance matrix
-tag = "sens"
+tag = "sys"
 rewgt_input_file = "%s.SBNcovar.root" % tag
 rewgt_input_f = TFile(rewgt_input_file, "READ")
 rewght_covar = rewgt_input_f.Get("frac_covariance")
@@ -15,7 +15,7 @@ mixed_entry = -5.593215393234595e-05
 
 # Add them together
 N_1e1p_bins = 10
-N_1e1p_subchannels = 3
+N_1e1p_subchannels = 2
 N_1m1p_bins = 19
 N_1m1p_subchannels = 2
 output_file = "%s_total.SBNcovar.root" % tag
@@ -25,18 +25,10 @@ for i in range(covar.GetNrows()):
     for j in range(covar.GetNcols()):
         #covar[i][j] += detsys_covar[i][j]
         if ( (i<N_1e1p_bins) and (j<N_1e1p_bins) ): covar[i][j] += sel1e1p_entry
-        if ( (i>=(N_1e1p_subchannels-1)*N_1e1p_bins) and (i<N_1e1p_subchannels*N_1e1p_bins)
-             and (j>=(N_1e1p_subchannels-1)*N_1e1p_bins) and (j<N_1e1p_subchannels*N_1e1p_bins) ): covar[i][j] += sel1e1p_entry
-        if ( (i<N_1e1p_bins) and (j>=(N_1e1p_subchannels-1)*N_1e1p_bins) and (j<N_1e1p_subchannels*N_1e1p_bins) ): covar[i][j] += sel1e1p_entry
-        if ( (j<N_1e1p_bins) and (i>=(N_1e1p_subchannels-1)*N_1e1p_bins) and (i<N_1e1p_subchannels*N_1e1p_bins) ): covar[i][j] += sel1e1p_entry
         if ( (i>=N_1e1p_subchannels*N_1e1p_bins) and (i<N_1e1p_subchannels*N_1e1p_bins+N_1m1p_bins) 
              and (j>=N_1e1p_subchannels*N_1e1p_bins) and (j<N_1e1p_subchannels*N_1e1p_bins+N_1m1p_bins) ): covar[i][j] += sel1m1p_entry
         if ( (i<N_1e1p_bins) and (j>=N_1e1p_subchannels*N_1e1p_bins) and (j<N_1e1p_subchannels*N_1e1p_bins+N_1m1p_bins) ):  covar[i][j] += mixed_entry
-        if ( (i>=(N_1e1p_subchannels-1)*N_1e1p_bins) and (i<N_1e1p_subchannels*N_1e1p_bins)
-             and (j>=N_1e1p_subchannels*N_1e1p_bins) and (j<N_1e1p_subchannels*N_1e1p_bins+N_1m1p_bins) ): covar[i][j] += mixed_entry
         if ( (j<N_1e1p_bins) and (i>=N_1e1p_subchannels*N_1e1p_bins) and (i<N_1e1p_subchannels*N_1e1p_bins+N_1m1p_bins) ):  covar[i][j] += mixed_entry
-        if ( (j>=(N_1e1p_subchannels-1)*N_1e1p_bins) and (j<N_1e1p_subchannels*N_1e1p_bins)
-             and (i>=N_1e1p_subchannels*N_1e1p_bins) and (i<N_1e1p_subchannels*N_1e1p_bins+N_1m1p_bins) ): covar[i][j] += mixed_entry
 
 for i in range(covar.GetNrows()):
     for j in range(covar.GetNrows()):

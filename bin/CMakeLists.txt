@@ -3,6 +3,10 @@ include_directories(${CMAKE_SOURCE_DIR}/inc)
 add_executable (sbnfit_make_covariance sbnfit_make_covariance.cxx)
 target_link_libraries (sbnfit_make_covariance SBNfitlib tinyxmllib EventWeight)
 
+add_executable (sbnfit_complete_covariance sbnfit_complete_covariance.cxx)
+target_link_libraries (sbnfit_complete_covariance SBNfitlib tinyxmllib EventWeight)
+
+
 add_executable (sbnfit_plot_covariance sbnfit_plot_covariance.cxx)
 target_link_libraries (sbnfit_plot_covariance SBNfitlib tinyxmllib EventWeight)
 

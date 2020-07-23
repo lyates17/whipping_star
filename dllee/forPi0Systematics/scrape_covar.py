@@ -5,9 +5,10 @@ from ROOT import TFile
 outdir = "output"
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 
-var_list = [ "pi0_mass_reco", "Delta_mass_reco" ]
+sel_list = [ "run1_curr", "run1_full", "run3_curr", "run3_full", "comb_curr", "comb_full" ]
+var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]
 
-for sel in ["postsel"]:
+for sel in sel_list:
     for var in var_list:
         
         tag = "%s__%s" % (sel, var)
