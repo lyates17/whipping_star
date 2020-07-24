@@ -663,7 +663,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 				Cstack->cd();
 				THStack * hs = new THStack(canvas_name.c_str(),  canvas_name.c_str());
 				//TLegend legStack(0.50, 0.5, 0.89, 0.89);
-				TLegend legStack(0.11, 0.69, 0.89, 0.89);
+				TLegend legStack(0.11, 0.58, 0.89, 0.89);
 				legStack.SetNColumns(2);
 				legStack.SetLineWidth(0);
 				legStack.SetLineColor(kWhite);
@@ -782,7 +782,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					double error = sqrt(pow(hsum->GetBinError(i+1), 2.0) + collapse_covar(error_bin+i, error_bin+i)/pow(xbin_width, 2.0));
 					//double error = hsum->GetBinError(i+1) + sqrt(collapse_covar(error_bin+i, error_bin+i));
 					//std::cout << collapse_covar(error_bin+i, error_bin+i) << std::endl;
-					std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
+					//std::cout << "previous error: "<< hsum->GetBinError(i+1) << ", later one: " << error << std::endl;
 					hsum->SetBinError(i+1, error);
 				}
 				error_bin +=hsum->GetNbinsX();
@@ -848,7 +848,7 @@ int SBNspec::CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec,
 					hcomp->Draw("EP same");
 
 					//hcomp->Draw("hist same");
-					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.6);
+					hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*2.5);
 					//hs->SetMaximum(std::max(hs->GetMaximum(), hcomp->GetMaximum())*1.1);
 					hs->SetMinimum(0.001);
 

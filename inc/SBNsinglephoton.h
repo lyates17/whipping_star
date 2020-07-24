@@ -104,12 +104,12 @@ namespace sbn{
 	SBNsinglephoton(std::string xmlname, std::string intag, NGrid ingrid, NGrid in_polygrid, bool has_polygrid);
 
 	// MEMBER FUNCTION//
-	
+        int PreScaleSpectrum(std::string xmlname, double, std::vector<double>& param);	
         int PreScaleSpectrum(std::string xmlname, std::vector<double>& param);  //generate scaled spectrum per set of parameter
 	int GeneratePreScaledSpectra();    //generate pre-scaled spectra for full polynomial grid
 	int LoadSpectraApplyFullScaling();  //load spectra and apply full scaling
 	//calc scale factors based on event energy and polynomial parameters
-        double ScaleFactor(double E, std::vector<double>& param);
+        double ScaleFactor(double E, double, std::vector<double>& param);
 	//int WriteOutCV(std::string tag); 
 
 
@@ -135,6 +135,8 @@ namespace sbn{
 	
 	int ModifyCV(double factor);
 	int ModifyCV(double, std::vector<double> param);
+
+	SBNspec GeneratePointSpectra(int );
 
 	protected:
 

@@ -19,7 +19,7 @@ SBNsinglephoton::SBNsinglephoton(std::string xmlname, std::string intag, NGrid i
     }
 
     m_total_gridpoints = m_num_total_gridpoints*m_poly_total_gridpoints;
-    m_max_number_iterations = 5;
+    m_max_number_iterations = 20;
     m_chi_min_convergance_tolerance = 0.001;
     m_bool_modify_cv = false;
     m_bool_cv_spectrum_generated = false;
@@ -144,92 +144,10 @@ int SBNsinglephoton::CloseFiles(){
     return 0;
 }
 
-int SBNsinglephoton::PreScaleSpectrum(std::string xmlname, std::vector<double>& param){
+int SBNsinglephoton::PreScaleSpectrum(std::string xmlname, double flat_factor, std::vector<double>& param){
     SBNspec tm(xmlname,-1,false);
     SBNspec temp_cv_spectrum = tm;
     SBNspec spec_prescale  = tm;   //prescaled spectrum
-
- /*   int num_files = montecarlo_file.size();
-    montecarlo_additional_weight.resize(num_files,1.0);
-    montecarlo_additional_weight_formulas.resize(num_files);
-
-
-    for(auto &fn: montecarlo_file){
-        files.push_back(new TFile(fn.c_str()));
-        if(files.back()->IsZombie() || !files.back()->IsOpen()){
-            std::cout<<"SBNsinglephoton || ERROR! Failed to open the file "<<fn<<std::endl;
-            exit(EXIT_FAILURE);
-        }
-    }
-
-
-    for(int i=0; i<montecarlo_name.size(); i++){
-        std::cout<<"Getting TTree "<<montecarlo_name[i]<<" from file "<<montecarlo_file[i]<<std::endl;
-        trees.push_back((TTree*)files.at(i)->Get(montecarlo_name.at(i).c_str()) );
-        std::cout<<"--TTree has "<<trees.back()->GetEntries()<<" entries. "<<std::endl;
-    }
-
-    for(int i=0; i<montecarlo_file.size(); i++){
-        const auto& fn = montecarlo_file.at(i);
-        auto montecarlo_file_friend_treename_iter = montecarlo_file_friend_treename_map.find(fn);
-        if (montecarlo_file_friend_treename_iter != montecarlo_file_friend_treename_map.end()) {
-            std::cout<<" Detected friend trees "<<std::endl;
-
-            auto montecarlo_file_friend_iter = montecarlo_file_friend_map.find(fn);
-            if (montecarlo_file_friend_iter == montecarlo_file_friend_map.end()) {
-                std::stringstream ss;
-                ss << "Looked for filename=" << fn << " in fnmontecarlo_file_friend_iter, but could not be found... bad config?" << std::endl;
-                throw std::runtime_error(ss.str());
-            }
-
-            for(int k=0; k < (*montecarlo_file_friend_iter).second.size(); k++){
-                std::string treefriendname = (*montecarlo_file_friend_treename_iter).second.at(k);
-                std::string treefriendfile = (*montecarlo_file_friend_iter).second.at(k);
-
-                std::cout <<" Adding a friend tree:  " <<treefriendname<<" from file: "<< treefriendfile <<std::endl;
-
-                trees[i]->AddFriend(treefriendname.c_str(),treefriendfile.c_str());
-            }
-        }
-
-    }
-
-    for(auto &t: trees){
-        nentries.push_back(t->GetEntries());
-    }
-
-
-    for(int i=0; i< num_files; i++){
-
-        double pot_scale = 1.0;
-        if(montecarlo_pot[i]!=-1){
-            pot_scale = this->plot_pot/montecarlo_pot[i];
-        }
-
-        montecarlo_scale[i] = montecarlo_scale[i]*pot_scale;
-
-        std::cout << " TFile::Open() file=" << files[i]->GetName() << " @" << files[i] << std::endl;
-        std::cout << " Has POT " <<montecarlo_pot[i] <<" and "<<nentries[i] <<" entries "<<std::endl;
-
-        for(int k=0; k<branch_variables.at(i).size(); k++){
-            const auto branch_variable = branch_variables.at(i).at(k);
-            std::cout<<"Setting Branch: "<<branch_variable->name<<std::endl;
-             branch_variable->branch_formula =  new TTreeFormula(("branch_form"+std::to_string(i)).c_str(), branch_variable->name.c_str(), trees[i]);
-
-            if(branch_variable->GetOscillate()){
-                std::cout<<"Setting true branch variables"<<std::endl;
-                trees.at(i)->SetBranchAddress( branch_variable->true_param_name.c_str(), branch_variable->GetTrueValue() );
-            }
-        }
-
-        if(montecarlo_additional_weight_bool[i]){
-            std::cout<<"Setting Additional weight of : "<< montecarlo_additional_weight_names[i].c_str()<<std::endl;
-            montecarlo_additional_weight_formulas[i] =  new TTreeFormula(("a_w"+std::to_string(i)).c_str(),montecarlo_additional_weight_names[i].c_str(),trees[i]);
-        }
-
-
-    }
-    */
 
     std::cout<<"SBNsinglephoton::PreScaleSpectrum\t|| -----------------------------------------------\n";
     std::cout<<"SBNsinglephoton::PreScaleSpectrum\t|| -----------------------------------------------\n";
@@ -271,7 +189,7 @@ int SBNsinglephoton::PreScaleSpectrum(std::string xmlname, std::vector<double>& 
 			//truth info
   			double true_var = *(static_cast<double*>(branch_variables[j][t]->GetTrueValue()));
 
-                        double prescale_factor = this->ScaleFactor(true_var, param);
+                        double prescale_factor = this->ScaleFactor(true_var, flat_factor, param);
 
                         spec_prescale.hist[ih].Fill(reco_var, global_weight*prescale_factor);
          		if(!m_bool_cv_spectrum_generated)  temp_cv_spectrum.hist[ih].Fill(reco_var,global_weight);
@@ -285,11 +203,13 @@ int SBNsinglephoton::PreScaleSpectrum(std::string xmlname, std::vector<double>& 
  
     if(is_verbose) std::cout<< "SBNsinglephoton::PreScaleSpectrum\t||Write out spectra" << std::endl;
     std::ostringstream prescale_tag;
+    if(flat_factor != 0) prescale_tag << "Flat_" << std::fixed<< std::setprecision(3) << flat_factor << "_PreScaled";
+    else prescale_tag << "PreScaled";
     //generate tag for prescaled spectra
     for(int i=0; i< param.size(); i++){
 	prescale_tag << "_" << std::fixed<< std::setprecision(3) << param[i]; 
     }   
-    if(param.size() != 0) spec_prescale.WriteOut(tag+"_PreScaled"+prescale_tag.str());
+    if(param.size() != 0) spec_prescale.WriteOut(tag+"_"+prescale_tag.str());
     //if(param.size() != 0) spec_prescale.WriteOut(tag+"_PreScaled"+prescale_tag.str());
 
     if(!m_bool_cv_spectrum_generated){
@@ -297,6 +217,11 @@ int SBNsinglephoton::PreScaleSpectrum(std::string xmlname, std::vector<double>& 
 	   temp_cv_spectrum.WriteOut(tag+"_CV");
     }
     return 0;
+}
+
+
+int SBNsinglephoton::PreScaleSpectrum(std::string xmlname, std::vector<double>& param){
+	return this->PreScaleSpectrum(xmlname, 0.0, param);
 }
 
 
@@ -331,9 +256,10 @@ int SBNsinglephoton::LoadSpectraApplyFullScaling(){
    //	}
 
 	SBNspec temp_cv((tag+"_CV.SBNspec.root").c_str(), this->xmlname, false);
+	temp_cv.Scale("BNBext", 0.0);
+	temp_cv.Scale("Dirt", 0.0);
 
 	//m_scaled_spec_grid.clear();
-	//m_scaled_spec_grid.resize(m_total_gridpoints, temp_cv); 
 	m_scaled_spec_grid.resize(m_total_gridpoints); 
 
 
@@ -370,9 +296,7 @@ int SBNsinglephoton::LoadSpectraApplyFullScaling(){
 
 			// do not want to keep LEE in it
 			//m_scaled_spec_grid.back()->Scale("NCDeltaRadOverlayLEE", 0.0);
-			m_scaled_spec_grid[ip_processd].Scale("NCDeltaRadOverlayLEE", 0.0);
-			m_scaled_spec_grid[ip_processd].Scale("BNBext", 0.0);
-			m_scaled_spec_grid[ip_processd].Scale("Dirt", 0.0);
+			//m_scaled_spec_grid[ip_processd].Scale("NCDeltaRadOverlayLEE", 0.0);
 			ip_processd++;
 
 		}//end loop over regular grid
@@ -395,10 +319,8 @@ int SBNsinglephoton::LoadSpectraApplyFullScaling(){
 
 	     		// do not want to keep LEE in it
 			//m_scaled_spec_grid.back()->Scale("NCDeltaRadOverlayLEE", 0.0);
-			m_scaled_spec_grid[ip_processd].Scale("NCDeltaRadOverlayLEE", 0.0);
+			//m_scaled_spec_grid[ip_processd].Scale("NCDeltaRadOverlayLEE", 0.0);
 	
-			m_scaled_spec_grid[ip_processd].Scale("BNBext", 0.0);
-                        m_scaled_spec_grid[ip_processd].Scale("Dirt", 0.0);
 			ip_processd++;
 	    }
 	}
@@ -418,7 +340,7 @@ int SBNsinglephoton::CalcChiGridScanShapeOnlyFit(){
 	std::cout << "SBNsinglephoton::CalcChiGridScanShapeOnlyFit\t|| WARNING!! Data spec hasn't been loaded, will do a sensitivity study instead!" << std::endl;
 	m_data_spectrum = new SBNspec();
 	*m_data_spectrum = *m_cv_spectrum;
-	m_data_spectrum->Scale("NCDeltaRadOverlayLEE", 0.0);
+	//m_data_spectrum->Scale("NCDeltaRadOverlayLEE", 0.0);
 	m_data_spectrum->CollapseVector();
     }    
 
@@ -445,7 +367,7 @@ int SBNsinglephoton::CalcChiGridScanShapeOnlyFit(){
     TMatrixT<double> inversed_total_covariance_matrix(num_bins_total_compressed, num_bins_total_compressed);
 
     for(int n_iter =0; n_iter < m_max_number_iterations; n_iter ++){
-        std::cout << "SBNsinglephoton::CalcChiGridScanShapeOnlyFit\t|| On fit iteration "<< n_iter << std::endl;
+	std::cout << "SBNsinglephoton::CalcChiGridScanShapeOnlyFit\t|| On fit iteration "<< n_iter << std::endl;
 	//reset everything at the biginning of each iteration
 	best_chi = DBL_MAX;
 	vec_chi.clear();
@@ -453,11 +375,11 @@ int SBNsinglephoton::CalcChiGridScanShapeOnlyFit(){
 
 	if(n_iter == 0){
 		last_best_spectrum = *m_cv_spectrum;
+		//last_best_spectrum.Scale("NCDeltaRadOverlayLEE", 0.0);
 	}else{
 		last_best_spectrum = m_scaled_spec_grid[last_best_point];		
 	}
 
-	last_best_spectrum.Scale("NCDeltaRadOverlayLEE", 0.0);
 	background_spectrum = last_best_spectrum;
 
 	//============================Calculate covariance matrix and its invert====================================/
@@ -510,6 +432,8 @@ int SBNsinglephoton::CalcChiGridScanShapeOnlyFit(){
 	   }
 	}
 
+	if(is_verbose) std::cout << "SBNsinglephoton::CalcChiGridScanShapeOnlyFit\t|| chi2 minimum :" << best_chi << "at point " << best_point << "/" << m_total_gridpoints << std::endl;
+
 	if(n_iter != 0){
 	   if(fabs(best_chi - last_best_chi) < m_chi_min_convergance_tolerance){
 		std::cout << "SBNsinglephoton::CalcChiGridScanShapeOnlyFit\t|| chi2 has converged with best chi2 value " << best_chi << " at point " << best_point << "/" << m_total_gridpoints << std::endl;
@@ -543,8 +467,8 @@ int SBNsinglephoton::CalcChiGridScan(){
 	std::cout << "SBNsinglephoton::CalcChiGridScan\t|| WARNING!! Data spec hasn't been loaded, will do a sensitivity study instead!" << std::endl;
 	m_data_spectrum = new SBNspec();
 	*m_data_spectrum = *m_cv_spectrum;
-	m_data_spectrum->Scale("NCDeltaRadOverlayLEE", 0.0);
-	if(m_bool_modify_cv) m_data_spectrum->Scale("NCDeltaRadOverlaySM", m_cv_delta_scaling);
+	//m_data_spectrum->Scale("NCDeltaRadOverlayLEE", 0.0);
+	if(m_bool_modify_cv) m_data_spectrum->Scale("NCDeltaRadOverlayLEE", (m_cv_delta_scaling-1)*0.5);
 	m_data_spectrum->CollapseVector();
     }else{
 	m_cv_spectrum->CompareSBNspecs(m_data_spectrum, tag+"_CVvsData_NoErrorBar");
@@ -569,21 +493,21 @@ int SBNsinglephoton::CalcChiGridScan(){
     TMatrixT<double> inversed_total_covariance_matrix(num_bins_total_compressed, num_bins_total_compressed);
 
     for(int n_iter =0; n_iter < m_max_number_iterations; n_iter ++){
+	std::cout << "SBNsinglephoton::CalcChiGridScan\t|| On fit iteration "<< n_iter << std::endl;
 	//reset everything at the biginning of each iteration
 	best_chi = DBL_MAX;
 	vec_chi.clear();
 
-	std::cout << "SBNsinglephoton::CalcChiGridScan\t|| On fit iteration "<< n_iter << std::endl;
 
 	if(n_iter == 0){
 		last_best_spectrum = *m_cv_spectrum;
+		//last_best_spectrum.Scale("NCDeltaRadOverlayLEE", 0.0);
 		last_best_spectrum.Scale("BNBext", 0.0);
                 last_best_spectrum.Scale("Dirt", 0.0);
 	}else{
 		last_best_spectrum = m_scaled_spec_grid[last_best_point];		
 	}
 
-	last_best_spectrum.Scale("NCDeltaRadOverlayLEE", 0.0);
 
 	//============================Calculate covariance matrix and its invert====================================/
 	//full systematic covariance matrix, except genie uncertainty
@@ -613,6 +537,8 @@ int SBNsinglephoton::CalcChiGridScan(){
 	   }
 	}
 
+	if(is_verbose) std::cout << "SBNsinglephoton::CalcChiGridScan\t|| chi2 minimum :" << best_chi << "at point " << best_point << "/" << m_total_gridpoints << std::endl;
+
 	if(n_iter != 0){
 	   if(fabs(best_chi - last_best_chi) < m_chi_min_convergance_tolerance){
 		std::cout << "SBNsinglephoton::CalcChiGridScan\t|| chi2 has converged with best chi2 value " << best_chi << " at point " << best_point << "/" << m_total_gridpoints << std::endl;
@@ -630,7 +556,8 @@ int SBNsinglephoton::CalcChiGridScan(){
     //best-fit vs data comparison	
     if(is_verbose && m_bool_data_spectrum_loaded){
         collapsed_full_systematic_matrix = m_chi->FillSystMatrix(*m_full_fractional_covariance_matrix, m_scaled_spec_grid[best_point].full_vector, true);
-        m_scaled_spec_grid[best_point].CompareSBNspecs(collapsed_full_systematic_matrix, m_data_spectrum, tag+"_BFvsData");
+	SBNspec temp_best_spec = this->GeneratePointSpectra(best_point);
+        temp_best_spec.CompareSBNspecs(collapsed_full_systematic_matrix, m_data_spectrum, tag+"_BFvsData");
     }
 
     m_map={{best_point, vec_chi}};
@@ -723,22 +650,21 @@ int SBNsinglephoton::CalcFullButGenieFractionalCovarMatrix(){
 }
 
 
-double SBNsinglephoton::ScaleFactor(double E, std::vector<double>& vec){
-	double scale;
+double SBNsinglephoton::ScaleFactor(double E, double factor, std::vector<double>& vec){
+	double scale = factor;
 	switch(vec.size()){
 	   case 0:
 		std::cout<< "SBNsinglephoton::ScaleFactor\t|| No energy/momentum dependent scaling applied" << std::endl;
-		scale = 0.0;
 		break;
 	   case 1:
 		std::cout << "SBNsinglephoton::ScaleFactor\t|| Applying Linear energy/momentum dependent scaling!"<< std::endl;
-		scale = vec[0]*E;
+		scale += vec[0]*E;
 		break;
 	   case 2:
 		std::cout << "SBNsinglephoton::ScaleFactor\t|| Applying 2nd order polynomial energy/momentum dependent scaling!" << std::endl;
-		scale = vec[0]*E+vec[1]*E*E;
+		scale += vec[0]*E+vec[1]*E*E;
 		break;
-	   default: scale = 0;
+	   default: scale += 0;
 	}
 
 	return scale;
@@ -1073,8 +999,59 @@ int SBNsinglephoton::ModifyCV(double infactor, std::vector<double> param){
 	   }
 	}
 
+	if(m_bool_data_spectrum_loaded) m_cv_spectrum->Scale("NCDeltaRadOverlayLEE", (infactor-1)*0.5);
         m_bool_modify_cv = true;
 	m_cv_delta_scaling = infactor;
 
 	return 0;
+}
+
+SBNspec SBNsinglephoton::GeneratePointSpectra(int np){
+	int m_poly_grid_index = np/m_num_total_gridpoints;
+        int m_grid_index = np%m_num_total_gridpoints;
+
+	SBNspec spec_rgrid_part((tag+"_CV.SBNspec.root").c_str(), xmlname, false);
+
+	spec_rgrid_part.Scale("BNBext", 0.0);
+	spec_rgrid_part.Scale("Dirt", 0.0);
+
+	std::vector<double> temp_p_grid = m_vec_grid[m_grid_index];
+	for(int i=0;i<m_grid.f_num_dimensions; i++){
+	    if(m_grid.f_dimensions[i].f_name == "NCDeltaRadOverlayLEE" && temp_p_grid[i]<0 ){
+		spec_rgrid_part.Scale("NCDeltaRadOverlayLEE", 0.0);
+		spec_rgrid_part.Scale("NCDeltaRadOverlaySM", 1+temp_p_grid[i]*2.0);
+	    }
+	    else
+		spec_rgrid_part.Scale(m_grid.f_dimensions[i].f_name, temp_p_grid[i]);
+	}
+
+	if(m_bool_poly_grid){
+	    double non_coh_factor;   
+	    for(int i=0;i<m_grid.f_num_dimensions; i++){
+		if(m_grid.f_dimensions[i].f_name == "NCPi0NotCoh"){
+		    non_coh_factor=temp_p_grid[i];
+		    spec_rgrid_part.Scale("NCPi0NotCoh", 0.0);
+		}
+	    }
+
+	    std::vector<double> temp_p_polygrid=m_vec_poly_grid[m_poly_grid_index];
+	    std::ostringstream prescale_tag;
+    //generate tag for prescaled spectra
+	    prescale_tag<< "Flat_"<< std::fixed<<std::setprecision(3) <<non_coh_factor << "_PreScaled";
+            for(int i=0; i< temp_p_polygrid.size(); i++){
+                prescale_tag << "_" << std::fixed<< std::setprecision(3) << temp_p_polygrid[i];
+            }
+
+	    this->OpenFiles();
+	    m_bool_cv_spectrum_generated=true;
+	    this->PreScaleSpectrum(xmlname, non_coh_factor, temp_p_polygrid);
+	    this->CloseFiles();
+
+	    SBNspec spec_polygrid_part((tag+"_"+prescale_tag.str()+".SBNspec.root").c_str(), xmlname, false); 
+	
+	    spec_rgrid_part.Add(&spec_polygrid_part);
+	}
+
+
+	return spec_rgrid_part;
 }
