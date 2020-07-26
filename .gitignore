@@ -4,3 +4,12 @@ build
 *.root
 *.so
 *.o
+
+# additional things...
+matrix_plots/
+variations/
+*.pdf
+ratio_list*.txt
+auto*/
+output*/
+log*.txt
