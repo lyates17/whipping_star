@@ -1197,6 +1197,7 @@ int SBNchi::PrintMatricies(std::string tag){
     fout->Close();
     return 0;
 }
+
 int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf, bool indiv, bool is_corr){
     fin->cd();
     if(indiv){
@@ -1207,6 +1208,7 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
         fin->cd(); 
         individualDir->cd();
     }
+    gStyle->SetOptStat(0);
     if(is_corr) gStyle->SetPalette(kLightTemperature);
 
 
@@ -1219,8 +1221,7 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
                     matrix(i,i)=1.0;
                     matrix(j,j)=1.0;
                 }
-               }
-
+	    }
         }
     }
 
@@ -1239,7 +1240,7 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
         h2_full.GetZaxis()->SetRangeUser(-1,1);
     }
     else{
-        h2_full.GetZaxis()->SetRangeUser(-0.25,0.25);
+      //h2_full.GetZaxis()->SetRangeUser(-0.25,0.25);
     }    
 
     c_full->SetFrameFillColor(kWhite);
@@ -1248,11 +1249,11 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
 
 
     c_full->SetRightMargin(0.150);
-    c_full->SetLeftMargin(0.10);//0.250
+    c_full->SetLeftMargin(0.250);
     c_full->SetTopMargin(0.10);
-    int use_full =0;
+    int use_full = 0;
 
-    double percent_left = 0.05;//0.15
+    double percent_left = 0.15;
     double nice_shift = num_bins_total*0.02;
 
     for(int im =0; im<num_modes; im++){
@@ -1276,7 +1277,7 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
                     //tcs->SetTextSize(0.03);
                    
                     //dont plot names ta the moment
-                    //tmd->Draw();
+                    tmd->Draw();
                     //tcs->Draw();
 
 
@@ -1298,14 +1299,14 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
                         TLine *lsch = new TLine(num_bins.at(ic)+use_full,0, num_bins.at(ic)+use_full, num_bins_total*1.045);
                         lscv->SetLineWidth(3);
                         lsch->SetLineWidth(3);
-                        lscv->SetLineColor(kRed);
-                        lsch->SetLineColor(kRed);
+                        lscv->SetLineColor(kBlack); //kRed
+                        lsch->SetLineColor(kBlack); //kRed
                         lscv->SetLineStyle(9);
                         lsch->SetLineStyle(9);
 
                         //Going to drop the little ones for now
-                        //lscv->Draw();
-                        //lsch->Draw();
+                        lscv->Draw();
+                        lsch->Draw();
 
                         use_full+=num_bins.at(ic);
 

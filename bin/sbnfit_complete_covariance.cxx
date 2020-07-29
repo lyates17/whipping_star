@@ -40,7 +40,7 @@ using namespace sbn;
 
 /*************************************************************
  *************************************************************
- *		BEGIN sbnfit_plot_covariance.cxx
+ *		BEGIN sbnfit_complete_covariance.cxx
  ************************************************************
  ************************************************************/
 int main(int argc, char* argv[])
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
             case '?':
             case 'h':
                 std::cout<<"---------------------------------------------------"<<std::endl;
-                std::cout<<"sbnfit_plot_covariance allows for the plotting of covariance matricies from input root files containing reconstructed variables and covariance matricies. "<<std::endl;
+                std::cout<<"sbnfit_complete_covariance completes the set of covariance matrices from an input SBNcovar.root file"<<std::endl;
                 std::cout<<"---------------------------------------------------"<<std::endl;
                 std::cout<<"--- Required arguments: ---"<<std::endl;
                 std::cout<<"\t-x\t--xml\t\tInput configuration .xml file for SBNconfig"<<std::endl;
@@ -135,7 +135,8 @@ int main(int argc, char* argv[])
      ************************************************************/
     time_t start_time = time(0);
 
-    std::cout<<"Begining Covariance Plotting for tag: "<<tag<<std::endl;
+    std::cout<<"Begining covariance calcluations for tag: "<<tag<<std::endl;
+    
     std::cout<<"Loading SBNspec file : "<<signal_file<<" with xml "<<xml<<std::endl;
     SBNspec sig(signal_file,xml);
     
@@ -202,6 +203,14 @@ int main(int argc, char* argv[])
     coll_correlation.Write("collapsed_correlation",TObject::kWriteDelete);
     fout->Close();
     
+    TFile *fplots=new TFile(("SBNfit_covariance_plots_"+tag+".root").c_str(),"RECREATE");
+    collapse_chi.plot_one(full_covariance,"SBNfit_covariance_matrix_"+tag,fplots,true,false,false);
+    collapse_chi.plot_one(frac_covariance,"SBNfit_fractional_covariance_matrix_"+tag,fplots,true,false,false);
+    collapse_chi.plot_one(full_correlation,"SBNfit_correlation_matrix_"+tag,fplots,true,false,true);
+    collapse_chi.plot_one(coll_covariance,"SBNfit_collapsed_covariance_matrix_"+tag,fplots,true,false,false);
+    collapse_chi.plot_one(coll_frac_covariance,"SBNfit_collapsed_fractional_covariance_matrix_"+tag,fplots,true,false,false);
+    collapse_chi.plot_one(coll_correlation,"SBNfit_collapsed_correlation_matrix_"+tag,fplots,true,false,true);
+
     std::cout << "Total wall time: " << difftime(time(0), start_time)/60.0 << " Minutes.\n";
     return 0;
 
