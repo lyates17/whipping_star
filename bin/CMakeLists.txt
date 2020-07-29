@@ -33,6 +33,9 @@ target_link_libraries (sbnfit_uboone_scaling_fc SBNfitlib tinyxmllib EventWeight
 add_executable (sbnfit_lee_frequentist_study sbnfit_lee_frequentist_study.cxx)
 target_link_libraries (sbnfit_lee_frequentist_study SBNfitlib tinyxmllib EventWeight)
 
+add_executable (sbnfit_lee_frequentist_withData sbnfit_lee_frequentist_withData.cxx)
+target_link_libraries (sbnfit_lee_frequentist_withData SBNfitlib tinyxmllib EventWeight)
+
 add_executable (sbnfit_scale_spec sbnfit_scale_spec.cxx)
 target_link_libraries (sbnfit_scale_spec SBNfitlib tinyxmllib EventWeight)
 

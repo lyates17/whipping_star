@@ -117,6 +117,7 @@ colH0 = kRed-7;
     };
     int SetSampleFromCollapsed(){draw_pseudo_from_collapsed = true;};
     int CalcCLS(int,std::string);
+    int CalcCLSWithData(int,std::string, SBNspec *data);
 	int SetSampleCovariance();
 	int SetSamplePoisson();
 
@@ -128,6 +129,7 @@ colH0 = kRed-7;
 
     int setMode(int);
     int makePlots(CLSresult &h0_result, CLSresult & h1_result, std::string tag,  int which_mode=0);
+    int makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float data_result, std::string tag,  int which_mode=0);
     int runConstraintTest();
 
 
