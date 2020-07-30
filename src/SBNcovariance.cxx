@@ -1509,6 +1509,7 @@ int SBNcovariance::PrintMatricies(std::string tag, bool print_indiv) {
     h2_coll_corr.SetTitle("Collapsed Correlation matrix");
     h2_coll_corr.GetXaxis()->SetTitle("Reco Bin i");
     h2_coll_corr.GetYaxis()->SetTitle("Reco Bin j");
+    h2_coll_corr.GetZaxis()->SetRangeUser(-1,1);
     c_coll_corr->SetRightMargin(0.150);
 
     int use_coll_corr =0;

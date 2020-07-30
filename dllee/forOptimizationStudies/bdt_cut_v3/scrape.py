@@ -22,7 +22,8 @@ with open("%s/opt.txt" % outdir, "w") as out:
                     #print alpha, sigma
                     
             #if sigma >= 3.3:
-            if i == j:
+            #if i == j:
+            if True:
                 out.write( "%s,%s,%s,%s\n" % (cut_values[i], cut_values[j], alpha, sigma) )
 
 print "Done!"

@@ -1299,8 +1299,8 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
                         TLine *lsch = new TLine(num_bins.at(ic)+use_full,0, num_bins.at(ic)+use_full, num_bins_total*1.045);
                         lscv->SetLineWidth(3);
                         lsch->SetLineWidth(3);
-                        lscv->SetLineColor(kBlack); //kRed
-                        lsch->SetLineColor(kBlack); //kRed
+                        lscv->SetLineColor(kRed);
+                        lsch->SetLineColor(kRed);
                         lscv->SetLineStyle(9);
                         lsch->SetLineStyle(9);
 
@@ -1316,8 +1316,8 @@ int SBNchi::plot_one(TMatrixD matrix, std::string tag, TFile *fin, bool plot_pdf
                 TLine *lh = new TLine(num_bins.at(ic)+use_full,0, num_bins.at(ic)+use_full, num_bins_total*1.045);
                 lv->SetLineWidth(2);
                 lh->SetLineWidth(2);
-                lv->SetLineColor(kBlack);
-                lh->SetLineColor(kBlack);
+                lv->SetLineColor(kRed);
+                lh->SetLineColor(kRed);
                 use_full+=num_bins.at(ic);
                 lv->Draw();
                 lh->Draw();
