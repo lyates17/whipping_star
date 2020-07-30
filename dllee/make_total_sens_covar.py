@@ -18,7 +18,7 @@ N_1e1p_bins = 10
 N_1e1p_subchannels = 3
 N_1m1p_bins = 19
 N_1m1p_subchannels = 2
-output_file = "%s_total.SBNcovar.root" % tag
+output_file = "total_%s.SBNcovar.root" % tag
 output_f = TFile(output_file, "RECREATE")
 covar = TMatrixD(rewght_covar)
 for i in range(covar.GetNrows()):
