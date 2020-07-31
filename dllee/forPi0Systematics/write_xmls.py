@@ -123,9 +123,9 @@ xml_str = """<?xml version="1.0" ?>
 # 6 variables...
 var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]
 units_list = [ "MeV", "MeV", "MeV", "MeV",  "MeV", "MeV" ]
-nbins_list = [ 20, 20, 20, 20, 20, 20 ]
-xlow_list  = [ 0., 900, 80., 35., 100., 35. ]
-xhigh_list = [ 400., 1800., 450., 350., 800., 800. ]
+nbins_list = [ 20, 10, 20, 20, 20, 20 ]
+xlow_list  = [ 0., 1000, 80., 35., 100., 35. ]
+xhigh_list = [ 400., 1400., 450., 350., 800., 800. ]
 
 # input files
 run1_file_name = "input_to_sbnfit_v40_pi0_run1_Jul21.root"

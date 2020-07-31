@@ -152,8 +152,8 @@ xml_str = """<?xml version="1.0" ?>
 
 
 # file name information
-run1_file_name = "input_to_sbnfit_v40_1mu1p_run1_Jul15.root"
-run3_file_name = "input_to_sbnfit_v40_1mu1p_run3_Jul15.root"
+run1_file_name = "input_to_sbnfit_v40_1mu1p_run1_Jul30.root"
+run3_file_name = "input_to_sbnfit_v40_1mu1p_run3_Jul30.root"
 
 # weighting information
 weight_str = "xsec_corr_weight"
