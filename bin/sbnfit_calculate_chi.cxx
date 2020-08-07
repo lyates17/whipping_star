@@ -46,13 +46,9 @@ int main(int argc, char* argv[])
     int iarg = 0;
     opterr=1;
     int index;
-    bool sample_with_gaussian = false;
     bool sample_from_covariance = true;
-    bool sample_from_collapsed = false;
     bool remove_correlations = false;
     bool stats_only = false;
-    int num_MC_events = 100000;
-    int which_mode = 1;
 
     std::string tag = "TEST";
 
@@ -75,15 +71,12 @@ int main(int argc, char* argv[])
     {
         {"xml", 		required_argument, 	0, 'x'},
         {"covariance", 	required_argument,0,'c'},
-        {"collapse", 	required_argument,	0,'j'},
         {"signal", 		required_argument,	0,'s'},
-        {"mode", 	    	required_argument,	0,'m'},
         {"background", 	required_argument,	0,'b'},
         {"tag", 	    required_argument,	0,'t'},
         {"epsilon", required_argument,0,'e'},
         {"legend",required_argument,0,'l'},
         {"zero",no_argument,0,'z'},
-        {"gaussian",no_argument,0,'g'},
         {"tester",no_argument,0,'k'},
         {"reverse",no_argument,0,'r'},
         {"poisson", no_argument,0,'p'},
@@ -104,12 +97,6 @@ int main(int argc, char* argv[])
                 break;
             case 'z':
                 remove_correlations = true; 
-                break;
-            case 'j':
-                sample_from_collapsed = true;
-                break;
-            case 'm':
-                which_mode = (int)strtod(optarg,NULL);
                 break;
             case 'l':
                 legends = optarg;
@@ -139,12 +126,6 @@ int main(int argc, char* argv[])
 	    case 'c':
                 covariance_file = optarg;
                 break;
-            case 'g':
-                sample_with_gaussian  = true;
-                break;
-            case 'n':
-                num_MC_events = (int)strtod(optarg,NULL);
-                break;
             case 'p':
                 sample_from_covariance = false;
                 break;
@@ -164,13 +145,9 @@ int main(int argc, char* argv[])
                 std::cout<<"\t-c\t--covariance\t\tInput Fractional Covariance Matrix SBNcovar.root file. If not passed, defaults to stats only!"<<std::endl;
                 std::cout<<"\t-d\t--data\t\t\tInput data SBNspec.root file"<<std::endl;
                 std::cout<<"--- Optional arguments: ---"<<std::endl;
-                std::cout<<"\t-j\t--collapse\t\tSample from collapsed rather than full covariance matrix (default false, experimental!)"<<std::endl;
                 std::cout<<"\t-f\t--flat\t\tAdd a flat percent systematic to fractional covariance matrix (all channels) (default false, pass in percent, i.e 5.0 for 5\% experimental)"<<std::endl;
                 std::cout<<"\t-z\t--zero\t\tZero out all off diagonal elements of the systematics covariance matrix (default false, experimental!)"<<std::endl;
                 std::cout<<"\t-e\t--epsilon\t\tEpsilon tolerance by which to add back to diagonal of covariance matrix if determinant is 0 (default 1e-12)"<<std::endl;
-                std::cout<<"\t-n\t--number\t\tNumber of MC events for frequentist studies (default 100k)"<<std::endl;
-                std::cout<<"\t-g\t--gaussian\t\tSample by adding sqrt(N) to covariance rather than 2-step Poisson sampling (default: false)"<<std::endl;
-                std::cout<<"\t-m\t--mode\t\tMode for test statistics 0: absolute chi^2, 1: delta chi^2 (default Delta Chi| obsolete, runs all concurrently)"<<std::endl;
                 std::cout<<"\t-p\t--poisson\t\tUse Poissonian draws for pseudo experiments instead of from covariance matrix"<<std::endl;
                 std::cout<<"\t-h\t--help\t\t\tThis help menu."<<std::endl;
                 std::cout<<"---------------------------------------------------"<<std::endl;
@@ -254,11 +231,11 @@ int main(int argc, char* argv[])
 	float *h1_spec = new float[sig.num_bins_total_compressed];
 	float *data_spec = new float [dat.num_bins_total_compressed];
 	bkg.CollapseVector();
-	//bkg.PrintCollapsedVector();
+	bkg.PrintCollapsedVector();
 	sig.CollapseVector();
-	//sig.PrintCollapsedVector();
+	sig.PrintCollapsedVector();
 	dat.CollapseVector();
-	//dat.PrintCollapsedVector();
+	dat.PrintCollapsedVector();
 	for(int i=0; i < dat.num_bins_total_compressed; i++) {
 	  h0_spec[i]   = bkg.f_collapsed_vector[i];
 	  h1_spec[i]   = sig.f_collapsed_vector[i];
@@ -266,19 +243,15 @@ int main(int argc, char* argv[])
 	}
 
         SBNcls cls_factory(&bkg, &sig,*cov);
+	if(sample_from_covariance) cls_factory.SetSampleCovariance();
         cls_factory.SetTolerance(epsilon);
-        if(sample_from_collapsed)  cls_factory.SetSampleFromCollapsed();
-        if(sample_from_covariance) cls_factory.SetSampleCovariance();
-        if(sample_with_gaussian) cls_factory.SetGaussianSampling();
         if(reverse_colors)cls_factory.ReverseColours();
         cls_factory.SetLegends(legends);
 
-        cls_factory.setMode(which_mode);
+        cls_factory.setMode(1);
         if(tester){cls_factory.runConstraintTest();return 0;}
-        cls_factory.CalcCLSWithData(num_MC_events, tag, &dat);
 
 	// calculate chi2 for data
-	/*
 	std::cout << "starting data calcluation..." << std::endl;
 	float chi_cnp_h0 = cls_factory.chi_h0.CalcChi_CNP(h0_spec,data_spec);
 	std::cout << "... got Chi2 for H0: " << chi_cnp_h0 << std::endl;
@@ -286,8 +259,9 @@ int main(int argc, char* argv[])
 	std::cout << "... got Chi2 for H1: " << chi_cnp_h1 << std::endl;
 	float delta_chi_cnp = chi_cnp_h0 - chi_cnp_h1;
 	std::cout << "... Delta Chi2 CNP is " << delta_chi_cnp << std::endl;
-	*/
     }else{
+      std::cout << "Sorry! Code not set up for stats-only mode..." << std::endl;
+      /*
         SBNcls cls_factory(&bkg, &sig);
         cls_factory.SetTolerance(epsilon);
         if(sample_from_collapsed)  cls_factory.SetSampleFromCollapsed();
@@ -299,6 +273,7 @@ int main(int argc, char* argv[])
 
         cls_factory.SetLegends(legends);
         cls_factory.CalcCLS(num_MC_events, tag);
+      */
     }
 
     return 0;

@@ -40,3 +40,5 @@ add_executable (sbnfit_scale_spec sbnfit_scale_spec.cxx)
 target_link_libraries (sbnfit_scale_spec SBNfitlib tinyxmllib EventWeight)
 
 
+add_executable (sbnfit_calculate_chi sbnfit_calculate_chi.cxx)
+target_link_libraries (sbnfit_calculate_chi SBNfitlib tinyxmllib EventWeight)

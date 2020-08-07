@@ -248,12 +248,33 @@ int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
     std::cout << "  Pearson_Chi for H0: H0 " << h0_results[3].m_nlower[0] << ", H1 " << h1_results[3].m_nlower[0] << std::endl;
     std::cout << "  Pearson_Chi for H1: H0 " << h0_results[4].m_nlower[0] << ", H1 " << h1_results[4].m_nlower[0] << std::endl;
 
+    // Also calculate p-values for median sensitivities, bolt on to the end
+    // Loop over different chi2 metrics...
+    for(int i=0; i<h0_results.size(); i++ ) {
+      // Reset m_nlower vectors
+      h0_results[i].m_nlower.resize(2,0.);
+      // Loop over pseudo experiment results...
+      for(int m=0; m<numMC; m++) {
+	// If the H0 chi2 value in this pseudo experiment is larger than the median H1 chi2, increment m_nlower
+	// ... assuming "median" corresponds to quantile with index 2
+	if(h0_results[i].m_values[m]>=h1_results[i].m_quantiles[2]) h0_results[i].m_nlower[1] += 1.0/(double(numMC));
+      }
+    }
+    // Print this out too
+    std::cout << "Median sensitivities: " << std::endl;
+    std::cout << "  Delta Pearson_Chi:  " << h0_results[0].m_nlower[1] << ", " << pval2sig(h0_results[0].m_nlower[1]) << " sigma" << std::endl;
+    std::cout << "  Delta Poisson_LL:   " << h0_results[1].m_nlower[1] << ", " << pval2sig(h0_results[1].m_nlower[1]) << " sigma" << std::endl;
+    std::cout << "  Delta Chi_CNP:      " << h0_results[2].m_nlower[1] << ", " << pval2sig(h0_results[2].m_nlower[1]) << " sigma" << std::endl;
+    std::cout << "  Pearson_Chi for H0: " << h0_results[3].m_nlower[1] << ", " << pval2sig(h0_results[3].m_nlower[1]) << " sigma" << std::endl;
+    std::cout << "  Pearson_Chi for H1: " << h0_results[4].m_nlower[1] << ", " << pval2sig(h0_results[4].m_nlower[1]) << " sigma" << std::endl;
+
     std::cout << "Total wall time: " << difftime(time(0), start_time)/1.0 << " Secs.\n";
     
     std::vector<std::string> nice_names = {"Pearson_Delta_Chi","Delta_Poisson_Log_Likelihood","CNP_Delta_Chi", "Pearson_Chi_H0", "Pearson_Chi_H1"};
+    std::vector<int> plot_modes = {1, 1, 1, 0, 0};
 
     for(int i=0; i<h0_results.size(); i++){
-      makePlotsWithData( h0_results[i], h1_results[i], data_results[i], tag+nice_names[i], which_mode);
+      makePlotsWithData( h0_results[i], h1_results[i], data_results[i], tag+"_"+nice_names[i], plot_modes[i]);
     }
 
     return 0 ;
@@ -525,9 +546,10 @@ int SBNcls::makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float
   TGraph *analytical_graph = new TGraph(analytical_chi.size(),&analytical_chi[0],&analytical_prob[0]);
   analytical_graph->SetLineColor(kRed);
   // If this is a non-Delta chi2, draw this analytical distribution
-  if(which_mode==0) analytical_graph->Draw("same");
+  // ... jk, this graph is already too busy
+  //if(which_mode==0) analytical_graph->Draw("same");
   
-  // Data result line and p-values
+  // Data result line
   TLine *data_l = new TLine(data_result, 0.0, data_result, maxval*1.05);
   data_l->SetLineColor(kCyan-4);
   data_l->SetLineWidth(2);
@@ -538,20 +560,52 @@ int SBNcls::makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float
   data_nam->DrawLatex(data_result, maxval*1.3, "Data");
   data_l->Draw("same");
   
+  // Data chi2
+  TLatex *dat_text = new TLatex();
+  dat_text->SetTextSize(0.045);
+  dat_text->SetTextAlign(32);
+  std::string dat_details = "Data ";
+  if (which_mode==0) dat_details += "#chi^{2}";
+  else if (which_mode==1) dat_details += "#Delta #chi^{2}";
+  dat_details += " = "+to_string_prec(data_result,2);
+  std::cout << dat_details << std::endl;
+  dat_text->DrawLatexNDC(0.85,0.6,dat_details.c_str());
+
+  // Median sensitivity
+  // ... jk, this is too confusing in the context of things that are more important to put on the plot
+  /*
+  if (draw_both) {
+    TLatex *med_text = new TLatex();
+    med_text->SetTextSize(0.03);
+    med_text->SetTextAlign(32);
+    std::string med_details = "Median sensitivity: ";
+    double sens_pval = h0_result.m_nlower[1];
+    double sens_sigma = pval2sig(sens_pval);
+    med_details += "p_value ";
+    if (sens_pval>0.001) med_details += to_string_prec(sens_pval,3);
+    else med_details += "10^{"+to_string_prec(log10(sens_pval),2)+"}";
+    med_details += ", ";
+    if (sens_sigma!=0) med_details += to_string_prec(sens_sigma,1)+"#sigma";
+    else med_details += "inf #sigma";
+    std::cout << med_details << std::endl;
+    med_text->DrawLatexNDC(0.875,0.575,med_details.c_str());
+  }
+  */
+
+  // H0, H1 p-values and sensitivities...
   double h0_pval = h0_result.m_nlower[0];
   double h1_pval = h1_result.m_nlower[0];
 
   std::vector<double> pvals = {h0_pval};
-  std::vector<std::string> pval_names = {legends[0].c_str()};
-  // ... actually not sure it makes sense to report this p-value regardless
-  //if(draw_both){
-  //  pvals.push_back(h1_pval);
-  //  pval_names.push_back(legends[1].c_str());
-  //}
+  std::vector<std::string> pval_names = {legends[0]};
+  if(draw_both){
+    pvals.push_back(h1_pval);
+    pval_names.push_back(legends[1]);
+  }
 
   for(int i=0; i<pvals.size(); i++){
     TLatex *pval_text = new TLatex();
-    pval_text->SetTextSize(0.03);
+    pval_text->SetTextSize(0.045);
     pval_text->SetTextAlign(32);
     
     std::string pval_str;
@@ -564,7 +618,7 @@ int SBNcls::makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float
     
     std::string details = pval_names[i]+": p-value "+pval_str+", "+sigma_str;
     std::cout << details << std::endl;
-    pval_text->DrawLatexNDC(0.75,0.6-i*0.1,details.c_str());
+    pval_text->DrawLatexNDC(0.85,0.6-(i+1)*0.075,details.c_str());
   }
 
 
@@ -574,7 +628,7 @@ int SBNcls::makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float
   leg->SetFillStyle(0);
   leg->AddEntry(&h0_pdf,legends[0].c_str(),"lf");
   if(draw_both)leg->AddEntry(&h1_pdf,legends[1].c_str(),"lf");
-  if(which_mode==0)leg->AddEntry(analytical_graph,("#chi^{2} PDF "+std::to_string(h0->num_bins_total_compressed)+" dof").c_str(),"l");
+  //if(which_mode==0)leg->AddEntry(analytical_graph,("#chi^{2} PDF "+std::to_string(h0->num_bins_total_compressed)+" dof").c_str(),"l");
   leg->Draw();
   
   // x and y axis labels

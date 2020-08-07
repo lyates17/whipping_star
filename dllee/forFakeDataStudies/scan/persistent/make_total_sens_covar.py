@@ -1,7 +1,7 @@
 from ROOT import TFile,TMatrixD
 
 # Get reweightable covariance matrix
-tag = "sens_pred"
+tag = "sens"
 rewgt_input_file = "%s.SBNcovar.root" % tag
 rewgt_input_f = TFile(rewgt_input_file, "READ")
 rewght_covar = rewgt_input_f.Get("frac_covariance")
