@@ -246,25 +246,25 @@ int main(int argc, char* argv[])
     }
 
 
+    // initialize variables relevant for chi2 calculations
+    float *h0_spec = new float[bkg.num_bins_total_compressed];
+    float *h1_spec = new float[sig.num_bins_total_compressed];
+    float *data_spec = new float [dat.num_bins_total_compressed];
+    bkg.CollapseVector();
+    //bkg.PrintCollapsedVector();
+    sig.CollapseVector();
+    //sig.PrintCollapsedVector();
+    dat.CollapseVector();
+    //dat.PrintCollapsedVector();
+    for(int i=0; i < dat.num_bins_total_compressed; i++) {
+      h0_spec[i]   = bkg.f_collapsed_vector[i];
+      h1_spec[i]   = sig.f_collapsed_vector[i];
+      data_spec[i] = dat.f_collapsed_vector[i];
+    }
+
     if(!stats_only){
         std::cout<<"Not running in stats only mode"<<std::endl;
 	
-	// initialize variables relevant for chi2 calculations
-        float *h0_spec = new float[bkg.num_bins_total_compressed];
-	float *h1_spec = new float[sig.num_bins_total_compressed];
-	float *data_spec = new float [dat.num_bins_total_compressed];
-	bkg.CollapseVector();
-	//bkg.PrintCollapsedVector();
-	sig.CollapseVector();
-	//sig.PrintCollapsedVector();
-	dat.CollapseVector();
-	//dat.PrintCollapsedVector();
-	for(int i=0; i < dat.num_bins_total_compressed; i++) {
-	  h0_spec[i]   = bkg.f_collapsed_vector[i];
-	  h1_spec[i]   = sig.f_collapsed_vector[i];
-	  data_spec[i] = dat.f_collapsed_vector[i];
-	}
-
         SBNcls cls_factory(&bkg, &sig,*cov);
         cls_factory.SetTolerance(epsilon);
         if(sample_from_collapsed)  cls_factory.SetSampleFromCollapsed();
@@ -288,17 +288,20 @@ int main(int argc, char* argv[])
 	std::cout << "... Delta Chi2 CNP is " << delta_chi_cnp << std::endl;
 	*/
     }else{
+      std::cout << "Running in stats only mode" << std::endl;
+      
         SBNcls cls_factory(&bkg, &sig);
         cls_factory.SetTolerance(epsilon);
         if(sample_from_collapsed)  cls_factory.SetSampleFromCollapsed();
         if(sample_with_gaussian) cls_factory.SetGaussianSampling();
         if(reverse_colors)cls_factory.ReverseColours();
+        cls_factory.SetLegends(legends);
         cls_factory.setMode(which_mode);
         
         if(tester){cls_factory.runConstraintTest();return 0;}
 
         cls_factory.SetLegends(legends);
-        cls_factory.CalcCLS(num_MC_events, tag);
+        cls_factory.CalcCLSWithData(num_MC_events, tag, &dat);
     }
 
     return 0;
