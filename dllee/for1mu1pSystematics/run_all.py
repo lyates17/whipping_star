@@ -11,7 +11,8 @@ var_list = [ "x_reco", "y_reco", "z_reco",
              "Bjx_reco", "Bjy_reco", "BjxB_reco", "BjyB_reco",
              "Q2_reco", "sph_reco", "Q0_reco", "Q3_reco", "sphB_reco",
              "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
-             "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco" ]
+             "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco",
+             "mpid_eminus_score", "mpid_muon_score", "mpid_proton_score", "mpid_gamma_score", "mpid_pion_score" ]
 
 os.chdir(autodir)
 

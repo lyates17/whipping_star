@@ -10,7 +10,7 @@ var_list = [ 'nu_energy_reco', 'eta_reco', 'pT_reco', 'alphaT_reco', 'sphB_reco'
 os.chdir(autodir)
 
 #for sel in ["highE", "final", "blind"]:
-for sel in ["blind"]:
+for sel in ["highE"]:
     for var in var_list:
         tag = "%s__%s" % (sel, var)
         cmd = "/uboone/app/users/yatesla/sbnfit/whipping_star/build/bin/sbnfit_make_covariance --xml %s.xml --tag %s" % (tag, tag)

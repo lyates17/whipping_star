@@ -145,8 +145,8 @@ final_dict['run1_scale'] = 0.242  # for Run 1, using standard numbers from Pawel
 final_dict['run3_scale'] = 0.758  # for Run 2+3, again using standard numbers from Pawel
 final_dict['weight'] = "xsec_corr_weight"
 highE_dict = {}
-highE_dict['run1_scale'] = 1.56 / (1.56 + 1.63 + 1.70)           # for Run 1, using numbers from Jarrett  (July 16th)
-highE_dict['run3_scale'] = (1.63 + 1.70) / (1.56 + 1.63 + 1.70)  # for Run 2+3, using numbers from Jarrett (July 16th)
+highE_dict['run1_scale'] = 1.746 / (1.746 + 5.072)  # for Run 1, using numbers from Nick (August 12th)
+highE_dict['run3_scale'] = 5.072 / (1.746 + 5.072)  # for Run 2+3, using numbers from Nick (August 12th)
 highE_dict['weight'] = "xsec_corr_weight * (nu_energy_reco>700)"
 blind_dict = {}
 blind_dict['run1_scale'] = 25 / float(15+39+35)       # for Run 1, using numbers from Jarrett (July 19th)
@@ -156,8 +156,7 @@ sel_dict = { "final": final_dict, "highE": highE_dict, "blind": blind_dict }
 
 
 # Loop over everything, write the xmls...
-#for sel in sel_dict:
-for sel in ["blind"]:
+for sel in sel_dict:
 
     # Set the POT scale factors
     run1_scale = sel_dict[sel]['run1_scale']
@@ -173,6 +172,11 @@ for sel in ["blind"]:
         xlow  = float(bin_list[i][0])
         xhigh = float(bin_list[i][1])
         nbins = N_bins[i]
+        # If this is is the highE nu energy reco plot, then use 13 bins from 700 to 2000 MeV
+        if ( sel=='highE' and var_list[i]=='nu_energy_reco' ):
+            xlow  = 700.
+            xhigh = 2000.
+            nbins = 13
         edges = [ xlow + ((xhigh - xlow)/nbins)*j for j in range(nbins+1) ]
         edges_str = ''
         for bin_edge in edges:

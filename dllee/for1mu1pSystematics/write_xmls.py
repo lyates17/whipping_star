@@ -152,8 +152,8 @@ xml_str = """<?xml version="1.0" ?>
 
 
 # file name information
-run1_file_name = "input_to_sbnfit_v40_1mu1p_run1_Jul30.root"
-run3_file_name = "input_to_sbnfit_v40_1mu1p_run3_Jul30.root"
+run1_file_name = "input_to_sbnfit_v40_1mu1p_run1_Aug10.root"
+run3_file_name = "input_to_sbnfit_v40_1mu1p_run3_Aug10.root"
 
 # weighting information
 weight_str = "xsec_corr_weight"
@@ -189,7 +189,12 @@ var_dict = { "x_reco": (14,15.,241.25,"cm"),
              "proton_theta_reco": (14,0.,2.,"rad"),
              "proton_length_reco": (14,5.,100.,"cm"),
              "proton_KE_reco": (14,50.,500.,"MeV"),
-             "proton_cos_theta_reco": (14,0.,1.,"")
+             "proton_cos_theta_reco": (14,0.,1.,""),
+             "mpid_eminus_score": (14,0.,1.,""),
+             "mpid_muon_score": (14,0.,1.,""),
+             "mpid_proton_score": (14,0.,1.,""),
+             "mpid_gamma_score": (14,0.,1.,""),
+             "mpid_pion_score": (14,0.,1.,"")
 }
 
 # dummy sel_dict
