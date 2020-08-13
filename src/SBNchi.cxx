@@ -2114,7 +2114,7 @@ TH1D SBNchi::SamplePoisson_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi & chi_h1, 
 
 std::vector<CLSresult> SBNchi::Mike_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi & chi_h1, int num_MC, int which_sample, int id){
 
-    std::vector<CLSresult> v_results(5);
+    std::vector<CLSresult> v_results(7);
 
     float** h0_vec_matrix_inverted = new float*[num_bins_total_compressed];
     float** h1_vec_matrix_inverted = new float*[num_bins_total_compressed];
@@ -2150,12 +2150,16 @@ std::vector<CLSresult> SBNchi::Mike_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi &
     std::vector<float> vec_cnp (num_MC, 0.0);
     std::vector<float> vec_h0 (num_MC, 0.0);
     std::vector<float> vec_h1 (num_MC, 0.0);
+    std::vector<float> vec_cnp_h0 (num_MC, 0.0);
+    std::vector<float> vec_cnp_h1 (num_MC, 0.0);
 
     float* a_vec_chis  = (float*)vec_chis.data();
     float* a_vec_pois  = (float*)vec_pois.data();
     float* a_vec_cnp  = (float*)vec_cnp.data();
     float* a_vec_h0  = (float*)vec_h0.data();
     float* a_vec_h1  = (float*)vec_h1.data();
+    float* a_vec_cnp_h0 = (float*)vec_cnp_h0.data();
+    float* a_vec_cnp_h1 = (float*)vec_cnp_h1.data();
 
 
     float* sampled_fullvector = new float[num_bins_total] ;
@@ -2199,6 +2203,8 @@ std::vector<CLSresult> SBNchi::Mike_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi &
         a_vec_cnp[i]  = val_cnp_h0 - val_cnp_h1;
         a_vec_h0[i] = val_chi_h0;
         a_vec_h1[i] = val_chi_h1;
+	a_vec_cnp_h0[i] = val_cnp_h0;
+	a_vec_cnp_h1[i] = val_cnp_h1;
 
         if(i%1000==0) std::cout<<"Pseudo-Experiment: "<<i<<"/"<<num_MC<<" DeltaChi: "<<a_vec_chis[i]<<" PoisLogLiki: "<<a_vec_pois[i]<<" CNP_chi: "<<a_vec_cnp[i]<<std::endl;
 
@@ -2207,12 +2213,16 @@ std::vector<CLSresult> SBNchi::Mike_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi &
         if(a_vec_cnp[i]  < v_results[2].m_min_value) v_results[2].m_min_value = a_vec_cnp[i];
         if(val_chi_h0  < v_results[3].m_min_value) v_results[3].m_min_value = val_chi_h0;
         if(val_chi_h1  < v_results[4].m_min_value) v_results[4].m_min_value = val_chi_h1;
+        if(val_cnp_h0  < v_results[5].m_min_value) v_results[5].m_min_value = val_cnp_h0;
+        if(val_cnp_h1  < v_results[6].m_min_value) v_results[6].m_min_value = val_cnp_h1;
 
         if(a_vec_chis[i] > v_results[0].m_max_value) v_results[0].m_max_value = a_vec_chis[i];
         if(a_vec_pois[i] > v_results[1].m_max_value) v_results[1].m_max_value = a_vec_pois[i];
         if(a_vec_cnp[i]  > v_results[2].m_max_value) v_results[2].m_max_value = a_vec_cnp[i];
         if(val_chi_h0  > v_results[3].m_max_value) v_results[3].m_max_value = val_chi_h0;
         if(val_chi_h1  > v_results[4].m_max_value) v_results[4].m_max_value = val_chi_h1;
+        if(val_cnp_h0  > v_results[5].m_max_value) v_results[5].m_max_value = val_cnp_h0;
+        if(val_cnp_h1  > v_results[6].m_max_value) v_results[6].m_max_value = val_cnp_h1;
 
     }
 
@@ -2225,6 +2235,8 @@ std::vector<CLSresult> SBNchi::Mike_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi &
     TH1D ans2(("2"+std::to_string(id)).c_str(),("2"+std::to_string(id)).c_str(),std::max(200,(int)v_results[2].m_max_value),v_results[2].m_min_value,v_results[2].m_max_value);
     TH1D ans3(("3"+std::to_string(id)).c_str(),("3"+std::to_string(id)).c_str(),std::max(200,(int)v_results[3].m_max_value),v_results[3].m_min_value,v_results[3].m_max_value);
     TH1D ans4(("4"+std::to_string(id)).c_str(),("4"+std::to_string(id)).c_str(),std::max(200,(int)v_results[4].m_max_value),v_results[4].m_min_value,v_results[4].m_max_value);
+    TH1D ans5(("5"+std::to_string(id)).c_str(),("5"+std::to_string(id)).c_str(),std::max(200,(int)v_results[5].m_max_value),v_results[5].m_min_value,v_results[5].m_max_value);
+    TH1D ans6(("6"+std::to_string(id)).c_str(),("6"+std::to_string(id)).c_str(),std::max(200,(int)v_results[6].m_max_value),v_results[6].m_min_value,v_results[6].m_max_value);
 
     for(int i=0; i<num_MC; i++){
         ans0.Fill(a_vec_chis[i]);
@@ -2232,18 +2244,24 @@ std::vector<CLSresult> SBNchi::Mike_NP(SBNspec *specin, SBNchi &chi_h0, SBNchi &
         ans2.Fill(a_vec_cnp[i]);
         ans3.Fill(a_vec_h0[i]);
         ans4.Fill(a_vec_h1[i]);
+        ans5.Fill(a_vec_cnp_h0[i]);
+        ans6.Fill(a_vec_cnp_h1[i]);
     }
     v_results[0].m_pdf = ans0;
     v_results[1].m_pdf = ans1;
     v_results[2].m_pdf = ans2;
     v_results[3].m_pdf = ans3;
     v_results[4].m_pdf = ans4;
+    v_results[5].m_pdf = ans5;
+    v_results[6].m_pdf = ans6;
 
     v_results[0].m_values = vec_chis;
     v_results[1].m_values = vec_pois;
     v_results[2].m_values = vec_cnp;
     v_results[3].m_values = vec_h0;
     v_results[4].m_values = vec_h1;
+    v_results[5].m_values = vec_cnp_h0;
+    v_results[6].m_values = vec_cnp_h1;
 
     is_verbose = true;
 

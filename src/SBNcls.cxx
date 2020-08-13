@@ -126,6 +126,8 @@ int SBNcls::CalcCLS(int numMC, std::string tag){
 
     makePlots( h0_results[3], h0_results[4], tag+"_Base_PearsonChi_true_H0", 0);
     makePlots( h1_results[3], h1_results[4], tag+"_Base_PearsonChi_true_H1", 0);
+    makePlots( h0_results[5], h0_results[6], tag+"_Base_CNPChi_true_H0", 0);
+    makePlots( h1_results[5], h1_results[6], tag+"_Base_CNPChi_true_H1", 0);
     
 
     return 0 ;
@@ -191,7 +193,7 @@ int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
     }
 
     // Calculate chi2 values for data spectrum
-    std::vector<float> data_results(5);
+    std::vector<float> data_results(7);
     float *h0_spec = new float[h0->num_bins_total_compressed];
     float *h1_spec = new float[h1->num_bins_total_compressed];
     float *data_spec = new float [data->num_bins_total_compressed];
@@ -219,6 +221,10 @@ int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
     data_results[3] = val_chi_h0;
     // Result 4: standard chi2 wrt H1
     data_results[4] = val_chi_h1;
+    // Result 5: CNP chi2 wrt H0
+    data_results[5] = val_cnp_h0;
+    // Result 6: CNP chi2 wrt H1
+    data_results[6] = val_cnp_h1;
     // Print out results
     std::cout << "Data results: " << std::endl;
     std::cout << "  Delta Pearson_Chi:  " << data_results[0] << std::endl;
@@ -226,6 +232,8 @@ int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
     std::cout << "  Delta CNP_Chi:      " << data_results[2] << std::endl;
     std::cout << "  Pearson_Chi for H0: " << data_results[3] << std::endl;
     std::cout << "  Pearson_Chi for H1: " << data_results[4] << std::endl;
+    std::cout << "  CNP_Chi for H0:     " << data_results[5] << std::endl;
+    std::cout << "  CP_Chi for H1:      " << data_results[6] << std::endl;
 
     // Calculate p-values for h0 and h1 based on data results
     // Loop over different chi2 metrics...
@@ -247,6 +255,8 @@ int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
     std::cout << "  Delta Chi_CNP:      H0 " << h0_results[2].m_nlower[0] << ", H1 " << h1_results[2].m_nlower[0] << std::endl;
     std::cout << "  Pearson_Chi for H0: H0 " << h0_results[3].m_nlower[0] << ", H1 " << h1_results[3].m_nlower[0] << std::endl;
     std::cout << "  Pearson_Chi for H1: H0 " << h0_results[4].m_nlower[0] << ", H1 " << h1_results[4].m_nlower[0] << std::endl;
+    std::cout << "  CNP_Chi for H0:     H0 " << h0_results[5].m_nlower[0] << ", H1 " << h1_results[5].m_nlower[0] << std::endl;
+    std::cout << "  CNP_Chi for H1:     H0 " << h0_results[6].m_nlower[0] << ", H1 " << h1_results[6].m_nlower[0] << std::endl;
 
     // Also calculate p-values for median sensitivities, bolt on to the end
     // Loop over different chi2 metrics...
@@ -267,11 +277,13 @@ int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
     std::cout << "  Delta Chi_CNP:      " << h0_results[2].m_nlower[1] << ", " << pval2sig(h0_results[2].m_nlower[1]) << " sigma" << std::endl;
     std::cout << "  Pearson_Chi for H0: " << h0_results[3].m_nlower[1] << ", " << pval2sig(h0_results[3].m_nlower[1]) << " sigma" << std::endl;
     std::cout << "  Pearson_Chi for H1: " << h0_results[4].m_nlower[1] << ", " << pval2sig(h0_results[4].m_nlower[1]) << " sigma" << std::endl;
+    std::cout << "  CNP_Chi for H0:     " << h0_results[5].m_nlower[1] << ", " << pval2sig(h0_results[5].m_nlower[1]) << " sigma" << std::endl;
+    std::cout << "  CNP_Chi for H1:     " << h0_results[6].m_nlower[1] << ", " << pval2sig(h0_results[6].m_nlower[1]) << " sigma" << std::endl;
 
     std::cout << "Total wall time: " << difftime(time(0), start_time)/1.0 << " Secs.\n";
     
-    std::vector<std::string> nice_names = {"Pearson_Delta_Chi","Delta_Poisson_Log_Likelihood","CNP_Delta_Chi", "Pearson_Chi_H0", "Pearson_Chi_H1"};
-    std::vector<int> plot_modes = {1, 1, 1, 0, 0};
+    std::vector<std::string> nice_names = {"Pearson_Delta_Chi","Delta_Poisson_Log_Likelihood","CNP_Delta_Chi", "Pearson_Chi_H0", "Pearson_Chi_H1", "CNP_Chi_H0", "CNP_Chi_H1"};
+    std::vector<int> plot_modes = {1, 1, 1, 0, 0, 0, 0};
 
     for(int i=0; i<h0_results.size(); i++){
       makePlotsWithData( h0_results[i], h1_results[i], data_results[i], tag+"_"+nice_names[i], plot_modes[i]);
