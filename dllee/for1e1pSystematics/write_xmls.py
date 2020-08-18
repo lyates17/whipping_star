@@ -126,16 +126,18 @@ xml_str = """<?xml version="1.0" ?>
 #             'Lepton_ThetaReco','Lepton_PhiReco','OpenAng','Xreco','Yreco','Zreco','BDTscore_1e1p','Muon MPID','Proton MPID','Electron MPID' ]
 var_list = [ 'nu_energy_reco', 'eta_reco', 'pT_reco', 'alphaT_reco', 'sphB_reco', 'pzEnu_reco', 'charge_near_trunk_reco', 'Q0_reco','Q3_reco', 'sum_thetas_reco','sum_phis_reco',
              'pT_ratio_reco', 'proton_theta_reco', 'proton_phi_reco', 'min_shr_frac_reco', 'max_shr_frac_reco', 'BjxB_reco', 'BjyB_reco', 'proton_KE_reco', 'lepton_KE_reco',
-             'lepton_theta_reco', 'lepton_phi_reco', 'openang_reco', 'x_reco', 'y_reco', 'z_reco', 'bdt_score', 'mpid_muon_score', 'mpid_proton_score', 'mpid_electron_score' ]
+             'lepton_theta_reco', 'lepton_phi_reco', 'openang_reco', 'x_reco', 'y_reco', 'z_reco', 'bdt_score', 'mpid_muon_score', 'mpid_proton_score', 'mpid_electron_score',
+             'shr_charge_ratio_reco', 'shr_consistency_reco' ]
 N_bins = [ 10 for x in var_list ]
 N_bins[0] = 12  # using 12 bins for energy
 bin_list = [ (0,1200),(0,0.6),(0,800),(0,math.pi),(0,5000),(-1500,300),(0,800),(100,700),(0,1400),(0,2*math.pi),(0,2*math.pi),
              (0,1),(0,math.pi),(-math.pi,math.pi),(0,1),(0,1),(0,3),(0,1),(60,500),(0,1000),(math.pi/5,math.pi),
-             (-math.pi,math.pi),(0,math.pi),(0,256),(-117,117),(0,1036),(0,1),(0,1),(0,1),(0,1) ]
+             (-math.pi,math.pi),(0,math.pi),(0,256),(-117,117),(0,1036),(0,1),(0,1),(0,1),(0,1),
+             (0,2), (0,5) ]
 
 # input file information
-run1_file_name = "input_to_sbnfit_v40_1e1p_run1_Jul15.root"
-run3_file_name = "input_to_sbnfit_v40_1e1p_run3_Jul15.root"
+run1_file_name = "input_to_sbnfit_v40_1e1p_run1_Aug14.root"
+run3_file_name = "input_to_sbnfit_v40_1e1p_run3_Aug14.root"
 
 # set the CV weights
 
@@ -168,15 +170,17 @@ for sel in sel_dict:
     for i in range(len(var_list)):
         
         var_xml_str = xml_str
+
+        # (re)Set additional weight
+        additional_weight = sel_dict[sel]['weight']
         
+        # Get the bin edges
         xlow  = float(bin_list[i][0])
         xhigh = float(bin_list[i][1])
         nbins = N_bins[i]
-        # If this is is the highE nu energy reco plot, then use 13 bins from 700 to 2000 MeV
+        # If this is is the highE nu energy reco plot, also include events below 700 MeV
         if ( sel=='highE' and var_list[i]=='nu_energy_reco' ):
-            xlow  = 700.
-            xhigh = 2000.
-            nbins = 13
+            additional_weight = "xsec_corr_weight"
         edges = [ xlow + ((xhigh - xlow)/nbins)*j for j in range(nbins+1) ]
         edges_str = ''
         for bin_edge in edges:

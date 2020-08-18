@@ -8,7 +8,7 @@ subprocess.call("mkdir -p %s" % outdir, shell=True)
 var_list = ['Enu_1e1p','Eta','PT_1e1p','AlphaT_1e1p','SphB_1e1p','PzEnu_1e1p','ChargeNearTrunk','Q0_1e1p','Q3_1e1p','Thetas','Phis',
             'PTRat_1e1p','Proton_ThetaReco','Proton_PhiReco','MinShrFrac','MaxShrFrac','BjXB_1e1p','BjYB_1e1p',
             'Proton_Edep','Electron_Edep','Lepton_ThetaReco','Lepton_PhiReco','OpenAng','Xreco','Yreco','Zreco','BDTscore_1e1p',
-            'MPIDY_muon','MPIDY_proton','MPIDY_eminus']
+            'MPIDY_muon','MPIDY_proton','MPIDY_eminus','shower_charge_ratio','Shower_Consistency']
 var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'Eta': 'eta_reco',
             'PT_1e1p': 'pT_reco',
@@ -38,7 +38,9 @@ var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'BDTscore_1e1p': 'bdt_score',
             'MPIDY_muon': 'mpid_muon_score',
             'MPIDY_proton': 'mpid_proton_score',
-            'MPIDY_eminus': 'mpid_electron_score'
+            'MPIDY_eminus': 'mpid_electron_score',
+            'shower_charge_ratio': 'shr_charge_ratio_reco',
+            'Shower_Consistency':  'shr_consistency_reco'
 }
 
 
