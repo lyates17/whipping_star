@@ -186,7 +186,7 @@ xml_str = """<?xml version="1.0"?>
 </WeightMaps>
 """
 
-scale_list = [ 0.05*i for i in range(121) ]
+scale_list = [ 0.05*i for i in range(141) ]
 #scale_list = [ 0., 1., 2., 3., 4. ] 
 
 # Loop over everything, write the xmls...

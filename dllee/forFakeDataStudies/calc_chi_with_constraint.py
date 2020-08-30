@@ -167,15 +167,20 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
 
     # 5) Subtract Gaussian-like statistical uncertanties, add CNP-like statistical uncertanties to diagonal of B_matrix
     #      Note: this is for CNP-like chi2
+    #      If N_i^{data} > 0, add 3/((2/N_i^{fit})+(1/N_i^{data})), else add N_i^{fit}/2; assuming all N_i^{fit} > 0
     B_CNP_matrix = ROOT.TMatrixD(B_matrix)
     for i in range(nue_spec.GetNbinsX()):
+        B_CNP_matrix[i][i] -= N_fit_vec[i]
         if nue_data_spec.GetBinContent(i+1) > 0.:
-            B_CNP_matrix[i][i] -= N_fit_vec[i]
             B_CNP_matrix[i][i] += ( 3. / ( (2./N_fit_vec[i]) + (1./nue_data_spec.GetBinContent(i+1)) ) )
+        else:
+            B_CNP_matrix[i][i] += N_fit_vec[i]/2.
     for i in range(numu_spec.GetNbinsX()):
+        B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] -= N_fit_vec[nue_spec.GetNbinsX()+i]
         if numu_data_spec.GetBinContent(i+1) > 0.:
-            B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] -= N_fit_vec[nue_spec.GetNbinsX()+i]
             B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] += ( 3. / ( (2./N_fit_vec[nue_spec.GetNbinsX()+i]) + (1./numu_data_spec.GetBinContent(i+1)) ) )
+        else:
+            B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] += N_fit_vec[nue_spec.GetNbinsX()+i]/2.
     if debug:
         print("diagonals of constrainted covariance matrix with CNP-like stat errors, B_CNP: ")
         print([ B_CNP_matrix[i][i] for i in range(nue_spec.GetNbinsX()+numu_spec.GetNbinsX()) ])
@@ -213,9 +218,9 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
 if __name__ == "__main__":
 
     # Declare spectrum and covarinace matrix input files
-    spec_fname = '../sens_pred.SBNspec.root'
-    covar_fname = '../total_sens_pred.SBNcovar.root'
-    data_spec_fname = '../fakedata.SBNspec.root'
+    spec_fname = 'set1/sens_pred.SBNspec.root'
+    covar_fname = 'set1/total_sens_pred.SBNcovar.root'
+    data_spec_fname = 'set1/fakedata.SBNspec.root'
     
     # Create dict of nue, numu spectra
     spec_file = ROOT.TFile.Open(spec_fname)

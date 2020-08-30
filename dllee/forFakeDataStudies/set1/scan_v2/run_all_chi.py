@@ -9,7 +9,7 @@ outdir = os.path.join(topdir,"output")
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 output = os.path.join(outdir,"output.txt")
 
-scale_list = [ 0.05*i for i in range(121) ]
+scale_list = [ 0.05*i for i in range(141) ]
 
 for scale in scale_list:
 

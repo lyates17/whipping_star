@@ -13,3 +13,4 @@ ratio_list*.txt
 auto*/
 output*/
 log*.txt
+*.pyc
