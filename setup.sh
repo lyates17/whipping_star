@@ -2,7 +2,7 @@ source /grid/fermiapp/products/uboone/setup_uboone.sh;
 setup git v2_15_1; 
 setup gitflow v1_11_0; 
 setup mrb v1_16_02;
-setup root v6_10_04d -q e14:nu:prof; 
+setup root v6_12_04e -q e15:prof;
 setup cmake v3_11_4;
 setup eigen v3_3_4a
 
