@@ -51,11 +51,11 @@ for scale in scale_list:
         else: data_spec_dict[sel].Add(data_spec_file.Get(k))
 
     # Calculate the chi2 with constraint
-    chi2, CNP_chi2 = calcChiWithConstraint(spec_dict['1e1p'], spec_dict['1mu1p'], total_covar, data_spec_dict['1e1p'], data_spec_dict['1mu1p'], debug=False)
-    print scale, chi2, CNP_chi2
+    chi2 = calcChiWithConstraint(spec_dict['1e1p'], spec_dict['1mu1p'], total_covar, data_spec_dict['1e1p'], data_spec_dict['1mu1p'], debug=False)
+    print scale, chi2
 
     with open(output, 'a+') as f:
-        f.write("%s,%s,%s\n" % (scale, chi2, CNP_chi2))
+        f.write("%s,%s\n" % (scale, chi2))
 
 os.chdir(topdir)
 

@@ -4,8 +4,7 @@ topdir = os.getcwd()
 autodir = os.path.join(topdir,"auto")
 pdir = os.path.join(topdir,"persistent")
 
-#scale_list = [ 0.05*i for i in range(121) ]
-scale_list = [ 0.05*i for i in range(120,141) ]
+scale_list = [ 0.05*i for i in range(141) ]
 
 for scale in scale_list:
 

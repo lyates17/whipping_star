@@ -40,7 +40,7 @@ def checkInversion(matrix, inverse, dim, debug=False):
 
 def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_data_spec, debug=True):
 
-    ## Function that forms fractional uncertainity table
+    ## Function that calculates the chi2 between nue data and constrained nue prediction
     ## Inputs:
     ##   nue_spec          nue MC spectrum (TH1D)
     ##   numu_spec         numu MC spectrum (TH1D)
@@ -50,8 +50,8 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
     ##   debug             flag for whether to print out various debugging information
     ## Returns:
     ##   chi2              chi2 for nue data spec with respect to constrained nue spectrum
-    ##   CNP_chi2          CNP-like chi2 for nue data spec with respect to constrained nue spectrum 
 
+    
     # If operating in debug mode, print out information on inputs
     if debug:
         print("nue spectrum: ", [ nue_spec.GetBinContent(i+1) for i in range(nue_spec.GetNbinsX()) ])
@@ -62,10 +62,6 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
         sys_covar.Print()
 
     
-    # Calculate the inverse of the matrix B...
-    #   B is defined by B_{ij}^{-1} = M_{ij}^{-1} + 1/N_i^{data}*(i==j)*(i in numu bins)
-    #   Note: M_{ij} is the *total* covariance matrix including statistical errors, so add those first
-
     # 0) Add statistical uncertainty (squared) to diagonals of systematics covariance matrix
     #      "Data-like" statistical uncertaintites => N_i
     covar = ROOT.TMatrixD(sys_covar)
@@ -89,8 +85,8 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
     # 1a) Validate that the matrix inversion worked as expected
     #sn = 1e-16
     if not checkInversion(covar, inverse, nue_spec.GetNbinsX()+numu_spec.GetNbinsX()):
-        print("Matrix still not invertable, returning...")
-        return [], []
+        print("Matrix not invertable, returning...")
+        return
         ## 1b) If not, add small number to diagonals and try again
         #print("Matrix not invertable, adding small number to diagonals and trying again...")
         #for i in range(nue_spec.GetNbinsX()+numu_spec.GetNbinsX()):
@@ -129,6 +125,11 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
         print("constrained covariance matrix, B: ")
         B_matrix.Print()
 
+    # 3a) Validate that the matrix inversion worked as expected
+    if not checkInversion(B_matrix, B_matrix_inverse, nue_spec.GetNbinsX()+numu_spec.GetNbinsX()):
+        print("Matrix not invertable, returning...")
+        return
+    
     # 4) Calculate N_i^{fit}
     # 4a) Form the vector N^{MC}...
     N_MC_vec = ROOT.TVectorD(nue_spec.GetNbinsX()+numu_spec.GetNbinsX())
@@ -156,60 +157,41 @@ def calcChiWithConstraint(nue_spec, numu_spec, sys_covar, nue_data_spec, numu_da
         print("vector of fit bin values: ")
         N_fit_vec.Print()
 
+    # 5) Get the nue block of the constrained covariance matrix
+    B_nue_matrix = ROOT.TMatrixD(nue_spec.GetNbinsX(),nue_spec.GetNbinsX())
+    for i in range(nue_spec.GetNbinsX()):
+        for j in range(nue_spec.GetNbinsX()):
+            B_nue_matrix[i][j] = B_matrix[i][j]
+    # If in debug mode, print out this matrix
+    if debug:
+        print("nue block of the constrained covariance matrix, B_nue: ")
+        B_nue_matrix.Print()
+
+    # 6) Invert the nue block of the constrained covariance matrix
+    B_nue_matrix_inverse = ROOT.TMatrixD(B_nue_matrix).Invert()
+    # If in debug mode, print out this matrix
+    if debug:
+        print("inverse of the nue block of the constrained covariance matrix, B_nue_inverse: ")
+        B_nue_matrix_inverse.Print()
+
+    # 6a) Validate that the matrix inversion worked as expected
+    if not checkInversion(B_nue_matrix, B_nue_matrix_inverse, nue_spec.GetNbinsX()):
+        print("Matrix not invertable, returning...")
+        return
+    
+    
     # Calculate the chi2 with the constrained covariance matrix (with gaussian-like stat errors)
     chi2 = 0.
     for i in range(nue_spec.GetNbinsX()):
         for j in range(nue_spec.GetNbinsX()):
-            chi2+= ( (nue_data_spec.GetBinContent(i+1) - N_fit_vec[i]) * B_matrix_inverse[i][j]
+            chi2 += ( (nue_data_spec.GetBinContent(i+1) - N_fit_vec[i]) * B_nue_matrix_inverse[i][j]
                           * (nue_data_spec.GetBinContent(j+1) - N_fit_vec[j]) )
     if debug:
         print("chi2: ", chi2)
 
-    # 5) Subtract Gaussian-like statistical uncertanties, add CNP-like statistical uncertanties to diagonal of B_matrix
-    #      Note: this is for CNP-like chi2
-    #      If N_i^{data} > 0, add 3/((2/N_i^{fit})+(1/N_i^{data})), else add N_i^{fit}/2; assuming all N_i^{fit} > 0
-    B_CNP_matrix = ROOT.TMatrixD(B_matrix)
-    for i in range(nue_spec.GetNbinsX()):
-        B_CNP_matrix[i][i] -= N_fit_vec[i]
-        if nue_data_spec.GetBinContent(i+1) > 0.:
-            B_CNP_matrix[i][i] += ( 3. / ( (2./N_fit_vec[i]) + (1./nue_data_spec.GetBinContent(i+1)) ) )
-        else:
-            B_CNP_matrix[i][i] += N_fit_vec[i]/2.
-    for i in range(numu_spec.GetNbinsX()):
-        B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] -= N_fit_vec[nue_spec.GetNbinsX()+i]
-        if numu_data_spec.GetBinContent(i+1) > 0.:
-            B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] += ( 3. / ( (2./N_fit_vec[nue_spec.GetNbinsX()+i]) + (1./numu_data_spec.GetBinContent(i+1)) ) )
-        else:
-            B_CNP_matrix[nue_spec.GetNbinsX()+i][nue_spec.GetNbinsX()+i] += N_fit_vec[nue_spec.GetNbinsX()+i]/2.
-    if debug:
-        print("diagonals of constrainted covariance matrix with CNP-like stat errors, B_CNP: ")
-        print([ B_CNP_matrix[i][i] for i in range(nue_spec.GetNbinsX()+numu_spec.GetNbinsX()) ])
-
-    # 6) Invert the B CNP matrix
-    #      Note: this is for CNP-like chi2
-    B_CNP_matrix_inverse = ROOT.TMatrixD(B_CNP_matrix).Invert()
-    # If in debug mode, print the inverse matrix and the first diagonal element in the numu block
-    if debug:
-        print("inverse of B_CNP matrix: ")
-        B_CNP_matrix_inverse.Print()
-        print(B_CNP_matrix_inverse[nue_spec.GetNbinsX()][nue_spec.GetNbinsX()])
-    # 6a) Validate that the matrix inversion worked as expected
-    #sn = 1e-16
-    if not checkInversion(B_CNP_matrix, B_CNP_matrix_inverse, nue_spec.GetNbinsX()+numu_spec.GetNbinsX()):
-        print("B_CNP matrix not invertable, returning...")
-        return chi2, -1.
-
-    # Finally, calculate the chi2 with the CNP-like constrained covariance matrix
-    CNP_chi2 = 0.
-    for i in range(nue_spec.GetNbinsX()):
-        for j in range(nue_spec.GetNbinsX()):
-            CNP_chi2 += ( (nue_data_spec.GetBinContent(i+1) - N_fit_vec[i]) * B_CNP_matrix_inverse[i][j]
-                          * (nue_data_spec.GetBinContent(j+1) - N_fit_vec[j]) )
-    if debug:
-        print("CNP_chi2: ", CNP_chi2)
     
     # Return constrained prediction, uncertanties
-    return chi2, CNP_chi2
+    return chi2
 
 ## End definition of runConstraint
 
@@ -250,4 +232,4 @@ if __name__ == "__main__":
         else: data_spec_dict[sel].Add(data_spec_file.Get(k))
 
     # Run the constraint and calculate chi2
-    chi2, CNP_chi2 = calcChiWithConstraint(spec_dict['1e1p'], spec_dict['1mu1p'], total_covar, data_spec_dict['1e1p'], data_spec_dict['1mu1p'], debug=True)
+    chi2 = calcChiWithConstraint(spec_dict['1e1p'], spec_dict['1mu1p'], total_covar, data_spec_dict['1e1p'], data_spec_dict['1mu1p'], debug=True)
