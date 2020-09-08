@@ -15,9 +15,9 @@ mixed_entry = -5.593215393234595e-05
 
 # Add them together
 N_1e1p_bins = 10
-N_1e1p_subchannels = 3
+N_1e1p_subchannels = 2
 N_1m1p_bins = 19
-N_1m1p_subchannels = 2
+N_1m1p_subchannels = 1
 output_file = "total_%s.SBNcovar.root" % tag
 output_f = TFile(output_file, "RECREATE")
 covar = TMatrixD(rewght_covar)

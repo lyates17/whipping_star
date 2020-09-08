@@ -90,16 +90,6 @@ xml_str = """<?xml version="1.0"?>
 </MultisimFile>
 
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40_1mu1p_run1_Jul30.root" scale="0.485" maxevents="100000" pot="4.715e20">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * (nu_energy_true>400) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
 <MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40_1mu1p_run3_Jul30.root" scale="0.515" maxevents="100000" pot="8.987e20">
   <branch
       name="nu_energy_reco"
@@ -110,32 +100,12 @@ xml_str = """<?xml version="1.0"?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_lowE_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40_1mu1p_run1_Jul30.root" scale="0.485" maxevents="100000" pot="1.631e21">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
 <MultisimFile treename="sel_bnb_lowE_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40_1mu1p_run3_Jul30.root" scale="0.515" maxevents="100000" pot="1.512e21">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
       additional_weight="( xsec_corr_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40_1mu1p_run1_Jul30.root" scale="0.485" maxevents="100000" pot="9.803e22">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="xsec_corr_weight"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>

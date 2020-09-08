@@ -17,7 +17,7 @@ for scale in scale_list:
     print cmd
     subprocess.call(cmd, shell=True)
 
-    cmd = "cp %s ." % os.path.join(pdir, "make_total_sens_covar.py")
+    cmd = "cp %s ." % os.path.join(topdir, "make_total_sens_covar.py")
     subprocess.call(cmd, shell=True)
     cmd = "python make_total_sens_covar.py"
     print cmd
