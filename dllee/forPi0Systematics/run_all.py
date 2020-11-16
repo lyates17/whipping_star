@@ -3,7 +3,7 @@ import os,subprocess
 autodir = "auto"
 topdir = os.getcwd()
 
-sel_list = [ "run1_curr", "run1_full", "run3_curr", "run3_full", "comb_curr", "comb_full" ]
+sel_list = [ "cv_weighted", "pi0_weighted" ]
 var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]
 
 os.chdir(autodir)
