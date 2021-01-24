@@ -299,7 +299,6 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
     //Is there a Global weight to be applied to ALL weights, CV and otherwise, inside the eventweight class? 
     bnbcorrection_str = "NAN";//"TunedCentralValue_Genie";//"bnbcorrection_FluxHist";
 
-
     bool restrict_variations = false;
 
     //variations_to_use = {"expskin_FluxUnisim","horncurrent_FluxUnisim","kminus_PrimaryHadronNormalization","kplus_PrimaryHadronFeynmanScaling","kzero_PrimaryHadronSanfordWang","nucleoninexsec_FluxUnisim","nucleonqexsec_FluxUnisim","nucleontotxsec_FluxUnisim","piminus_PrimaryHadronSWCentralSplineVariation","pioninexsec_FluxUnisim","pionqexsec_FluxUnisim","piontotxsec_FluxUnisim","piplus_PrimaryHadronSWCentralSplineVariation","genie_ccresAxial_Genie","genie_ncresAxial_Genie","genie_qema_Genie","genie_NC_Genie","genie_NonResRvbarp1pi_Genie","genie_NonResRvbarp2pi_Genie","genie_NonResRvp1pi_Genie","genie_NonResRvp2pi_Genie","genie_NonResRvbarp1piAlt_Genie","genie_NonResRvbarp2piAlt_Genie","genie_NonResRvp1piAlt_Genie","genie_NonResRvp2piAlt_Genie"};
@@ -307,9 +306,10 @@ SBNcovariance::SBNcovariance(std::string xmlname) : SBNconfig(xmlname) {
     variations_to_use={"expskin_FluxUnisim","horncurrent_FluxUnisim","kminus_PrimaryHadronNormalization","kplus_PrimaryHadronFeynmanScaling","kzero_PrimaryHadronSanfordWang","nucleoninexsec_FluxUnisim","nucleonqexsec_FluxUnisim","nucleontotxsec_FluxUnisim","piminus_PrimaryHadronSWCentralSplineVariation","pioninexsec_FluxUnisim","pionqexsec_FluxUnisim","piontotxsec_FluxUnisim","piplus_PrimaryHadronSWCentralSplineVariation","All"};
 
     // variations_to_use = {"AGKYpT1pi_Genie"," AGKYxF1pi_Genie"," AhtBY_Genie"," AxFFCCQEshape_Genie"," BhtBY_Genie"," CV1uBY_Genie"," CV2uBY_Genie"," DecayAngMEC_Genie"," EtaNCEL_Genie"," FrAbs_N_Genie"," FrAbs_pi_Genie"," FrCEx_N_Genie"," FrCEx_pi_Genie"," FrInel_N_Genie"," FrInel_pi_Genie"," FrPiProd_N_Genie"," FrPiProd_pi_Genie"," FracDelta_CCMEC_Genie"," FracPN_CCMEC_Genie"," MFP_N_Genie"," MFP_pi_Genie"," MaCCQE_Genie"    ," MaCCRES_Genie"," MaCOHpi_Genie"," MaNCEL_Genie"," MvCCRES_Genie"," NonRESBGvbarnCC1pi_Genie"," NonRESBGvbarnCC2pi_Genie"," NonRESBGvbarnNC1pi_Genie"," NonRESBGvbarnNC2pi_Genie"," NonRESBGvbarpCC1pi_Genie"," NonRESBGvbarpCC2pi_Genie"," NonRESBGvbarpNC1pi_Genie"," NonRESBGvbarpNC2pi_Genie"," NonRESBGvnCC1pi_Genie"," NonRESBGvnCC2pi_Genie"," NonRESBGvnNC1pi_Genie"," NonRESBGvnNC2pi_Genie"," NonRESBGvpCC1pi_Genie"," NonRESBGvpCC2pi_Genie"," NonRESBGvpNC1pi_Genie"," NonRESBGvpNC2pi_Genie"," NormCCMEC_Genie"," NormNCMEC_Genie"," R0COHpi_Genie"," RDecBR1eta_Genie"," RDecBR1gamma_Genie"," RPA_CCQE_Genie"," Theta_Delta2Npi_Genie"," VecFFCCQEshape_Genie"," XSecShape_CCMEC_Genie"};
-    for(auto &s: variations_to_use){
-        m_variations_to_use[s]=true;
-    }
+ 
+    //for(auto &s: variations_to_use){
+    //    m_variations_to_use[s]=true;
+    //}
 
 
 
@@ -797,6 +797,54 @@ int SBNcovariance::FillHistograms(int file, int uni, double wei){
 
 int SBNcovariance::FormCovarianceMatrix(std::string tag){
 
+	//std::map<bool, std::string> map_shape_only{{true, "NCDeltaRadOverlaySM"}};
+	std::map<bool, std::string> map_shape_only{{false, "NCDeltaRadOverlayLEE"}};
+	//std::map<bool, std::string> map_shape_only{{false, "NCPi0NotCoh"}};
+	//std::map<bool, std::string> map_shape_only{{true, "NCPi0NotCoh"}};
+
+	for(auto const& imap : map_shape_only){
+		bool lshape_only = imap.first;
+		if(lshape_only == false) continue;
+		std::string lname_subchannel = imap.second;
+		if(is_verbose) std::cout << "SBNcovariance::FormCovariancematrix\t||\tSubchannel " << lname_subchannel << " will be constructed as shape-only matrix ? " << lshape_only << std::endl;	
+
+
+
+		//save the toal number of events of CV for specific subchannels, and their global bin indices.
+	        spec_central_value.CalcFullVector();
+		std::vector<double> CV_tot_count;
+		std::map<int, std::vector<double>> map_index_global_bin;
+		for(auto const& lh:spec_central_value.hist){
+			std::string lname = lh.GetName();
+			if(lname.find(lname_subchannel) != std::string::npos){
+				//store the max/min global bin index for histogram
+				std::vector<double> lglobal_bin{spec_central_value.GetGlobalBinNumber(1, lname), spec_central_value.GetGlobalBinNumber(lh.GetNbinsX(), lname)};
+				map_index_global_bin.insert( std::pair<int, std::vector<double>>( (int)CV_tot_count.size(), lglobal_bin)  );
+
+				CV_tot_count.push_back(lh.Integral());
+				
+			}
+		}
+			
+		//start modify 'multi_vecspec'
+		for(int l=0; l< universes_used; l++){
+		    //now, multi_vecspec[l] is a spectra vector of 1 universe
+			std::string var_l = map_universe_to_var.at(l);
+			if(var_l.find("UBGenie") == std::string::npos) continue;
+
+			// loop over each histogram that has certain names		    
+			for(auto const& lmap:map_index_global_bin){
+				std::vector<double> lglobal_bin = lmap.second;
+
+				// total # of events of a subchannel of this universe
+				double uni_temp_count = std::accumulate(multi_vecspec[l].begin()+ lglobal_bin[0], multi_vecspec[l].begin()+lglobal_bin[1]+1, 0.0);
+				for(int k=lglobal_bin[0]; k <= lglobal_bin[1]; k++)
+					multi_vecspec[l][k] *= CV_tot_count[lmap.first]/uni_temp_count;
+			}
+
+		}
+	}
+
     std::cout<<"SBNcovariance::FormCovariancematrix\t||\tStart" << std::endl;
     full_covariance.ResizeTo(num_bins_total, num_bins_total);
     frac_covariance.ResizeTo(num_bins_total, num_bins_total);
@@ -864,6 +912,7 @@ int SBNcovariance::FormCovarianceMatrix(std::string tag){
         double vec_bot = ((double)a_num_universes_per_variation[k]);
         //next bit probably breaks the acc
         int varmode = m_variation_modes[varid];
+        std::cout << "SBNcovariance::FormCovariancematrix\t||\tvarmode (" <<varmode<<" ) vecuni2var ("<<varid<<" )"<< std::endl;
 
         if(varmode==0){ //run as normal. 
 #pragma acc loop seq
@@ -878,11 +927,13 @@ int SBNcovariance::FormCovarianceMatrix(std::string tag){
         }else if(varmode==1){
             //Instead, assign the covariance to be identicall the difference between this and the next universe (they come in 2's)
             for(int i=0; i<num_bins_total; i++) {
-                a_vec_full_covariance[varid][i*num_bins_total+i] = fabs(a_multi_vecspec[k][i]-a_multi_vecspec[k+1][i]);
+                for(int j=0; j<num_bins_total; j++) {
+                    a_vec_full_covariance[varid][i*num_bins_total+j] = (a_multi_vecspec[k][i]-a_multi_vecspec[k+1][i])* (a_multi_vecspec[k][j]-a_multi_vecspec[k+1][j]);
+                }
+                //a_vec_full_covariance[varid][i*num_bins_total+i] = fabs(a_multi_vecspec[k][i]-a_multi_vecspec[k+1][i]);
             }
             //we will also need to jump th universe count ahead by 1, just to skip the variation on the other side too.
             k++;
-
         }
     }
     watch.Stop();

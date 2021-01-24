@@ -14,6 +14,3 @@ export SBNFIT_LIBDIR=$me/build
 
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:$SBNFIT_LIBDIR
 
-
-
-

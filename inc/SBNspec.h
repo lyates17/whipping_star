@@ -13,7 +13,7 @@
 #include <TCanvas.h>
 #include <TLine.h>
 #include <TStyle.h>
-
+#include <TMatrixT.h>
 //#include <TROOT.h>
 #include <sstream>
 #include <iomanip>
@@ -24,7 +24,7 @@
 #include <TFile.h>
 #include "params.h"
 #include <TRandom3.h>
-
+#include "bayes.h"
 
 template <typename T> 
 std::vector<size_t> SortIndexes(const std::vector<T> &v) { 
@@ -76,13 +76,14 @@ namespace sbn{
 			std::vector<double > collapsed_vector;
 			std::vector<float > f_collapsed_vector;
 
+			std::vector<double > full_error;
 
 
 			//need to store a history of the scales for oscillation purposes.  FIX THIS
 			std::string scale_hist_name;
 			double scale_hist_val;
 			bool has_been_scaled;
-
+            bool m_bool_use_wire_bayes;
 
 
 			/*************************** Member Functions ****************/
@@ -122,6 +123,7 @@ namespace sbn{
 			double GetTotalEvents();
 
 			int GetGlobalBinNumber(double invar, int which_hist);
+			int GetGlobalBinNumber(int local_bin, std::string histname);
 			int GetLocalBinNumber(double invar, int which_hist);
 
 			int GetHistNumber(int f);
@@ -135,7 +137,9 @@ namespace sbn{
 			
             std::vector<int> GetIndiciesFromSubchannel(std::string const & subchannel);
 			int CompareSBNspecs(SBNspec * compsec, std::string tag);
-			};
+	        int CompareSBNspecs(TMatrixT<double> collapse_covar, SBNspec * compsec, std::string tag);
+		
+    };
 
 
 

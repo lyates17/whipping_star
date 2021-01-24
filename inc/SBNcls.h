@@ -30,6 +30,9 @@
 #include "TMatrixDSymEigen.h"
 
 #include "ngrid.h"
+
+#include "bayes.h"
+
 #include <gsl/gsl_randist.h>
 
 
@@ -132,6 +135,11 @@ colH0 = kRed-7;
     int makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float data_result, std::string tag,  int which_mode=0);
     int runConstraintTest();
 
+    int compareToRealData(SBNspec * data);
+
+
+
+    int runPi0Tests();
 
 };
 
