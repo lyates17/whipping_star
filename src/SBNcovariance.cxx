@@ -1178,8 +1178,11 @@ int SBNcovariance::PrintVariations(std::string tag){
         for(int i=0; i< temp_spec.hist.size(); i++){
             vec_canvas.at(which_matrix).at(i)->cd();
             temp_spec.hist.at(i).Scale(1,"width");
-            temp_spec.hist.at(i).SetLineColor((int)rangen->Uniform(300,1000));	
-            temp_spec.hist.at(i).DrawCopy("same hist");
+            temp_spec.hist.at(i).SetLineColor((int)rangen->Uniform(300,1000));
+	    // for "single knobs" studies...
+	    //if ( m%2 == 0 ) temp_spec.hist.at(i).SetLineColor(kRed);
+	    //else temp_spec.hist.at(i).SetLineColor(kBlue);
+	    temp_spec.hist.at(i).DrawCopy("same hist");
 
         }	
         //check to see if variation is over. if so
