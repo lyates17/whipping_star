@@ -115,7 +115,6 @@ int SBNcls::CalcCLS(int numMC, std::string tag){
     std::cout<<"We have "<<h1_results[i].m_pdf.Integral()<<" integral of H1 and "<<h0_results[i].m_pdf.Integral()<<" integral of H0 for metric "<<h1_results[i].m_tag<<std::endl;
   }
 
-
   std::cout << "Total wall time: " << difftime(time(0), start_time)/1.0 << " Secs.\n";
 
   std::vector<std::string> nice_names = {"Pearson_Chi","Poisson_Log_Likelihood","CNP_Chi"};
@@ -132,7 +131,6 @@ int SBNcls::CalcCLS(int numMC, std::string tag){
     
   return 0 ;
 }
-
 
 int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
 
