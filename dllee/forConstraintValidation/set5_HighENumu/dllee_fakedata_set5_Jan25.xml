@@ -1,0 +1,46 @@
+<?xml version="1.0"?>
+
+<mode name="nu"/>
+<detector name="uBooNE"/>
+
+<channel name="1e1p" unit="MeV">
+  <bins
+      edges="200 300 400 500 600 700 800 900 1000 1100 1200"
+      />
+  <subchannel name="bnb"/>
+  <subchannel name="lee"/>
+</channel>
+
+<channel name="1mu1p" unit="MeV">
+  <bins
+      edges="400 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200"
+      />
+  <subchannel name="bnb"/>
+</channel>
+
+
+
+<MultisimFile treename="sel_run1_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_fakedata_set5_1e1p_Jan21.root" scale="1.0" maxevents="10000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_bnb"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_run1_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_fakedata_set5_1e1p_Jan21.root" scale="0.0" maxevents="10000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_lee"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_run1_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_fakedata_set5_1mu1p_Jan19.root" scale="1.0" maxevents="10000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      />
+</MultisimFile>
