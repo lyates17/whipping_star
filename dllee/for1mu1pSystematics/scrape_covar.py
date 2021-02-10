@@ -17,11 +17,12 @@ var_list = [ "x_reco", "y_reco", "z_reco",
              "mpid_eminus_score", "mpid_muon_score", "mpid_proton_score", "mpid_gamma_score", "mpid_pion_score",
              "bdt_score" ]
 
-for sel in ["sel_total", "sel_run1", "sel_run2", "sel_run3"]:
+#for sel in ["sel_total", "sel_run1", "sel_run2", "sel_run3"]:
+for sel in ["sel_total_withoutPi0Weights", "sel_total_withPi0Weights"]: 
     for var in var_list:
         
-        if var != "bdt_score" and sel != "sel_total":
-            continue
+        #if var != "bdt_score" and sel != "sel_total":
+        #    continue
 
         tag = "%s__%s" % (sel, var)
         input_file = "auto/%s.SBNcovar.root" % tag

@@ -119,24 +119,33 @@ xml_str = """<?xml version="1.0" ?>
   <whitelist>piontotxsec_FluxUnisim</whitelist>
   <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
   <whitelist>All_UBGenie</whitelist>
-  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
   <whitelist>RPA_CCQE_UBGenie</whitelist>
   <whitelist>AxFFCCQEshape_UBGenie</whitelist>
   <whitelist>VecFFCCQEshape_UBGenie</whitelist>
   <whitelist>DecayAngMEC_UBGenie</whitelist>
-  <whitelist>xsr_scc_Fa3_SCC</whitelist>
-  <whitelist>xsr_scc_Fv3_SCC</whitelist>
-  <whitelist>NormCCCOH_UBGenie</whitelist>
-  <whitelist>NormNCCOH_UBGenie</whitelist>
+  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
   <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
   <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
+  <whitelist>NormCCCOH_UBGenie</whitelist>
+  <whitelist>NormNCCOH_UBGenie</whitelist>
+  <whitelist>xsr_scc_Fa3_SCC</whitelist>
+  <whitelist>xsr_scc_Fv3_SCC</whitelist>
   <whitelist>reinteractions_piminus_Geant4</whitelist>
   <whitelist>reinteractions_piplus_Geant4</whitelist>
   <whitelist>reinteractions_proton_Geant4</whitelist>
 </variation_list>
 
 <WeightMaps>
-  <variation pattern="_UBGenie" weight_formula="1./ub_tune_weight"/>
+  <variation pattern="All_UBGenie" weight_formula="1.0/ub_tune_weight"/>
+  <variation pattern="RPA_CCQE_UBGenie" weight_formula="1.0/ub_tune_weight"/>
+  <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="VecFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="XSecShape_CCMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="ThetaDelta2NRad_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
 </WeightMaps>
 """
 
@@ -151,9 +160,9 @@ run2_scale = run2_data_pot / total_data_pot
 run3_scale = run3_data_pot / total_data_pot
 
 # file name information
-run1_file_name = "input_to_sbnfit_v48_Sep24_1mu1p_run1_Oct27.root"
-run2_file_name = "input_to_sbnfit_v48_Sep24_1mu1p_run2_Oct27.root"
-run3_file_name = "input_to_sbnfit_v48_Sep24_1mu1p_run3_Oct27.root"
+run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Feb08.root"
+run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_Feb08.root"
+run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Feb08.root"
 
 # weighting information
 weight_str = "xsec_corr_weight"
@@ -200,10 +209,13 @@ var_dict = { "x_reco": (14,15.,241.25,"cm"),
 
 # sel_dict
 # selection name: [ total_data_pot, run1_scale, run2_scale, run3_scale ]
-sel_dict = { 'sel_total': [ total_data_pot, run1_scale, run2_scale, run3_scale ], 
-             'sel_run1':  [ run1_data_pot, 1., 0., 0. ], 
-             'sel_run2':  [ run2_data_pot, 0., 1., 0. ],
-             'sel_run3':  [ run3_data_pot, 0., 0., 1. ] }
+#sel_dict = { 'sel_total': [ total_data_pot, run1_scale, run2_scale, run3_scale ], 
+#             'sel_run1':  [ run1_data_pot, 1., 0., 0. ], 
+#             'sel_run2':  [ run2_data_pot, 0., 1., 0. ],
+#             'sel_run3':  [ run3_data_pot, 0., 0., 1. ] }
+sel_dict = { 'sel_total_withoutPi0Weights': [ total_data_pot, run1_scale, run2_scale, run3_scale, "xsec_corr_weight" ], 
+             'sel_total_withPi0Weights':    [ total_data_pot, run1_scale, run2_scale, run3_scale, "xsec_corr_weight*dllee_pi0_weight" ]  }
+
 
 # Loop over everything, write the xmls...
 for sel in sel_dict:
@@ -215,7 +227,7 @@ for sel in sel_dict:
     run3_scale_str = str(sel_dict[sel][3])
     run2and3_scale_str = str( float(sel_dict[sel][2]+sel_dict[sel][3]) )
     # Set the weight string
-    additional_weight = weight_str
+    additional_weight = str(sel_dict[sel][4])
 
     # Loop over the variables...
     for var in var_dict:

@@ -22,7 +22,7 @@ xml_str = """<?xml version="1.0" ?>
 <plotpot value=POT_VALUE/>
 
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="4.716e20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="1.337e21">
   <branch
       name="VAR_NAME"
       type="double"
@@ -73,6 +73,46 @@ xml_str = """<?xml version="1.0" ?>
 </MultisimFile>
 
 <MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="RUN3_SCALE" maxevents="100000" pot="4.707e22">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_pi0_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="2.904e21">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_pi0_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="RUN2AND3_SCALE" maxevents="100000" pot="2.488e21">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_pi0_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="6.953e20">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_pi0_bnb"
+      additional_weight="ADDITIONAL_WEIGHT"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="RUN2AND3_SCALE" maxevents="100000" pot="5.922e20">
   <branch
       name="VAR_NAME"
       type="double"
@@ -135,7 +175,16 @@ xml_str = """<?xml version="1.0" ?>
 </variation_list>
 
 <WeightMaps>
-  <variation pattern="_UBGenie" weight_formula="1./ub_tune_weight"/>
+  <variation pattern="All_UBGenie" weight_formula="1.0/ub_tune_weight"/>
+  <variation pattern="RPA_CCQE_UBGenie" weight_formula="1.0/ub_tune_weight"/>
+  <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="VecFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="XSecShape_CCMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="ThetaDelta2NRad_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
 </WeightMaps>
 """
 
@@ -152,9 +201,9 @@ run3_scale = run3_data_pot / total_data_pot
 run2and3_scale = ( run2_data_pot + run3_data_pot ) / total_data_pot
 
 # input files
-run1_file_name = "input_to_sbnfit_v48_Sep24_pi0_run1_Nov09.root"
-run2_file_name = "input_to_sbnfit_v48_Sep24_pi0_run2_Nov09.root"
-run3_file_name = "input_to_sbnfit_v48_Sep24_pi0_run3_Nov09.root"
+run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run1_Feb08.root"
+run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run2_Feb08.root"
+run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run3_Feb08.root"
 
 # 6 variables...
 var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]

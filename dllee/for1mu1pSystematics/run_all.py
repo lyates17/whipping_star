@@ -19,10 +19,11 @@ print len(var_list)
 
 os.chdir(autodir)
 
-for sel in ["sel_total", "sel_run1", "sel_run2", "sel_run3"]:
+#for sel in ["sel_total", "sel_run1", "sel_run2", "sel_run3"]:
+for sel in ["sel_total_withoutPi0Weights", "sel_total_withPi0Weights"]:
     for var in var_list:
-        if var != "bdt_score" and sel != "sel_total":
-            continue
+        #if var != "bdt_score" and sel != "sel_total":
+        #    continue
         tag = "%s__%s" % (sel, var)
         cmd = "/uboone/app/users/yatesla/sbnfit/whipping_star/build/bin/sbnfit_make_covariance --xml %s.xml --tag %s" % (tag, tag)
         print cmd
