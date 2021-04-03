@@ -203,13 +203,14 @@ int main(int argc, char* argv[])
     coll_correlation.Write("collapsed_correlation",TObject::kWriteDelete);
     fout->Close();
     
-    TFile *fplots=new TFile(("SBNfit_covariance_plots_"+tag+".root").c_str(),"RECREATE");
-    collapse_chi.plot_one(full_covariance,"SBNfit_covariance_matrix_"+tag,fplots,true,false,false);
-    collapse_chi.plot_one(frac_covariance,"SBNfit_fractional_covariance_matrix_"+tag,fplots,true,false,false);
-    collapse_chi.plot_one(full_correlation,"SBNfit_correlation_matrix_"+tag,fplots,true,false,true);
-    collapse_chi.plot_one(coll_covariance,"SBNfit_collapsed_covariance_matrix_"+tag,fplots,true,false,false);
-    collapse_chi.plot_one(coll_frac_covariance,"SBNfit_collapsed_fractional_covariance_matrix_"+tag,fplots,true,false,false);
-    collapse_chi.plot_one(coll_correlation,"SBNfit_collapsed_correlation_matrix_"+tag,fplots,true,false,true);
+    //TFile *fplots=new TFile(("SBNfit_covariance_plots_"+tag+".root").c_str(),"RECREATE");
+    //collapse_chi.plot_one(full_covariance,"SBNfit_covariance_matrix_"+tag,fplots,true,false,false);
+    //collapse_chi.plot_one(frac_covariance,"SBNfit_fractional_covariance_matrix_"+tag,fplots,true,false,false);
+    //collapse_chi.plot_one(full_correlation,"SBNfit_correlation_matrix_"+tag,fplots,true,false,true);
+    //collapse_chi.plot_one(coll_covariance,"SBNfit_collapsed_covariance_matrix_"+tag,fplots,true,false,false);
+    //collapse_chi.plot_one(coll_frac_covariance,"SBNfit_collapsed_fractional_covariance_matrix_"+tag,fplots,true,false,false);
+    //collapse_chi.plot_one(coll_correlation,"SBNfit_collapsed_correlation_matrix_"+tag,fplots,true,false,true);
+    collapse_chi.PrintMatricies(tag);
 
     std::cout << "Total wall time: " << difftime(time(0), start_time)/60.0 << " Minutes.\n";
     return 0;

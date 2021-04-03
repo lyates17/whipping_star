@@ -208,9 +208,9 @@ run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run3_Feb08.root"
 # 6 variables...
 var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]
 units_list = [ "MeV", "MeV", "MeV", "MeV",  "MeV", "MeV" ]
-nbins_list = [ 20, 10, 20, 20, 20, 20 ]
-xlow_list  = [ 0., 1000, 80., 35., 100., 35. ]
-xhigh_list = [ 400., 1400., 450., 350., 800., 800. ]
+nbins_list = [ 20, 20, 20, 20, 20, 20 ]
+xlow_list  = [ 30., 1000, 80., 35., 100., 100. ]
+xhigh_list = [ 350., 1400., 450., 300., 750., 700. ]
 
 # additional weight
 #additional_weight = "xsec_corr_weight"

@@ -27,132 +27,132 @@
 <plotpot value=6.818e20/>
 
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Feb09.root" scale="0.256" maxevents="100000" pot="8.977e22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((1.746e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Feb09.root" scale="0.388" maxevents="100000" pot="9.209e22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((2.643e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Feb09.root" scale="0.356" maxevents="100000" pot="4.719e22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((2.430e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Feb09.root" scale="0.256" maxevents="100000" pot="4.716e20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.746e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Feb09.root" scale="0.388" maxevents="100000" pot="4.090e20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((2.643e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Feb09.root" scale="0.356" maxevents="100000" pot="8.882e20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((2.430e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Feb09.root" scale="0.256" maxevents="100000" pot="2.908e21">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="xsec_corr_weight*dllee_pi0_weight"
+      associated_subchannel="nu_uBooNE_1e1p_bnb"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((1.746e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Feb09.root" scale="0.356" maxevents="100000" pot="2.489e21">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Mar04.root" scale="0.356" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="xsec_corr_weight*dllee_pi0_weight"
+      associated_subchannel="nu_uBooNE_1e1p_bnb"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((2.430e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Feb09.root" scale="0.256" maxevents="100000" pot="6.914e20">
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="xsec_corr_weight*dllee_pi0_weight"
+      associated_subchannel="nu_uBooNE_1e1p_bnb"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((1.746e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Feb09.root" scale="0.356" maxevents="100000" pot="5.913e20">
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1e1p_nue"
-      additional_weight="xsec_corr_weight*dllee_pi0_weight"
+      associated_subchannel="nu_uBooNE_1e1p_bnb"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((2.430e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Feb09.root" scale="0.256" maxevents="100000" pot="8.977e22">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Feb09.root" scale="0.388" maxevents="100000" pot="9.209e22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight * ((1.746e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Feb09.root" scale="0.356" maxevents="100000" pot="4.719e22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Mar04.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight )"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight * ((2.643e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Mar04.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_lee"
+      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight * ((2.430e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.900) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>

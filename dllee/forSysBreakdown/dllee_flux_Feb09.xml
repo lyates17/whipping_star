@@ -11,7 +11,7 @@
   <subchannel name="bnb"/>
   <!-- <subchannel name="dirt"/> -->
   <!-- <subchannel name="extbnb"/> -->
-  <subchannel name="lee"/>
+  <!-- <subchannel name="lee"/> -->
 </channel>
 
 <channel name="1mu1p" unit="MeV">
@@ -127,36 +127,6 @@
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run1_Feb09.root" scale="0.256" maxevents="100000" pot="8.977e22">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run2_Feb09.root" scale="0.388" maxevents="100000" pot="9.209e22">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_run3_Feb09.root" scale="0.356" maxevents="100000" pot="4.719e22">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight*lee_weight )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
 
 <MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Feb08.root" scale="0.256" maxevents="100000" pot="2.949e20">
   <branch
@@ -251,21 +221,6 @@
   <whitelist>pionqexsec_FluxUnisim</whitelist>
   <whitelist>piontotxsec_FluxUnisim</whitelist>
   <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
-  <whitelist>All_UBGenie</whitelist>
-  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
-  <whitelist>RPA_CCQE_UBGenie</whitelist>
-  <whitelist>AxFFCCQEshape_UBGenie</whitelist>
-  <whitelist>VecFFCCQEshape_UBGenie</whitelist>
-  <whitelist>DecayAngMEC_UBGenie</whitelist>
-  <whitelist>xsr_scc_Fa3_SCC</whitelist>
-  <whitelist>xsr_scc_Fv3_SCC</whitelist>
-  <whitelist>NormCCCOH_UBGenie</whitelist>
-  <whitelist>NormNCCOH_UBGenie</whitelist>
-  <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
-  <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
-  <whitelist>reinteractions_piminus_Geant4</whitelist>
-  <whitelist>reinteractions_piplus_Geant4</whitelist>
-  <whitelist>reinteractions_proton_Geant4</whitelist>
 </variation_list>
 
 <WeightMaps>
