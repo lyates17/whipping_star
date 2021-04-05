@@ -1,5 +1,6 @@
 import ROOT
 import math
+import os
 
 def getSpecList(hist_list):
 
@@ -22,7 +23,7 @@ def getSpecList(hist_list):
     return spec
 ## End definition of getSpecList
 
-def getSpecHist(spec, hist):
+def getSpecHist(spec, in_hist):
 
     ## Function that converts a spectrum into a TH1D
     ## Inputs: 
@@ -68,7 +69,10 @@ def getFullCovar(frac_covar, spec, debug=False):
     for i in range(full_covar.GetNrows()):
         for j in range(full_covar.GetNcols()):
             if math.isnan(full_covar[i][j]):
-                full_covar[i][j] = 0.
+                if i==j:
+                    full_covar[i][j] = 1.
+                else:
+                    full_covar[i][j] = 0.
             else:
                 full_covar[i][j] *= spec[i]*spec[j]
 
@@ -104,10 +108,12 @@ def getFracCovar(full_covar, spec, debug=False):
     frac_covar = ROOT.TMatrixD(full_covar)
 
     # Compute F_ij = M_ij/(N_i*N_j)
-    #  note: no special handling for division by 0 -- let there be NaNs
     for i in range(full_covar.GetNrows()):
         for j in range(full_covar.GetNcols()):
-            frac_covar[i][j] *= 1./(spec[i]*spec[j])
+            if spec[i]*spec[j] == 0.:
+                frac_covar[i][j] = float('nan')
+            else:
+                frac_covar[i][j] *= 1./(spec[i]*spec[j])
 
     # If in debug mode, print out information on output
     if debug:
@@ -342,7 +348,7 @@ if __name__ == "__main__":
                     in_data_spec_f = in_h0_spec_f  # TODO: when real 1mu1p data is available, update this
                     
                     # define helper variables...
-                    Nbins_1e1p = in_h1_spec_f.Get("nu_uBooNE_1e1p_nue")
+                    Nbins_1e1p = in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetNbinsX()
                     sel1e1p_keys = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee"]
                     joint_keys   = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee", "nu_uBooNE_1mu1p_bnb"]
                     
@@ -379,7 +385,7 @@ if __name__ == "__main__":
                     for key in sel1e1p_keys:
                         out_h0_spec_f.WriteTObject(out_h0_hist_dict[key])
                         out_h1_spec_f.WriteTObject(out_h1_hist_dict[key])
-                    out_covar_f.WriteTObject(constr_sel1e1p_covar, "frac_covariance")
+                    out_covar_f.WriteTObject(constr_1e1p_frac_covar, "frac_covariance")
                     # close the inputs
                     in_h0_spec_f.Close()
                     in_h1_spec_f.Close()

@@ -11,7 +11,7 @@ sel1e1p_mpidp_cut_values = [ 0.0, 0.2 ]
 
 detsys_subdir_dict = {}
 detsys_subdir_dict["dllee_bdt_score_avg"]    = "AvgScore"
-detsys_subdir_dict["dllee_bdt_score_median"] = "AvgScore"  # TODO: when detector systematic covariance matrices for median score strategy are available, update this
+detsys_subdir_dict["dllee_bdt_score_median"] = "MedScore"
 bkg_subdir_dict = {}
 bkg_subdir_dict["dllee_bdt_score_avg"]    = "avgscore"
 bkg_subdir_dict["dllee_bdt_score_median"] = "medianscore"
@@ -107,7 +107,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 
                 
                 # add detector systematics for 1e1p bnb (i.e., numu backgrounds to the 1e1p selection)...
-                detsys_bkg = 0.2**2  # TODO: update this value
+                detsys_bkg = 1.0**2  # TODO: update this value (currently 100% fractional error)
                 print "Adding detector systematics for numu backgrounds to the 1e1p ({:.3f})".format(detsys_bkg)
                 for i in range(Nbins_e):
                     out_covar[offset_1e1p_bnb+i][offset_1e1p_bnb+i] += detsys_bkg

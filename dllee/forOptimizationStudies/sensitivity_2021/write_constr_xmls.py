@@ -17,16 +17,7 @@ xml_str = """<?xml version="1.0"?>
       />
   <subchannel name="nue"/>
   <subchannel name="bnb"/>
-  <!-- <subchannel name="dirt"/> -->
-  <!-- <subchannel name="extbnb"/> -->
   <subchannel name="lee"/>
-</channel>
-
-<channel name="1mu1p" unit="MeV">
-  <bins
-      edges="200 250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200"
-      />
-  <subchannel name="bnb"   />
 </channel>
 
 
@@ -161,127 +152,6 @@ xml_str = """<?xml version="1.0"?>
 </MultisimFile>
 
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN1_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN2_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((RUN2_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((RUN3_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN1_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN2_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((RUN2_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight * ((RUN3_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN1_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="0.356" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((RUN3_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN1_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( xsec_corr_weight*dllee_pi0_weight  * ((RUN3_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN1_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="1.0" maxevents="100000">
-  <branch
-      name="nu_energy_reco"
-      type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="( (((RUN2_DATA_POT)+(RUN3_DATA_POT))/dllee_pot_weight) * (SEL1MU1P_BDT_CUT_VAR>=SEL1MU1P_BDT_CUT_VAL) )"
-      eventweight_branch_name="sys_weights"
-      />
-</MultisimFile>
-
-
 <variation_list>
   <whitelist>expskin_FluxUnisim</whitelist>
   <whitelist>horncurrent_FluxUnisim</whitelist>
@@ -343,9 +213,6 @@ sel1e1p_file_name_dict["dllee_bdt_score_avg"]    = [ "input_to_sbnfit_v48_Sep24_
 sel1e1p_file_name_dict["dllee_bdt_score_median"] = [ "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run1_Mar26.root",
                                                      "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run2_Mar26.root",
                                                      "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run3_Mar26.root" ]
-sel1mu1p_run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Mar31.root"
-sel1mu1p_run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_Mar31.root"
-sel1mu1p_run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Mar31.root"
 
 # data POT information
 # in theory (from docdb-26979, Table 3)...
@@ -376,19 +243,14 @@ for var_e in sel1e1p_bdt_cut_variables:
                     var_xml_str = var_xml_str.replace("SEL1E1P_RUN1_FILE_NAME", sel1e1p_run1_file_name)
                     var_xml_str = var_xml_str.replace("SEL1E1P_RUN2_FILE_NAME", sel1e1p_run2_file_name)
                     var_xml_str = var_xml_str.replace("SEL1E1P_RUN3_FILE_NAME", sel1e1p_run3_file_name)
-                    var_xml_str = var_xml_str.replace("SEL1MU1P_RUN1_FILE_NAME", sel1mu1p_run1_file_name)
-                    var_xml_str = var_xml_str.replace("SEL1MU1P_RUN2_FILE_NAME", sel1mu1p_run2_file_name)
-                    var_xml_str = var_xml_str.replace("SEL1MU1P_RUN3_FILE_NAME", sel1mu1p_run3_file_name)
                     var_xml_str = var_xml_str.replace("RUN1_DATA_POT", "{:.3e}".format(run1_data_pot) )
                     var_xml_str = var_xml_str.replace("RUN2_DATA_POT", "{:.3e}".format(run2_data_pot) )
                     var_xml_str = var_xml_str.replace("RUN3_DATA_POT", "{:.3e}".format(run3_data_pot) )
                     var_xml_str = var_xml_str.replace("SEL1E1P_BDT_CUT_VAR", var_e)
                     var_xml_str = var_xml_str.replace("SEL1E1P_BDT_CUT_VAL", "{:0.2f}".format(val_e))
                     var_xml_str = var_xml_str.replace("SEL1E1P_MPIDP_CUT_VAL", "{:0.3f}".format(val_p))
-                    var_xml_str = var_xml_str.replace("SEL1MU1P_BDT_CUT_VAR", var_m)
-                    var_xml_str = var_xml_str.replace("SEL1MU1P_BDT_CUT_VAL", "{:0.2f}".format(val_m))
                     
-                    output = "./%s/%s.xml" % (outdir, "opt-{}-e{:02d}-{:02d}-m{:02d}".format( var_e.split('_')[-1], int(val_e*100), int(val_p*100), int(val_m*100) ))
+                    output = "./%s/%s.xml" % (outdir, "opt-{}-e{:02d}-{:02d}-m{:02d}_constr".format( var_e.split('_')[-1], int(val_e*100), int(val_p*100), int(val_m*100) ))
                     with open(output, 'w') as f:
                         f.write(var_xml_str)
 
