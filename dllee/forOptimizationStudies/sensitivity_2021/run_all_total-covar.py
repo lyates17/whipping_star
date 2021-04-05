@@ -22,8 +22,8 @@ os.chdir(autodir)
 for var_e in sel1e1p_bdt_cut_variables:
     for val_p in sel1e1p_mpidp_cut_values:
 
-        detsysdir = os.path.join(topdir, "detsys", detsys_subdir_dict[var_e])  # TODO: when detector systematic covariane matrices with proton MPID cut are available, update this
-        bkgdir    = os.path.join(topdir, "bkg", "{:02d}".format(val_p*100), bkg_subdir_dict[var_e])
+        detsysdir = os.path.join(topdir, "detsys", detsys_subdir_dict[var_e])  # TODO: when detector systematic covariance matrices with proton MPID cut are available, update this
+        bkgdir    = os.path.join(topdir, "bkg", "{:02d}".format(int(val_p*100)), bkg_subdir_dict[var_e])
         
         for val_e in sel1e1p_bdt_cut_values:
             for val_m in sel1mu1p_bdt_cut_values:
@@ -56,7 +56,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 offset_1mu1p    = 3*Nbins_e
                 
                 # add detector systematics for 1e1p nue, 1e1p lee, and 1mu1p bnb... 
-                # read in detector systematic covariance matrix from csv file
+                # read in fractional detector systematic covariance matrix from csv file
                 #   note: covariance matrix in this file has dimension 20+12
                 #           20 1mu1p bins from 200 to 1200 MeV in  50 MeV bins, then
                 #           12 1e1p  bins from   0 to 1200 MeV in 100 MeV bins
@@ -108,7 +108,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 
                 # add detector systematics for 1e1p bnb (i.e., numu backgrounds to the 1e1p selection)...
                 detsys_bkg = 0.2**2  # TODO: update this value
-                print "Adding detector systematics for numu backgrounds to the 1e1p... ({:.3f})".format(detsys_bkg)
+                print "Adding detector systematics for numu backgrounds to the 1e1p ({:.3f})".format(detsys_bkg)
                 for i in range(Nbins_e):
                     out_covar[offset_1e1p_bnb+i][offset_1e1p_bnb+i] += detsys_bkg
                 # ... done adding detector systeamtics for 1e1p bnb
@@ -119,19 +119,22 @@ for var_e in sel1e1p_bdt_cut_variables:
                 #        print "{}, {}: {}".format(i, j, out_covar[i][j] - in_covar_f.Get("frac_covariance")[i][j] )
                 
                 
-                # add mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p...
+                # add *fractional* mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p...
                 #   and remove them from spec errors, so SBNfit doesn't double-count
-                print "Adding mc stat errors from {}...".format("sens_{}.SBNspec.root".format(tag))
+                print "Adding mc stat errors from {}".format("sens_{}.SBNspec.root".format(tag))
                 for i in range(Nbins_e):
-                    out_covar[i][i] += in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinError(i+1)
+                    if in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinContent(i+1) > 0.:
+                        out_covar[i][i] += in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinContent(i+1)
                     out_h0_spec_dict["nu_uBooNE_1e1p_nue"].SetBinError(i+1, 0.)
                     out_h1_spec_dict["nu_uBooNE_1e1p_nue"].SetBinError(i+1, 0.)
                 for i in range(Nbins_e):
-                    out_covar[offset_1e1p_lee+i][offset_1e1p_lee+i] += in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinError(i+1)
+                    if in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinContent(i+1) > 0.:
+                        out_covar[offset_1e1p_lee+i][offset_1e1p_lee+i] += in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinContent(i+1)
                     out_h0_spec_dict["nu_uBooNE_1e1p_lee"].SetBinError(i+1, 0.)
                     out_h1_spec_dict["nu_uBooNE_1e1p_lee"].SetBinError(i+1, 0.)
                 for i in range(Nbins_m):
-                    out_covar[offset_1mu1p+i][offset_1mu1p+i] += in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinError(i+1)
+                    if in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1) > 0.:
+                        out_covar[offset_1mu1p+i][offset_1mu1p+i] += in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1)
                     out_h0_spec_dict["nu_uBooNE_1mu1p_bnb"].SetBinError(i+1, 0.)
                     out_h1_spec_dict["nu_uBooNE_1mu1p_bnb"].SetBinError(i+1, 0.)
                 # ... done adding mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p
@@ -139,6 +142,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 # update prediction and mc stat errors for 1e1p bnb (i.e., numu backgrounds to the 1e1p selection)...
                 # read in the fitted prediction and associated mc stat covariance matrix
                 #   note: both have 11 1e1p bins from 100 to 1200 MeV in 100 MeV bins
+                #   note: mc stat covariance matrix in this file is *fractional*
                 bkgtag = "bkg_{:.2f}".format(val_e)
                 bkg_pred_f   = os.path.join(bkgdir, "{}_prediction.txt".format(bkgtag))
                 bkg_mcstat_f = os.path.join(bkgdir, "{}_cov.txt".format(bkgtag))
@@ -151,12 +155,14 @@ for var_e in sel1e1p_bdt_cut_variables:
                 with open(bkg_mcstat_f, 'r') as f:
                     for l in f:
                         bkg_mcstat_covar.append( [ float(x) for x in l.strip().split() ] )
-                # update everything... spec bin contents, spec errors, and covariance matrix
+                # update everything -- spec bin contents, spec errors, and covariance matrix
                 #   note: we only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
                 in_offset_bkg = 1
                 for i in range(Nbins_e):
-                    out_spec_dict["nu_uBooNE_1e1p_bnb"].SetBinContent(i+1, bkg_pred[in_offset_bkg+i])
-                    out_spec_dict["nu_uBooNE_1e1p_bnb"].SetBinError(i+1, 0.)
+                    out_h0_spec_dict["nu_uBooNE_1e1p_bnb"].SetBinContent(i+1, bkg_pred[in_offset_bkg+i])
+                    out_h1_spec_dict["nu_uBooNE_1e1p_bnb"].SetBinContent(i+1, bkg_pred[in_offset_bkg+i])
+                    out_h0_spec_dict["nu_uBooNE_1e1p_bnb"].SetBinError(i+1, 0.)
+                    out_h1_spec_dict["nu_uBooNE_1e1p_bnb"].SetBinError(i+1, 0.)
                     for j in range(Nbins_e):
                         out_covar[offset_1e1p_bnb+i][offset_1e1p_bnb+j] += bkg_mcstat_covar[in_offset_bkg+i][in_offset_bkg+j]
                 # ... done updating prediction and mc stat errors for 1e1p bnb
@@ -164,8 +170,8 @@ for var_e in sel1e1p_bdt_cut_variables:
                 
                 # write everything out
                 for k in [ key.GetName() for key in in_h1_spec_f.GetListOfKeys() ]:
-                    out_h0_spec_f.WriteTObject(out_spec_dict[k])
-                    out_h1_spec_f.WriteTObject(out_spec_dict[k])
+                    out_h0_spec_f.WriteTObject(out_h0_spec_dict[k])
+                    out_h1_spec_f.WriteTObject(out_h1_spec_dict[k])
                 out_covar_f.WriteTObject(out_covar, "frac_covariance")
                 # close the inputs
                 in_h0_spec_f.Close()

@@ -1,15 +1,127 @@
 import ROOT
 import math
 
-# TODO: define functions that form total, fractional covariane matrices (given the other + a spectrum)
+def getSpecList(hist_list):
 
-def getSpecList(hist_list, debug=False):
+    ## Function that concatenates a list of TH1Ds into a python list
+    ## Inputs: 
+    ##   hist_list    list of spectra to be concatenated (python list of TH1Ds)
+    ## Returns:
+    ##   spec         concatenated spectrum (python list)
+
+    # Initilize output spectrum
+    spec = []
+
+    # Loop over input spectra...
+    for hist in hist_list:
+        # Loop over bins in this spectrum...
+        for i in range(hist.GetNbinsX()):
+            spec.append( hist.GetBinContent(i+1) )
+
+    # Return concatenated spectrum
+    return spec
+## End definition of getSpecList
+
+def getSpecHist(spec, hist):
+
+    ## Function that converts a spectrum into a TH1D
+    ## Inputs: 
+    ##   spec       input spectrum (python list)
+    ##   in_hist    histogram to use as a template for the output (TH1D)
+    ## Returns:
+    ##   out_hist   input spectrum as TH1D
+
+    # Initilize output spectrum histogram, as a copy of in_hist
+    out_hist = ROOT.TH1D(in_hist)
+
+    # Loop over input spectrum...
+    for i in range(len(spec)):
+        out_hist.SetBinContent(i+1, spec[i])
+        out_hist.SetBinError(i+1, 0.)
+
+    # Return spectrum histogram
+    return out_hist
+## End definition of getSpecList
 
 
+def getFullCovar(frac_covar, spec, debug=False):
+
+    ## Function that calcuates full covariance matrix
+    ## Inputs: 
+    ##   frac_covar    fractional covariance matrix (TMatrixD)
+    ##   spec          spectrum (python list or similar)
+    ##   debug         flag for whether to print out various debugging information
+    ## Returns:
+    ##   full_covar    full covariance matrix (TMatrixD)
+
+    # If in debug mode, print out information on inputs
+    if debug:
+        print("spectrum: ", spec)
+        print("fractional covariance matrix: ")
+        print(frac_covar[0][0])
+        frac_covar.Print()
+
+    # Initialize output full covariance matrix as a copy of input fractional covariance matrix
+    full_covar = ROOT.TMatrixD(frac_covar)
+
+    # Compute M_ij = F_ij*N_i*N_j
+    for i in range(full_covar.GetNrows()):
+        for j in range(full_covar.GetNcols()):
+            if math.isnan(full_covar[i][j]):
+                full_covar[i][j] = 0.
+            else:
+                full_covar[i][j] *= spec[i]*spec[j]
+
+    # If in debug mode, print out information on output
+    if debug:
+        print("full covariance matrix: ")
+        print(full_covar[0][0])
+        full_covar.Print()
+
+    # Return full covariance matrix
+    return full_covar
+## End definition of getFullCovar
+
+
+def getFracCovar(full_covar, spec, debug=False):
+
+    ## Function that calcuates fractional covariance matrix
+    ## Inputs: 
+    ##   full_covar    full covariance matrix (TMatrixD)
+    ##   spec          spectrum (python list or similar)
+    ##   debug         flag for whether to print out various debugging information
+    ## Returns:
+    ##   frac_covar    fractional covariance matrix (TMatrixD)
+
+    # If in debug mode, print out information on inputs
+    if debug:
+        print("spectrum: ", spec)
+        print("full covariance matrix: ")
+        print(full_covar[0][0])
+        full_covar.Print()
+
+    # Initialize output fractional covariance matrix as a copy of input full covariance matrix
+    frac_covar = ROOT.TMatrixD(full_covar)
+
+    # Compute F_ij = M_ij/(N_i*N_j)
+    #  note: no special handling for division by 0 -- let there be NaNs
+    for i in range(full_covar.GetNrows()):
+        for j in range(full_covar.GetNcols()):
+            frac_covar[i][j] *= 1./(spec[i]*spec[j])
+
+    # If in debug mode, print out information on output
+    if debug:
+        print("fractional covariance matrix: ")
+        print(frac_covar[0][0])
+        frac_covar.Print()
+
+    # Return fractional covariance matrix
+    return frac_covar
+## End definition of getFracCovar
 
 
 def checkInversion(matrix, inverse, tol=1e-6, debug=False):
-
+    
     # Make copies of the matrices
     mat = ROOT.TMatrixD(matrix)
     inv = ROOT.TMatrixD(inverse)
@@ -49,18 +161,18 @@ def checkInversion(matrix, inverse, tol=1e-6, debug=False):
 
 def runConstraint(nue_spec, numu_spec, covar, numu_data_spec, debug=False):
 
-    ## Function that calculates the constrained nue prediction and covariance matrix using the method from docdb-32672
+    ## Function that calculates constrained nue prediction and covariance matrix using the method from docdb-32672
     ## Inputs:
-    ##   nue_spec          nue MC spectrum (python list or similar)
-    ##   numu_spec         numu MC spectrum (python list or similar)
-    ##   covar             joint nue+numu total covariance marix (TMatrixT<double>)
-    ##                       note: this should include all systematic uncertainties and MC stat errors, but *not* data stat errors
-    ##                       note: this should be the absolute covariance matrix, *not* fractional
-    ##   numu_data_spec    numu data spectrum (python list or similar)
-    ##   debug             flag for whether to print out various debugging information
+    ##   nue_spec             nue MC spectrum (python list or similar)
+    ##   numu_spec            numu MC spectrum (python list or similar)
+    ##   covar                joint nue+numu total covariance marix (TMatrixD)
+    ##                          note: this should include all systematic uncertainties and MC stat errors, but *not* data stat errors
+    ##                          note: this should be the full/absolute covariance matrix, *not* fractional
+    ##   numu_data_spec       numu data spectrum (python list or similar)
+    ##   debug                flag for whether to print out various debugging information
     ## Returns:
     ##   constr_nue_spec      constrained nue spectrum (python list)
-    ##   constr_covar_nue     constrained nue covariance matrix (TMatrixT<double>)
+    ##   constr_nue_covar     constrained nue covariance matrix (TMatrixD)
     ##                          note: *not* fractional, same as input covar
     
     
@@ -178,19 +290,19 @@ def runConstraint(nue_spec, numu_spec, covar, numu_data_spec, debug=False):
             calc_mat2[i][j] = 0.
             for k in range(Nbins_m):
                 calc_mat2[i][j] += covar_em[i][k]*calc_mat1[k][j]
-    constr_covar_nue = ROOT.TMatrixD(Nbins_e,Nbins_e)
+    constr_nue_covar = ROOT.TMatrixD(Nbins_e,Nbins_e)
     for i in range(Nbins_e):
         for j in range(Nbins_e):
-            constr_covar_nue[i][j] = covar_ee[i][j] - calc_mat2[i][j]
+            constr_nue_covar[i][j] = covar_ee[i][j] - calc_mat2[i][j]
     # If in debug mode, print these matrices out
     if debug:
         print("covar_em*(covar_mm)^{-1}*covar_me: ")
         calc_mat2.Print()
         print("constrained nue covariance matrix: ")
-        constr_covar_nue.Print()
+        constr_nue_covar.Print()
         
-    # Retrun constrained prediction, covariance matrix
-    return constr_nue_spec, constr_covar_nue
+    # Return constrained prediction, covariance matrix
+    return constr_nue_spec, constr_nue_covar
 ## End definition of runConstraint
 
 
@@ -208,6 +320,9 @@ if __name__ == "__main__":
     
     os.chdir(autodir)
 
+    # if we want debugging info, set this to True
+    debug = True
+
     for var_e in sel1e1p_bdt_cut_variables:
         for val_p in sel1e1p_mpidp_cut_values:
             for val_e in sel1e1p_bdt_cut_values:
@@ -224,58 +339,58 @@ if __name__ == "__main__":
                     in_h0_spec_f   = ROOT.TFile.Open("leeless_{}_total.SBNspec.root".format(tag), "READ")
                     in_h1_spec_f   = ROOT.TFile.Open("sens_{}_total.SBNspec.root".format(tag), "READ")
                     in_covar_f     = ROOT.TFile.Open("sens_{}_total.SBNcovar.root".format(tag), "READ")
-                    in_data_spec_f = in_h0_spec_f  # TODO: when real numu data is available, update this
+                    in_data_spec_f = in_h0_spec_f  # TODO: when real 1mu1p data is available, update this
+                    
+                    # define helper variables...
+                    Nbins_1e1p = in_h1_spec_f.Get("nu_uBooNE_1e1p_nue")
+                    sel1e1p_keys = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee"]
+                    joint_keys   = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee", "nu_uBooNE_1mu1p_bnb"]
                     
                     # convert input spectra from TH1Ds to python lists
-                    nue_spec   = getSpecList( [ in_h1_spec_f.Get(k) for k in ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee"] ] )
-                    numu_spec  = getSpecList( [ in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
-                    total_spec = getSpecList( [ in_h1_spec_f.Get(k) for k in ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee", "nu_uBooNE_1mu1p_bnb"] ] )
-                    # convert input fractional covariance matrix to total covariance matrix
-                    total_covar = getTotalCovar()
+                    sel1e1p_spec  = getSpecList( [ in_h1_spec_f.Get(k) for k in sel1e1p_keys ] )
+                    sel1mu1p_spec = getSpecList( [ in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
+                    joint_spec    = getSpecList( [ in_h1_spec_f.Get(k) for k in joint_keys ] )
+                    sel1mu1p_data_spec = getSpecList( [ in_data_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
+                    # convert input fractional covariance matrix to full covariance matrix
+                    full_covar = getFullCovar( in_covar_f.Get("frac_covariance"), joint_spec, debug=debug )
 
-                    # initialize the output spectra as copies of the inputs
-                    out_h0_spec_dict = {}
-                    out_h1_spec_dict = {}
-                    for k in [ key.GetName() for key in in_h1_spec_f.GetListOfKeys() ]:
-                        if '1mu1p' in k: continue
-                        out_h0_spec_dict[k] = ROOT.TH1D( in_h0_spec_f.Get(k) )
-                        out_h1_spec_dict[k] = ROOT.TH1D( in_h1_spec_f.Get(k) )
+                    # run the constraint
+                    constr_1e1p_spec, constr_1e1p_full_covar = runConstraint(sel1e1p_spec, sel1mu1p_spec, full_covar, sel1mu1p_data_spec, debug=debug)
 
-    
-    # Create dict of nue, numu spectra
-    spec_file = ROOT.TFile.Open(spec_fname)
-    spec_keys = [ key.GetName() for key in spec_file.GetListOfKeys() ]
-    spec_dict = {}
-    for k in spec_keys:
-        # Get the name of the selection that this spectrum contributes to
-        sel = k.split('_')[2]
-        # Add it to the dictionary
-        if sel not in spec_dict: spec_dict[sel] = spec_file.Get(k)
-        else: spec_dict[sel].Add(spec_file.Get(k))
+                    # convert the constrained spectra back to TH1Ds
+                    out_h0_hist_dict = {}
+                    out_h1_hist_dict = {}
+                    for i in range(len(sel1e1p_keys)):
+                        # get the key
+                        key = sel1e1p_keys[i]
+                        # get the corresponding portion of the constrained 1e1p spectrum
+                        out_h1_list = constr_1e1p_spec[ i*Nbins_1e1p : (i+1)*Nbins_1e1p ]
+                        if 'lee' not in key:
+                            out_h0_list = out_h1_list
+                        else:
+                            out_h0_list = [ 0. for N in out_h1_list ]
+                        # fill output TH1Ds based on the results of the constraint procedure
+                        out_h0_hist_dict[key] = getSpecHist( out_h0_list, in_h0_spec_f.Get(key) )
+                        out_h1_hist_dict[key] = getSpecHist( out_h1_list, in_h1_spec_f.Get(key) )                                            
+                    # convert the constrained full covariance matrix to a fractional covariance matrix
+                    constr_1e1p_frac_covar = getFracCovar( constr_1e1p_full_covar, constr_1e1p_spec, debug=debug )
 
-    # Get the total collapsed covariance matrix
-    covar_file = ROOT.TFile.Open(covar_fname)
-    total_covar = covar_file.Get("collapsed_covariance")
+                    # write everything out
+                    for key in sel1e1p_keys:
+                        out_h0_spec_f.WriteTObject(out_h0_hist_dict[key])
+                        out_h1_spec_f.WriteTObject(out_h1_hist_dict[key])
+                    out_covar_f.WriteTObject(constr_sel1e1p_covar, "frac_covariance")
+                    # close the inputs
+                    in_h0_spec_f.Close()
+                    in_h1_spec_f.Close()
+                    in_covar_f.Close()
+                    in_data_spec_f.Close()
+                    # close the outputs
+                    out_h0_spec_f.Close()
+                    out_h1_spec_f.Close()
+                    out_covar_f.Close()
 
-    # Get the data spectrum
-    data_spec_file = ROOT.TFile.Open(data_spec_fname)
-    data_spec_keys = [ key.GetName() for key in data_spec_file.GetListOfKeys() ]
-    data_spec_dict = {}
-    for k in data_spec_keys:
-        # Get the name of the selection that this spectrum contributes to
-        sel = k.split('_')[2]
-        # Add it to the dictionary
-        if sel not in data_spec_dict: data_spec_dict[sel] = data_spec_file.Get(k)
-        else: data_spec_dict[sel].Add(data_spec_file.Get(k))
-
-    # Add statistical errors to the numu component of the joint covariance matrix
-    for i in range(spec_dict['1mu1p'].GetNbinsX()):
-        total_covar[spec_dict['1e1p'].GetNbinsX()+i][spec_dict['1e1p'].GetNbinsX()+i] += spec_dict['1mu1p'].GetBinContent(i+1)
-    # Calculate the constrained nue spectrum, covarinace matrix
-    constr_nue_spec, constr_nue_covar = runConstraint(spec_dict['1e1p'], spec_dict['1mu1p'], total_covar, data_spec_dict['1mu1p'], debug=True)
-
-    print("N_fit_nue: ", [ constr_nue_spec[i] for i in range(spec_dict['1e1p'].GetNbinsX()) ])
-    print("sigma_fit_nue: ", [ math.sqrt(constr_nue_covar[i][i]) for i in range(spec_dict['1e1p'].GetNbinsX()) ])
-    
+                    # after one iteration, make sure debug is off
+                    debug = False
 
     print("Done!")
