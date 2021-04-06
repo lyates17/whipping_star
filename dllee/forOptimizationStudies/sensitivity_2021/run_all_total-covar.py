@@ -22,8 +22,8 @@ os.chdir(autodir)
 for var_e in sel1e1p_bdt_cut_variables:
     for val_p in sel1e1p_mpidp_cut_values:
 
-        detsysdir = os.path.join(topdir, "detsys", detsys_subdir_dict[var_e])  # TODO: when detector systematic covariance matrices with proton MPID cut are available, update this
-        bkgdir    = os.path.join(topdir, "bkg", "{:02d}".format(int(val_p*100)), bkg_subdir_dict[var_e])
+        detsysdir = os.path.join(topdir, "detsys", "{:02d}".format(int(val_p*100)), detsys_subdir_dict[var_e])
+        bkgdir    = os.path.join(topdir, "bkg",    "{:02d}".format(int(val_p*100)), bkg_subdir_dict[var_e])
         
         for val_e in sel1e1p_bdt_cut_values:
             for val_m in sel1mu1p_bdt_cut_values:
@@ -107,7 +107,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 
                 
                 # add detector systematics for 1e1p bnb (i.e., numu backgrounds to the 1e1p selection)...
-                detsys_bkg = 1.0**2  # TODO: update this value (currently 100% fractional error)
+                detsys_bkg = 0.20**2  # settled on 20%, see Slack DM with Nick at 9:34 on April 5
                 print "Adding detector systematics for numu backgrounds to the 1e1p ({:.3f})".format(detsys_bkg)
                 for i in range(Nbins_e):
                     out_covar[offset_1e1p_bnb+i][offset_1e1p_bnb+i] += detsys_bkg

@@ -19,7 +19,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 tag = "opt-{}-e{:02d}-{:02d}-m{:02d}".format( var_e.split('_')[-1], int(val_e*100.), int(val_p*100), int(val_m*100) )
 
                 # run the frequentist study for sensitivity
-                cmd = "/uboone/app/users/yatesla/sbnfit/whipping_star/build/bin/sbnfit_lee_frequentist_study "
+                cmd = "$SBNFIT_LIBDIR/bin/sbnfit_lee_frequentist_study "
                 cmd += "--xml {}_constr.xml --tag sens_{}_constr_ -b leeless_{}_constr.SBNspec.root -s sens_{}_constr.SBNspec.root -c sens_{}_constr.SBNcovar.root -e 1e-11 > log_{}.txt".format(tag, tag, tag, tag, tag, tag)
                 print cmd
                 subprocess.call(cmd, shell=True)
