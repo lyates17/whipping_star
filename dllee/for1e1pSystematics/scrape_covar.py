@@ -6,9 +6,9 @@ outdir = "output"
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 
 var_list = ['Enu_1e1p','Eta','PT_1e1p','AlphaT_1e1p','SphB_1e1p','PzEnu_1e1p','ChargeNearTrunk','Q0_1e1p','Q3_1e1p','Thetas','Phis',
-            'pTRat_1e1p','Proton_ThetaReco','Proton_PhiReco','MinShrFrac','MaxShrFrac','BjXB_1e1p','BjYB_1e1p',
-            'Proton_Edep','Electron_Edep','Lepton_ThetaReco','Lepton_PhiReco','OpenAng','Xreco','Yreco','Zreco','sigProb',
-            'MuonPID_int_yScore','ProtonPID_int_yScore','EminusPID_int_yScore','showerFraction','ShowerConsistency','EeCCQE','EpCCQE']
+            'PTRat_1e1p','Proton_ThetaReco','Proton_PhiReco','MinShrFrac','MaxShrFrac','BjXB_1e1p','BjYB_1e1p',
+            'Proton_Edep','Electron_Edep','Lepton_ThetaReco','Lepton_PhiReco','OpenAng','Xreco','Yreco','Zreco',
+            'MPIDY_muon','MPIDY_proton','MPIDY_eminus','shower_fraction','Shower_Consistency','EnuQE_lepton','EnuQE_proton', 'sigprobavg']
 var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'Eta': 'eta_reco',
             'PT_1e1p': 'pT_reco',
@@ -20,7 +20,7 @@ var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'Q3_1e1p': 'Q3_reco',
             'Thetas': 'sum_thetas_reco',
             'Phis': 'sum_phis_reco',
-            'pTRat_1e1p': 'pT_ratio_reco',
+            'PTRat_1e1p': 'pT_ratio_reco',
             'Proton_ThetaReco': 'proton_theta_reco',
             'Proton_PhiReco': 'proton_phi_reco',
             'MinShrFrac': 'min_shr_frac_reco',
@@ -35,19 +35,18 @@ var_dict = {'Enu_1e1p': 'nu_energy_reco',
             'Xreco': 'x_reco',
             'Yreco': 'y_reco',
             'Zreco': 'z_reco',
-            'sigProb': 'bdt_score',
-            'MuonPID_int_yScore': 'mpid_muon_score',
-            'ProtonPID_int_yScore': 'mpid_proton_score',
-            'EminusPID_int_yScore': 'mpid_electron_score',
-            'showerFraction': 'shr_charge_ratio_reco',
-            'ShowerConsistency':  'shr_consistency_reco',
-            'EeCCQE': 'nu_energy_QE_lepton_reco',
-            'EpCCQE': 'nu_energy_QE_proton_reco'
+            'MPIDY_muon': 'mpid_muon_score',
+            'MPIDY_proton': 'mpid_proton_score',
+            'MPIDY_eminus': 'mpid_electron_score',
+            'shower_fraction': 'shr_charge_ratio_reco',
+            'Shower_Consistency':  'shr_consistency_reco',
+            'EnuQE_lepton': 'nu_energy_QE_lepton_reco',
+            'EnuQE_proton': 'nu_energy_QE_proton_reco',
+            'sigprobavg': 'dllee_bdt_score_avg'
 }
 
 
-#for sel in ["final", "highE", "blind"]:
-for sel in ["final"]:
+for sel in ["FinalSelection", "HighE", "LowBDT", "KinCut"]:
     for var in var_list:
         
         # Get reweightable covariance matrix

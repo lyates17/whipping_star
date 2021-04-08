@@ -12,15 +12,17 @@ var_list = [ "x_reco", "y_reco", "z_reco",
              "Q2_reco", "Q0_reco", "Q3_reco", "sphB_reco",
              "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
              "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco",
-             "mpid_eminus_score", "mpid_muon_score", "mpid_proton_score", "mpid_gamma_score", "mpid_pion_score",
-             "bdt_score" ]
+             "mpid_electron_score", "mpid_muon_score", "mpid_proton_score", #"mpid_gamma_score", "mpid_pion_score",
+             #"bdt_score" ]
+             "dllee_bdt_score_avg" ]
 
 print len(var_list)
 
 os.chdir(autodir)
 
 #for sel in ["sel_total", "sel_run1", "sel_run2", "sel_run3"]:
-for sel in ["sel_total_withoutPi0Weights", "sel_total_withPi0Weights"]:
+#for sel in ["sel_total_withoutPi0Weights", "sel_total_withPi0Weights"]:
+for sel in ["sel_total_withPi0Weights"]:
     for var in var_list:
         #if var != "bdt_score" and sel != "sel_total":
         #    continue

@@ -32,7 +32,7 @@ xml_str = """<?xml version="1.0" ?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN2_FILE_NAME" scale="RUN2_SCALE" maxevents="100000" pot="4.090e20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN2_FILE_NAME" scale="RUN2_SCALE" maxevents="100000" pot="1.299e21">
   <branch
       name="VAR_NAME"
       type="double"
@@ -201,16 +201,16 @@ run3_scale = run3_data_pot / total_data_pot
 run2and3_scale = ( run2_data_pot + run3_data_pot ) / total_data_pot
 
 # input files
-run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run1_Feb08.root"
-run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run2_Feb08.root"
-run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run3_Feb08.root"
+run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run1_Apr02.root"
+run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run2_Apr02.root"
+run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_pi0_run3_Apr02.root"
 
 # 6 variables...
-var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]
-units_list = [ "MeV", "MeV", "MeV", "MeV",  "MeV", "MeV" ]
-nbins_list = [ 20, 20, 20, 20, 20, 20 ]
-xlow_list  = [ 30., 1000, 80., 35., 100., 100. ]
-xhigh_list = [ 350., 1400., 450., 300., 750., 700. ]
+var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco", "mpid_muon_score" ]
+units_list = [ "MeV", "MeV", "MeV", "MeV",  "MeV", "MeV", "" ]
+nbins_list = [ 20, 20, 20, 20, 20, 20, 20 ]
+xlow_list  = [ 30., 1000, 80., 35., 100., 100., 0. ]
+xhigh_list = [ 350., 1400., 450., 300., 750., 700., 1. ]
 
 # additional weight
 #additional_weight = "xsec_corr_weight"

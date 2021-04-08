@@ -6,7 +6,7 @@ import subprocess
 outdir = "auto"
 subprocess.call("mkdir -p %s" % outdir, shell=True)
 
-xml_str = """<?xml version="1.0" ?>
+xml_str = """<?xml version="1.0"?>
 
 <mode name="nu"/>
 <detector name="uBooNE"/>
@@ -20,85 +20,123 @@ xml_str = """<?xml version="1.0" ?>
   <subchannel name="extbnb"  />
 </channel>
 
-<plotpot value=TOTAL_POT/>
 
-
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="2.949e+20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="ADDITIONAL_WEIGHT"
+      additional_weight="( ADDITIONAL_WEIGHT * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((RUN1_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN2_FILE_NAME" scale="RUN2_SCALE" maxevents="100000" pot="4.090e+20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN2_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="ADDITIONAL_WEIGHT"
+      additional_weight="( ADDITIONAL_WEIGHT * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((RUN2_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="RUN3_SCALE" maxevents="100000" pot="5.103e+20">
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="ADDITIONAL_WEIGHT"
+      additional_weight="( ADDITIONAL_WEIGHT * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((RUN3_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="9.803e+22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="ADDITIONAL_WEIGHT"
+      additional_weight="( ADDITIONAL_WEIGHT * ((RUN1_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN2_FILE_NAME" scale="RUN2_SCALE" maxevents="100000" pot="9.209e+22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN2_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="ADDITIONAL_WEIGHT"
+      additional_weight="( ADDITIONAL_WEIGHT * ((RUN2_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="RUN3_SCALE" maxevents="100000" pot="4.707e+22">
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_bnb"
-      additional_weight="ADDITIONAL_WEIGHT"
+      additional_weight="( ADDITIONAL_WEIGHT * ((RUN3_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="RUN1_SCALE" maxevents="100000" pot="1.012e+20">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="1.0" maxevents="100000">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="( ADDITIONAL_WEIGHT  * ((RUN1_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="0.356" maxevents="100000">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="( ADDITIONAL_WEIGHT  * ((RUN3_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="1.0" maxevents="100000">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="( ADDITIONAL_WEIGHT  * ((RUN1_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000">
+  <branch
+      name="VAR_NAME"
+      type="double"
+      associated_subchannel="nu_uBooNE_1mu1p_bnb"
+      additional_weight="( ADDITIONAL_WEIGHT  * ((RUN3_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN1_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_extbnb"
-      additional_weight="1"
+      additional_weight="( ((RUN1_POT)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="RUN2AND3_SCALE" maxevents="100000" pot="1.536e+20">
+<MultisimFile treename="sel_extbnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_extbnb"
-      additional_weight="1"
+      additional_weight="( (((RUN2_POT)+(RUN3_POT))/dllee_pot_weight) * (dllee_bdt_score_avg>=0.5) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
@@ -119,17 +157,17 @@ xml_str = """<?xml version="1.0" ?>
   <whitelist>piontotxsec_FluxUnisim</whitelist>
   <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
   <whitelist>All_UBGenie</whitelist>
+  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
   <whitelist>RPA_CCQE_UBGenie</whitelist>
   <whitelist>AxFFCCQEshape_UBGenie</whitelist>
   <whitelist>VecFFCCQEshape_UBGenie</whitelist>
   <whitelist>DecayAngMEC_UBGenie</whitelist>
-  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
-  <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
-  <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
-  <whitelist>NormCCCOH_UBGenie</whitelist>
-  <whitelist>NormNCCOH_UBGenie</whitelist>
   <whitelist>xsr_scc_Fa3_SCC</whitelist>
   <whitelist>xsr_scc_Fv3_SCC</whitelist>
+  <whitelist>NormCCCOH_UBGenie</whitelist>
+  <whitelist>NormNCCOH_UBGenie</whitelist>
+  <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
+  <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
   <whitelist>reinteractions_piminus_Geant4</whitelist>
   <whitelist>reinteractions_piplus_Geant4</whitelist>
   <whitelist>reinteractions_proton_Geant4</whitelist>
@@ -149,23 +187,19 @@ xml_str = """<?xml version="1.0" ?>
 </WeightMaps>
 """
 
+
 # POT information
 run1_data_pot = float(1.558e+20) + float(1.129e+17) + float(1.869e+19)
 run2_data_pot = (float(1.63e+20) + float(2.964e+19) + float(1.239e+19)) + float(5.923e+19)
 run3_data_pot = (float(1.701e+20) + float(2.97e+19) + float(1.524e+17)) + float(4.3e+19)
-total_data_pot = run1_data_pot + run2_data_pot + run3_data_pot
-# scale factor information
-run1_scale = run1_data_pot / total_data_pot
-run2_scale = run2_data_pot / total_data_pot
-run3_scale = run3_data_pot / total_data_pot
 
 # file name information
-run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Feb08.root"
-run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_Feb08.root"
-run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Feb08.root"
+run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Mar31.root"
+run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_Mar31.root"
+run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Mar31.root"
 
 # weighting information
-weight_str = "xsec_corr_weight"
+#weight_str = "xsec_corr_weight"
 
 # var_dict with 34 variables... (nbins, xlow, xhigh, units)
 var_dict = { "x_reco": (14,15.,241.25,"cm"),
@@ -199,35 +233,30 @@ var_dict = { "x_reco": (14,15.,241.25,"cm"),
              "proton_length_reco": (14,5.,100.,"cm"),
              "proton_KE_reco": (14,50.,500.,"MeV"),
              "proton_cos_theta_reco": (14,0.,1.,""),
-             "mpid_eminus_score": (14,0.,1.,""),
+             "mpid_electron_score": (14,0.,1.,""),
              "mpid_muon_score": (14,0.,1.,""),
              "mpid_proton_score": (14,0.,1.,""),
-             "mpid_gamma_score": (14,0.,1.,""),
-             "mpid_pion_score": (14,0.,1.,""),
-             "bdt_score": (14,0.,0.4,"")
-}
+             #"mpid_gamma_score": (14,0.,1.,""),
+             #"mpid_pion_score": (14,0.,1.,""),
+             #"bdt_score": (14,0.,0.4,"")
+             "dllee_bdt_score_avg": (5,0.5,1.,"")
+         }
 
 # sel_dict
-# selection name: [ total_data_pot, run1_scale, run2_scale, run3_scale ]
-#sel_dict = { 'sel_total': [ total_data_pot, run1_scale, run2_scale, run3_scale ], 
-#             'sel_run1':  [ run1_data_pot, 1., 0., 0. ], 
-#             'sel_run2':  [ run2_data_pot, 0., 1., 0. ],
-#             'sel_run3':  [ run3_data_pot, 0., 0., 1. ] }
-sel_dict = { 'sel_total_withoutPi0Weights': [ total_data_pot, run1_scale, run2_scale, run3_scale, "xsec_corr_weight" ], 
-             'sel_total_withPi0Weights':    [ total_data_pot, run1_scale, run2_scale, run3_scale, "xsec_corr_weight*dllee_pi0_weight" ]  }
+# selection name: [ run1_pot, run2_pot, run3_pot, additional_weight ]
+sel_dict = { #'sel_total_withoutPi0Weights': [ run1_data_pot, run2_data_pot, run3_data_pot, "xsec_corr_weight" ],
+             'sel_total_withPi0Weights':    [ run1_data_pot, run2_data_pot, run3_data_pot, "xsec_corr_weight*dllee_pi0_weight" ]  }
 
 
 # Loop over everything, write the xmls...
 for sel in sel_dict:
 
     # Set the POT and associated scale strings
-    total_pot_str = str(sel_dict[sel][0])
-    run1_scale_str = str(sel_dict[sel][1])
-    run2_scale_str = str(sel_dict[sel][2])
-    run3_scale_str = str(sel_dict[sel][3])
-    run2and3_scale_str = str( float(sel_dict[sel][2]+sel_dict[sel][3]) )
+    run1_pot_str = str(sel_dict[sel][0])
+    run2_pot_str = str(sel_dict[sel][1])
+    run3_pot_str = str(sel_dict[sel][2])
     # Set the weight string
-    additional_weight = str(sel_dict[sel][4])
+    additional_weight = str(sel_dict[sel][3])
 
     # Loop over the variables...
     for var in var_dict:
@@ -248,14 +277,12 @@ for sel in sel_dict:
         
         var_xml_str = var_xml_str.replace("UNIT", units)
         var_xml_str = var_xml_str.replace("BIN_EDGES", edges_str)
-        var_xml_str = var_xml_str.replace("TOTAL_POT", total_pot_str)
         var_xml_str = var_xml_str.replace("RUN1_FILE_NAME", run1_file_name)
         var_xml_str = var_xml_str.replace("RUN2_FILE_NAME", run2_file_name)
         var_xml_str = var_xml_str.replace("RUN3_FILE_NAME", run3_file_name)
-        var_xml_str = var_xml_str.replace("RUN1_SCALE", run1_scale_str)
-        var_xml_str = var_xml_str.replace("RUN2_SCALE", run2_scale_str)
-        var_xml_str = var_xml_str.replace("RUN3_SCALE", run3_scale_str)
-        var_xml_str = var_xml_str.replace("RUN2AND3_SCALE", run2and3_scale_str)
+        var_xml_str = var_xml_str.replace("RUN1_POT", run1_pot_str)
+        var_xml_str = var_xml_str.replace("RUN2_POT", run2_pot_str)
+        var_xml_str = var_xml_str.replace("RUN3_POT", run3_pot_str)
         var_xml_str = var_xml_str.replace("VAR_NAME", var)
         var_xml_str = var_xml_str.replace("ADDITIONAL_WEIGHT", additional_weight)
             

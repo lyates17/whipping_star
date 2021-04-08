@@ -4,7 +4,7 @@ autodir = "auto"
 topdir = os.getcwd()
 
 sel_list = [ "cv_weighted", "pi0_weighted" ]
-var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco" ]
+var_list = [ "pi0_mass_reco", "Delta_mass_reco", "shower1_energy_reco", "shower2_energy_reco", "pi0_energy_reco", "pi0_momentum_reco", "mpid_muon_score" ]
 
 os.chdir(autodir)
 
