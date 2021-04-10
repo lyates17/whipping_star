@@ -4,10 +4,10 @@ import ROOT
 topdir = os.getcwd()
 autodir = os.path.join(topdir, "auto")
 
-sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg", "dllee_bdt_score_median" ]
+sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg" ] #, "dllee_bdt_score_median" ]
 sel1e1p_bdt_cut_values   = [ 0.7, 0.75, 0.8, 0.85, 0.9, 0.95 ]
 sel1mu1p_bdt_cut_values  = [ 0.5, 0.6, 0.7 ]
-sel1e1p_mpidp_cut_values = [ 0.0, 0.2 ]
+sel1e1p_mpidp_cut_values = [ 0.0 ] #, 0.2 ]
 
 detsys_subdir_dict = {}
 detsys_subdir_dict["dllee_bdt_score_avg"]    = "AvgScore"
@@ -124,17 +124,17 @@ for var_e in sel1e1p_bdt_cut_variables:
                 print "Adding mc stat errors from {}".format("sens_{}.SBNspec.root".format(tag))
                 for i in range(Nbins_e):
                     if in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinContent(i+1) > 0.:
-                        out_covar[i][i] += in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinContent(i+1)
+                        out_covar[i][i] += (in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetBinContent(i+1))**2
                     out_h0_spec_dict["nu_uBooNE_1e1p_nue"].SetBinError(i+1, 0.)
                     out_h1_spec_dict["nu_uBooNE_1e1p_nue"].SetBinError(i+1, 0.)
                 for i in range(Nbins_e):
                     if in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinContent(i+1) > 0.:
-                        out_covar[offset_1e1p_lee+i][offset_1e1p_lee+i] += in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinContent(i+1)
+                        out_covar[offset_1e1p_lee+i][offset_1e1p_lee+i] += (in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinContent(i+1))**2
                     out_h0_spec_dict["nu_uBooNE_1e1p_lee"].SetBinError(i+1, 0.)
                     out_h1_spec_dict["nu_uBooNE_1e1p_lee"].SetBinError(i+1, 0.)
                 for i in range(Nbins_m):
                     if in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1) > 0.:
-                        out_covar[offset_1mu1p+i][offset_1mu1p+i] += in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1)
+                        out_covar[offset_1mu1p+i][offset_1mu1p+i] += (in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1))**2
                     out_h0_spec_dict["nu_uBooNE_1mu1p_bnb"].SetBinError(i+1, 0.)
                     out_h1_spec_dict["nu_uBooNE_1mu1p_bnb"].SetBinError(i+1, 0.)
                 # ... done adding mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p

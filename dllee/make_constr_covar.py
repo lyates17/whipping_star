@@ -1,6 +1,6 @@
+import os,sys
 import ROOT
 import math
-import os
 
 def getSpecList(hist_list):
 
@@ -316,87 +316,86 @@ def runConstraint(nue_spec, numu_spec, covar, numu_data_spec, debug=False):
 # If this is the executable...
 if __name__ == "__main__":
 
+    # Declare file names for input files
     topdir = os.getcwd()
-    autodir = os.path.join(topdir, "auto")
+    tag = "total"
+    in_h0_spec_fname = os.path.join(topdir, "leeless_{}.SBNspec.root".format(tag))
+    in_h1_spec_fname = os.path.join(topdir, "sens_{}.SBNspec.root".format(tag))
+    in_covar_fname   = os.path.join(topdir, "sens_{}.SBNcovar.root".format(tag))
+    # If "total" not in file names, throw an error
+    if "total" not in in_covar_fname:
+        print("Input file names must have 'total' in them! Exiting...")
+        sys.exit(1)
 
-    sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg" ] #, "dllee_bdt_score_median" ]
-    sel1e1p_bdt_cut_values   = [ 0.7, 0.75, 0.8, 0.85, 0.9, 0.95 ]
-    sel1mu1p_bdt_cut_values  = [ 0.5, 0.6, 0.7 ]
-    sel1e1p_mpidp_cut_values = [ 0.0 ] #, 0.2 ]
+    # Define helper variables...
+    #   Note: Making some assumptions about the xml configuration
+    Nbins_1e1p = 10
+    sel1e1p_keys = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee"]
+    joint_keys   = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee", "nu_uBooNE_1mu1p_bnb"]
+    # If we want debugging info, set this to True
+    debug = False
+
     
-    os.chdir(autodir)
+    # Open the input files
+    in_h0_spec_f   = ROOT.TFile.Open(in_h0_spec_fname, "READ")
+    in_h1_spec_f   = ROOT.TFile.Open(in_h1_spec_fname, "READ")
+    in_covar_f     = ROOT.TFile.Open(in_covar_fname, "READ")
+    in_data_spec_f = in_h0_spec_f  # TODO: when real 1mu1p data is available, update this
+    
+    # Declare file names for output files
+    out_h0_spec_fname = in_h0_spec_fname.replace("total", "constr")
+    out_h1_spec_fname = in_h1_spec_fname.replace("total", "constr")
+    out_covar_fname   = in_covar_fname.replace("total", "constr")
 
-    # if we want debugging info, set this to True
-    debug = True
+    # Create the output files
+    out_h0_spec_f = ROOT.TFile(out_h0_spec_fname, "RECREATE")
+    out_h1_spec_f = ROOT.TFile(out_h1_spec_fname, "RECREATE")
+    out_covar_f   = ROOT.TFile(out_covar_fname, "RECREATE")
+    
+    
+    # Convert input spectra from TH1Ds to python lists
+    sel1e1p_spec  = getSpecList( [ in_h1_spec_f.Get(k) for k in sel1e1p_keys ] )
+    sel1mu1p_spec = getSpecList( [ in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
+    joint_spec    = getSpecList( [ in_h1_spec_f.Get(k) for k in joint_keys ] )
+    sel1mu1p_data_spec = getSpecList( [ in_data_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
+    # Convert input fractional covariance matrix to full covariance matrix
+    full_covar = getFullCovar( in_covar_f.Get("frac_covariance"), joint_spec, debug=debug )
 
-    for var_e in sel1e1p_bdt_cut_variables:
-        for val_p in sel1e1p_mpidp_cut_values:
-            for val_e in sel1e1p_bdt_cut_values:
-                for val_m in sel1mu1p_bdt_cut_values:
-                    
-                    tag = "opt-{}-e{:02d}-{:02d}-m{:02d}".format( var_e.split('_')[-1], int(val_e*100.), int(val_p*100), int(val_m*100) )
-                    print tag
+    # Run the constraint
+    constr_1e1p_spec, constr_1e1p_full_covar = runConstraint(sel1e1p_spec, sel1mu1p_spec, full_covar, sel1mu1p_data_spec, debug=debug)
 
-                    # create the output files
-                    out_h0_spec_f = ROOT.TFile("leeless_{}_constr.SBNspec.root".format(tag), "RECREATE")
-                    out_h1_spec_f = ROOT.TFile("sens_{}_constr.SBNspec.root".format(tag), "RECREATE")
-                    out_covar_f   = ROOT.TFile("sens_{}_constr.SBNcovar.root".format(tag), "RECREATE")
-                    # open the input files
-                    in_h0_spec_f   = ROOT.TFile.Open("leeless_{}_total.SBNspec.root".format(tag), "READ")
-                    in_h1_spec_f   = ROOT.TFile.Open("sens_{}_total.SBNspec.root".format(tag), "READ")
-                    in_covar_f     = ROOT.TFile.Open("sens_{}_total.SBNcovar.root".format(tag), "READ")
-                    in_data_spec_f = in_h0_spec_f  # TODO: when real 1mu1p data is available, update this
-                    
-                    # define helper variables...
-                    Nbins_1e1p = in_h1_spec_f.Get("nu_uBooNE_1e1p_nue").GetNbinsX()
-                    sel1e1p_keys = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee"]
-                    joint_keys   = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee", "nu_uBooNE_1mu1p_bnb"]
-                    
-                    # convert input spectra from TH1Ds to python lists
-                    sel1e1p_spec  = getSpecList( [ in_h1_spec_f.Get(k) for k in sel1e1p_keys ] )
-                    sel1mu1p_spec = getSpecList( [ in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
-                    joint_spec    = getSpecList( [ in_h1_spec_f.Get(k) for k in joint_keys ] )
-                    sel1mu1p_data_spec = getSpecList( [ in_data_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
-                    # convert input fractional covariance matrix to full covariance matrix
-                    full_covar = getFullCovar( in_covar_f.Get("frac_covariance"), joint_spec, debug=debug )
+    # Convert the constrained spectra back to TH1Ds
+    out_h0_hist_dict = {}
+    out_h1_hist_dict = {}
+    for i in range(len(sel1e1p_keys)):
+        # Get the key
+        key = sel1e1p_keys[i]
+        # Get the corresponding portion of the constrained 1e1p spectrum
+        out_h1_list = constr_1e1p_spec[ i*Nbins_1e1p : (i+1)*Nbins_1e1p ]
+        if 'lee' not in key:
+            out_h0_list = out_h1_list
+        else:
+            out_h0_list = [ 0. for N in out_h1_list ]
+        # Fill output TH1Ds based on the results of the constraint procedure
+        out_h0_hist_dict[key] = getSpecHist( out_h0_list, in_h0_spec_f.Get(key) )
+        out_h1_hist_dict[key] = getSpecHist( out_h1_list, in_h1_spec_f.Get(key) )                                            
+    # Convert the constrained full covariance matrix to a fractional covariance matrix
+    constr_1e1p_frac_covar = getFracCovar( constr_1e1p_full_covar, constr_1e1p_spec, debug=debug )
 
-                    # run the constraint
-                    constr_1e1p_spec, constr_1e1p_full_covar = runConstraint(sel1e1p_spec, sel1mu1p_spec, full_covar, sel1mu1p_data_spec, debug=debug)
-
-                    # convert the constrained spectra back to TH1Ds
-                    out_h0_hist_dict = {}
-                    out_h1_hist_dict = {}
-                    for i in range(len(sel1e1p_keys)):
-                        # get the key
-                        key = sel1e1p_keys[i]
-                        # get the corresponding portion of the constrained 1e1p spectrum
-                        out_h1_list = constr_1e1p_spec[ i*Nbins_1e1p : (i+1)*Nbins_1e1p ]
-                        if 'lee' not in key:
-                            out_h0_list = out_h1_list
-                        else:
-                            out_h0_list = [ 0. for N in out_h1_list ]
-                        # fill output TH1Ds based on the results of the constraint procedure
-                        out_h0_hist_dict[key] = getSpecHist( out_h0_list, in_h0_spec_f.Get(key) )
-                        out_h1_hist_dict[key] = getSpecHist( out_h1_list, in_h1_spec_f.Get(key) )                                            
-                    # convert the constrained full covariance matrix to a fractional covariance matrix
-                    constr_1e1p_frac_covar = getFracCovar( constr_1e1p_full_covar, constr_1e1p_spec, debug=debug )
-
-                    # write everything out
-                    for key in sel1e1p_keys:
-                        out_h0_spec_f.WriteTObject(out_h0_hist_dict[key])
-                        out_h1_spec_f.WriteTObject(out_h1_hist_dict[key])
-                    out_covar_f.WriteTObject(constr_1e1p_frac_covar, "frac_covariance")
-                    # close the inputs
-                    in_h0_spec_f.Close()
-                    in_h1_spec_f.Close()
-                    in_covar_f.Close()
-                    in_data_spec_f.Close()
-                    # close the outputs
-                    out_h0_spec_f.Close()
-                    out_h1_spec_f.Close()
-                    out_covar_f.Close()
-
-                    # after one iteration, make sure debug is off
-                    debug = False
+    
+    # Write everything out
+    for key in sel1e1p_keys:
+        out_h0_spec_f.WriteTObject(out_h0_hist_dict[key])
+        out_h1_spec_f.WriteTObject(out_h1_hist_dict[key])
+    out_covar_f.WriteTObject(constr_1e1p_frac_covar, "frac_covariance")
+    # Close the outputs
+    out_h0_spec_f.Close()
+    out_h1_spec_f.Close()
+    out_covar_f.Close()
+    # Close the inputs
+    in_h0_spec_f.Close()
+    in_h1_spec_f.Close()
+    in_covar_f.Close()
+    in_data_spec_f.Close()
 
     print("Done!")

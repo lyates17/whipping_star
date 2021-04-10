@@ -3,10 +3,10 @@ import os,subprocess
 topdir = os.getcwd()
 autodir = os.path.join(topdir, "auto")
 
-sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg", "dllee_bdt_score_median" ]
+sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg" ] #, "dllee_bdt_score_median" ]
 sel1e1p_bdt_cut_values   = [ 0.7, 0.75, 0.8, 0.85, 0.9, 0.95 ]
 sel1mu1p_bdt_cut_values  = [ 0.5, 0.6, 0.7 ]
-sel1e1p_mpidp_cut_values = [ 0.0, 0.2 ]
+sel1e1p_mpidp_cut_values = [ 0.0 ] #, 0.2 ]
 
 os.chdir(autodir)
 

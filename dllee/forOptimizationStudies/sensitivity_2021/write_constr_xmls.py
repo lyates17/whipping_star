@@ -198,21 +198,21 @@ xml_str = """<?xml version="1.0"?>
 """
 
 # step scan information
-sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg", "dllee_bdt_score_median" ]
+sel1e1p_bdt_cut_variables  = [ "dllee_bdt_score_avg" ] #, "dllee_bdt_score_median" ]
 sel1mu1p_bdt_cut_variables = [ "dllee_bdt_score_avg" ]
 # TODO: if adding lower BDT values, also add extbnb sub-channel for 1e1p selection (not gonna happen though)
 sel1e1p_bdt_cut_values   = [ 0.7, 0.75, 0.8, 0.85, 0.9, 0.95 ]
 sel1mu1p_bdt_cut_values  = [ 0.5, 0.6, 0.7 ]
-sel1e1p_mpidp_cut_values = [ -0.001, 0.2 ]
+sel1e1p_mpidp_cut_values = [ -0.001 ] #, 0.2 ]
 
 # input file information
 sel1e1p_file_name_dict = {}
-sel1e1p_file_name_dict["dllee_bdt_score_avg"]    = [ "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_avgscore_run1_Mar26.root",
-                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_avgscore_run2_Mar26.root",
-                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_avgscore_run3_Mar26.root" ]
-sel1e1p_file_name_dict["dllee_bdt_score_median"] = [ "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run1_Mar26.root",
-                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run2_Mar26.root",
-                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run3_Mar26.root" ]
+sel1e1p_file_name_dict["dllee_bdt_score_avg"]    = [ "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_FinalSelection_run1_Apr07.root",
+                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_FinalSelection_run2_Apr07.root",
+                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_FinalSelection_run3_Apr07.root" ]
+#sel1e1p_file_name_dict["dllee_bdt_score_median"] = [ "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run1_Mar26.root",
+#                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run2_Mar26.root",
+#                                                     "input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_medianscore_run3_Mar26.root" ]
 
 # data POT information
 # in theory (from docdb-26979, Table 3)...
