@@ -315,7 +315,7 @@ if __name__ == "__main__":
 
     # Declare file names for input files
     topdir = os.getcwd()
-    tag = "total"
+    tag = "Runs1to5_total"
     in_h0_spec_fname = os.path.join(topdir, "leeless_{}.SBNspec.root".format(tag))
     in_h1_spec_fname = os.path.join(topdir, "sens_{}.SBNspec.root".format(tag))
     in_covar_fname   = os.path.join(topdir, "sens_{}.SBNcovar.root".format(tag))

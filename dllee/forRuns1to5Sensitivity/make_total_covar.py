@@ -3,9 +3,9 @@ import ROOT
 
 # Declare file names for input files
 topdir = os.getcwd()
-in_h0_spec_fname = os.path.join(topdir, "leeless.SBNspec.root")
-in_h1_spec_fname = os.path.join(topdir, "sens.SBNspec.root")
-in_covar_fname   = os.path.join(topdir, "sens.SBNcovar.root")
+in_h0_spec_fname = os.path.join(topdir, "leeless_Runs1to5.SBNspec.root")
+in_h1_spec_fname = os.path.join(topdir, "sens_Runs1to5.SBNspec.root")
+in_covar_fname   = os.path.join(topdir, "sens_Runs1to5.SBNcovar.root")
 detsys_fname     = os.path.join(topdir, "detsys", "covMat_Tot.csv")
 bkg_pred_fname   = os.path.join(topdir, "bkg", "bkg_0.95_prediction.txt")
 bkg_covar_fname  = os.path.join(topdir, "bkg", "bkg_0.95_cov.txt")
@@ -132,7 +132,7 @@ print "Updating prediction for numu backgrounds to the 1e1p from {}".format(bkg_
 print "Adding mc stat errors for numu backgrounds to the 1e1p from {}".format(bkg_covar_fname)
 with open(bkg_pred_fname, 'r') as f:
     # First line has binning information, second line has spectrum
-    bkg_pred = [ float(x) for x in f.readlines()[1].strip().split() ]
+    bkg_pred = [ 1.868*float(x) for x in f.readlines()[1].strip().split() ]
 bkg_covar = []
 with open(bkg_covar_fname, 'r') as f:
     for l in f:

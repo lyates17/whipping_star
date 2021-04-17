@@ -1231,7 +1231,7 @@ int SBNcovariance::PrintVariations(std::string tag){
             vec_canvas.at(which_matrix).at(i)->cd();
             temp_spec.hist.at(i).Scale(1,"width");
             temp_spec.hist.at(i).SetLineColor((int)rangen->Uniform(300,1000));
-	    // for "single knobs" studies...
+	    // for "minmax" and/or "single knobs" studies, uncomment these two lines...
 	    //if ( m%2 == 0 ) temp_spec.hist.at(i).SetLineColor(kRed);
 	    //else temp_spec.hist.at(i).SetLineColor(kBlue);
 	    temp_spec.hist.at(i).DrawCopy("same hist");

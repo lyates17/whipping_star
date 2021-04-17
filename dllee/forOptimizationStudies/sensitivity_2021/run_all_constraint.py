@@ -69,6 +69,7 @@ def getFullCovar(frac_covar, spec, debug=False):
     for i in range(full_covar.GetNrows()):
         for j in range(full_covar.GetNcols()):
             if math.isnan(full_covar[i][j]):
+                # Note: Be *very careful* here if reusing this function... this ensures invertibility but may cause other problems
                 if i==j:
                     full_covar[i][j] = 1.
                 else:
