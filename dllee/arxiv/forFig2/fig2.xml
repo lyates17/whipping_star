@@ -1,0 +1,106 @@
+<?xml version="1.0"?>
+
+<mode name="nu"/>
+<detector name="uBooNE"/>
+
+<channel name="nue" unit="MeV">
+  <bins
+      edges="0 50 100 150 200 250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200 1250 1300 1350 1400 1450 1500"
+      />
+  <subchannel name="ccqe"/>
+  <subchannel name="ccmec"/>
+  <subchannel name="ccres"/>
+  <subchannel name="ccdis"/>
+  <subchannel name="other"/>
+  <subchannel name="lee"/>
+</channel>
+
+
+<MultisimFile treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/yatesla/arborist_mcc9/arborist_v48_Sep24_intrinsic_nue_run1_noNaNs.root" scale="1.0" maxevents="220497">
+  <branch
+      name="nu_energy_true"
+      type="double"
+      associated_subchannel="nu_uBooNE_nue_ccqe"
+      additional_weight="( xsec_corr_weight *  (nu_interaction_mode==0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/yatesla/arborist_mcc9/arborist_v48_Sep24_intrinsic_nue_run1_noNaNs.root" scale="1.0" maxevents="220497">
+  <branch
+      name="nu_energy_true"
+      type="double"
+      associated_subchannel="nu_uBooNE_nue_ccmec"
+      additional_weight="( xsec_corr_weight * (nu_interaction_mode==10) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/yatesla/arborist_mcc9/arborist_v48_Sep24_intrinsic_nue_run1_noNaNs.root" scale="1.0" maxevents="220497">
+  <branch
+      name="nu_energy_true"
+      type="double"
+      associated_subchannel="nu_uBooNE_nue_ccres"
+      additional_weight="( xsec_corr_weight * (nu_interaction_mode==1) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/yatesla/arborist_mcc9/arborist_v48_Sep24_intrinsic_nue_run1_noNaNs.root" scale="1.0" maxevents="220497">
+  <branch
+      name="nu_energy_true"
+      type="double"
+      associated_subchannel="nu_uBooNE_nue_ccdis"
+      additional_weight="( xsec_corr_weight * (nu_interaction_mode==2) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/yatesla/arborist_mcc9/arborist_v48_Sep24_intrinsic_nue_run1_noNaNs.root" scale="1.0" maxevents="220497">
+  <branch
+      name="nu_energy_true"
+      type="double"
+      associated_subchannel="nu_uBooNE_nue_other"
+      additional_weight="( xsec_corr_weight * (nu_interaction_mode>2)*(nu_interaction_mode!=10) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="eventweight_tree" filename="/pnfs/uboone/persistent/users/yatesla/arborist_mcc9/arborist_v48_Sep24_intrinsic_nue_run1_noNaNs.root" scale="1.0" maxevents="220497">
+  <branch
+      name="nu_energy_true"
+      type="double"
+      associated_subchannel="nu_uBooNE_nue_lee"
+      additional_weight="( xsec_corr_weight*lee_weight )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<variation_list>
+  <!-- <whitelist>All_UBGenie</whitelist> -->
+  <whitelist>XSecShape_CCMEC_UBGenie</whitelist>
+  <whitelist>RPA_CCQE_UBGenie</whitelist>
+  <whitelist>AxFFCCQEshape_UBGenie</whitelist>
+  <whitelist>VecFFCCQEshape_UBGenie</whitelist>
+  <whitelist>DecayAngMEC_UBGenie</whitelist>
+  <!-- <whitelist>xsr_scc_Fa3_SCC</whitelist> -->
+  <!-- <whitelist>xsr_scc_Fv3_SCC</whitelist> -->
+  <whitelist>NormCCCOH_UBGenie</whitelist>
+  <whitelist>NormNCCOH_UBGenie</whitelist>
+  <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
+  <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
+</variation_list>
+
+<WeightMaps>
+  <variation pattern="All_UBGenie" weight_formula="1.0/ub_tune_weight"/>
+  <variation pattern="RPA_CCQE_UBGenie" weight_formula="1.0/ub_tune_weight"/>
+  <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="VecFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="XSecShape_CCMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="ThetaDelta2NRad_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+  <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
+</WeightMaps>

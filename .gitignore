@@ -10,8 +10,13 @@ matrix_plots/
 variations/
 *.pdf
 ratio_list*.txt
+correlation_*.txt
+*variation_scale*.txt
+arxiv*/
 auto*/
 output*/
+bkg*/
+detsys*/
 log*.txt
 env*.txt
 *.log
