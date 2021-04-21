@@ -137,6 +137,16 @@ bkg_covar = []
 with open(bkg_covar_fname, 'r') as f:
     for l in f:
         bkg_covar.append( [ float(x) for x in l.strip().split() ] )
+# scale the prediction as needed
+#   TODO: update with values from new filtered data samples
+in_pot_bkg  = sum([ float(1.558e+20) + float(1.129e+17) + float(1.869e+19),                     # C1
+                    float(1.63e+20)  + float(2.964e+19) + float(1.239e+19),  float(5.923e+19),  # D2, E1
+                    float(4.3e+19), float(1.701e+20) + float(2.97e+19)  + float(1.524e+17) ])   # F1, G1
+in_pot_spec = float(6.96e20)
+bkg_scale = in_pot_spec / in_pot_bkg
+bkg_pred = [ bkg_scale*x for x in bkg_pred ]
+print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:0.3f}/{0.3f} = {:0.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
+print "  Resulting backgrounds: {}".format(bkg_pred)
 # Update everything -- spec bin contents, spec errors, and covariance matrix
 #   Note: We only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
 in_offset_bkg = 1
