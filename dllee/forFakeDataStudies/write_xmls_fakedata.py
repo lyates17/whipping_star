@@ -49,7 +49,6 @@ xml_str = """<?xml version="1.0"?>
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_data"
-      additional_weight="( dllee_bdt_score_avg>=0.5 )"
       eventweight_branch_name="weights"
       />
 </MultisimFile>
@@ -59,7 +58,6 @@ xml_str = """<?xml version="1.0"?>
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_data"
-      additional_weight="( dllee_bdt_score_avg>=0.5 )"
       eventweight_branch_name="weights"
       />
 </MultisimFile>

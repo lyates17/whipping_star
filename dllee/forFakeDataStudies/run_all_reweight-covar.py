@@ -14,7 +14,7 @@ for tag in fakedata_list:
     print cmd
     subprocess.call(cmd, shell=True)
     # make the leeless spectrum
-    cmd = "$SBNFIT_LIBDIR/bin/sbnfit_scale_spec --xml dllee_sense_pred_{}.xml -i h1.SBNspec.root -s lee -v 0.0 --tag h0".format(tag)
+    cmd = "$SBNFIT_LIBDIR/bin/sbnfit_scale_spec --xml dllee_sens_pred_{}.xml -i h1.SBNspec.root -s lee -v 0.0 --tag h0".format(tag)
     print cmd
     subprocess.call(cmd, shell=True)
     # while we're here, also make the data spectrum

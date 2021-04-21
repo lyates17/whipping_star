@@ -1,10 +1,11 @@
 import os,subprocess
+from math import sqrt
 import ROOT
 
 topdir = os.getcwd()
 
-detsysdir = os.path.join(topdir, "detsys", "{:02d}".format(int(val_p*100)), detsys_subdir_dict[var_e])
-bkgdir    = os.path.join(topdir, "bkg",    "{:02d}".format(int(val_p*100)), bkg_subdir_dict[var_e])
+detsysdir = os.path.join(topdir, "persistent", "detsys")
+bkgdir    = os.path.join(topdir, "persistent", "bkg")
 
 fakedata_list = [ 'set1', 'set2', 'set3', 'set4', 'set5' ]
 
@@ -19,8 +20,8 @@ offset_1mu1p    = 3*Nbins_e
 
 for tag in fakedata_list:
 
-    autodir = os.path.join(topdir, tag)
-    os.chdir(autodir)
+    workdir = os.path.join(topdir, tag)
+    os.chdir(workdir)
 
     # create the output files
     out_h0_spec_f = ROOT.TFile("h0_total.SBNspec.root".format(tag), "RECREATE")
@@ -132,15 +133,21 @@ for tag in fakedata_list:
     with open(bkg_mcstat_f, 'r') as f:
         for l in f:
             bkg_mcstat_covar.append( [ float(x) for x in l.strip().split() ] )
-    # scale the prediction as needed
+    # scale the prediction and update the normalization error in the bkg covariance matrix as needed
     #   note: we only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
     in_offset_bkg = 1
-    in_norm_bkg = sum(bkg_pred[in_offset_bkg:])
-    in_norm_1e1p_bnb = sum([ in_h1_spec_dict["nu_uBooNE_1e1p_bnb"].GetBinContent(i+1) for i in range(Nbins_e) ])
+    in_norm_bkg      = sum(bkg_pred[in_offset_bkg:])
+    in_norm_bkg_err2 = 0.033752591055783904  # from Nick, from Slack message at 8:51am on 4/21; note: this is the fractional error *squared*
+    in_norm_1e1p_bnb      = sum([ in_h1_spec_f.Get("nu_uBooNE_1e1p_bnb").GetBinContent(i+1)  for i in range(Nbins_e) ])
+    in_norm_1e1p_bnb_err2 = sum([ in_h1_spec_f.Get("nu_uBooNE_1e1p_bnb").GetBinError(i+1)**2 for i in range(Nbins_e) ]) / (in_norm_1e1p_bnb**2)
     bkg_scale = in_norm_1e1p_bnb / in_norm_bkg
     bkg_pred = [ bkg_scale*x for x in bkg_pred ]
-    print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:0.3f}/{0.3f} = {:0.3f}".format(in_norm_1e1p_bnb, in_norm_bkg, bkg_scale)
-    print "  Resulting backgrounds: {}".format(bkg_pred)
+    for i in range(len(bkg_mcstat_covar)):
+        for j in range(len(bkg_mcstat_covar[i])):
+            bkg_mcstat_covar[i][j] += ( in_norm_1e1p_bnb_err2 - in_norm_bkg_err2 )
+    print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:.3f}/{:.3f} = {:.3f}".format(in_norm_1e1p_bnb, in_norm_bkg, bkg_scale)
+    print "  Resulting backgrounds: {} (sum: {:.3f} = {:.3f})".format([round(x,3) for x in bkg_pred], in_norm_1e1p_bnb, sum(bkg_pred[in_offset_bkg:]))
+    print "  Resulting normalization error: {:.3f} (previously: {:.3f})".format(sqrt(in_norm_1e1p_bnb_err2), sqrt(in_norm_bkg_err2))
     # update everything -- spec bin contents, spec errors, and covariance matrix
     #   note: we only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
     #in_offset_bkg = 1  # declared above

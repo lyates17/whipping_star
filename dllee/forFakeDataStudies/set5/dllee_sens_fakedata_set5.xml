@@ -24,7 +24,7 @@
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_data"
       additional_weight="( dllee_bdt_score_avg>=0.95 )"
-      eventweight_branch_name="sys_weights"
+      eventweight_branch_name="weights"
       />
 </MultisimFile>
 
@@ -34,7 +34,7 @@
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_data"
       additional_weight="( dllee_bdt_score_avg>=0.95 )"
-      eventweight_branch_name="sys_weights"
+      eventweight_branch_name="weights"
       />
 </MultisimFile>
 
@@ -44,8 +44,7 @@
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_data"
-      additional_weight="( dllee_bdt_score_avg>=0.5 )"
-      eventweight_branch_name="sys_weights"
+      eventweight_branch_name="weights"
       />
 </MultisimFile>
 
@@ -54,7 +53,6 @@
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1mu1p_data"
-      additional_weight="( dllee_bdt_score_avg>=0.5 )"
-      eventweight_branch_name="sys_weights"
+      eventweight_branch_name="weights"
       />
 </MultisimFile>
