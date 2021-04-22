@@ -117,51 +117,6 @@ xml_str = """<?xml version="1.0"?>
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
-
-
-<variation_list>
-  <whitelist>expskin_FluxUnisim</whitelist>
-  <whitelist>horncurrent_FluxUnisim</whitelist>
-  <whitelist>kminus_PrimaryHadronNormalization</whitelist>
-  <whitelist>kplus_PrimaryHadronFeynmanScaling</whitelist>
-  <whitelist>kzero_PrimaryHadronSanfordWang</whitelist>
-  <whitelist>nucleoninexsec_FluxUnisim</whitelist>
-  <whitelist>nucleonqexsec_FluxUnisim</whitelist>
-  <whitelist>nucleontotxsec_FluxUnisim</whitelist>
-  <whitelist>piminus_PrimaryHadronSWCentralSplineVariation</whitelist>
-  <whitelist>pioninexsec_FluxUnisim</whitelist>
-  <whitelist>pionqexsec_FluxUnisim</whitelist>
-  <whitelist>piontotxsec_FluxUnisim</whitelist>
-  <whitelist>piplus_PrimaryHadronSWCentralSplineVariation</whitelist>
-  <whitelist>All_UBGenie</whitelist>
-  <!-- <whitelist>XSecShape_CCMEC_UBGenie</whitelist> -->
-  <whitelist>RPA_CCQE_UBGenie</whitelist>
-  <whitelist>AxFFCCQEshape_UBGenie</whitelist>
-  <whitelist>VecFFCCQEshape_UBGenie</whitelist>
-  <whitelist>DecayAngMEC_UBGenie</whitelist>
-  <whitelist>xsr_scc_Fa3_SCC</whitelist>
-  <whitelist>xsr_scc_Fv3_SCC</whitelist>
-  <whitelist>NormCCCOH_UBGenie</whitelist>
-  <whitelist>NormNCCOH_UBGenie</whitelist>
-  <whitelist>ThetaDelta2NRad_UBGenie</whitelist>
-  <whitelist>Theta_Delta2Npi_UBGenie</whitelist>
-  <whitelist>reinteractions_piminus_Geant4</whitelist>
-  <whitelist>reinteractions_piplus_Geant4</whitelist>
-  <whitelist>reinteractions_proton_Geant4</whitelist>
-</variation_list>
-
-<WeightMaps>
-  <variation pattern="All_UBGenie" weight_formula="1.0/ub_tune_weight"/>
-  <variation pattern="RPA_CCQE_UBGenie" weight_formula="1.0/ub_tune_weight"/>
-  <variation pattern="AxFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-  <variation pattern="VecFFCCQEshape_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-  <variation pattern="DecayAngMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-  <!-- <variation pattern="XSecShape_CCMEC_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/> -->
-  <variation pattern="ThetaDelta2NRad_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-  <variation pattern="Theta_Delta2Npi_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-  <variation pattern="NormCCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-  <variation pattern="NormNCCOH_UBGenie" weight_formula="1.0/ub_tune_weight" mode="minmax"/>
-</WeightMaps>
 """
 
 
@@ -216,8 +171,8 @@ for tag in fakedata_list:
     var_xml_str = var_xml_str.replace("RUN3_DATA_POT", "{:.3e}".format(run3_data_pot) )
     var_xml_str = var_xml_str.replace("SEL1E1P_BDT_CUT_VAR", sel1e1p_bdt_cut_var)
     var_xml_str = var_xml_str.replace("SEL1E1P_LEE_BDT_CUT_VAR", sel1e1p_lee_bdt_cut_var)
-    
-    output = os.path.join(outdir, "dllee_sens_pred_constr_{}.xml".format(tag))
+                    
+    output = os.path.join(outdir, "dllee_sens_pred_1e1p-only_{}.xml".format(tag))
     with open(output, 'w') as f:
         f.write(var_xml_str)
 

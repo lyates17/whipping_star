@@ -1,4 +1,5 @@
 import os,subprocess
+import math
 import ROOT
 
 # Declare file names for input files
@@ -42,7 +43,11 @@ for k in [ key.GetName() for key in in_h1_spec_f.GetListOfKeys() ]:
     out_h0_spec_dict[k] = ROOT.TH1D( in_h0_spec_f.Get(k) )
     out_h1_spec_dict[k] = ROOT.TH1D( in_h1_spec_f.Get(k) )
 out_covar = ROOT.TMatrixD( in_covar_f.Get("frac_covariance") )
-
+# Zero out any nans, so that things we add actually get added
+for i in range(out_covar.GetNrows()):
+    for j in range(out_covar.GetNcols()):
+        if math.isnan(out_covar[i][j]):
+            out_covar[i][j] = 0.
 
 # Add detector systematics for 1e1p nue, 1e1p lee, and 1mu1p bnb... 
 # Read in fractional detector systematic covariance matrix from csv file
@@ -145,8 +150,8 @@ in_pot_bkg  = sum([ float(1.558e+20) + float(1.129e+17) + float(1.869e+19),     
 in_pot_spec = float(6.96e20)
 bkg_scale = in_pot_spec / in_pot_bkg
 bkg_pred = [ bkg_scale*x for x in bkg_pred ]
-print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:0.3f}/{0.3f} = {:0.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
-print "  Resulting backgrounds: {}".format(bkg_pred)
+print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:.3e}/{:.3e} = {:.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
+print "  Resulting backgrounds: {}".format([round(x,3) for x in bkg_pred])
 # Update everything -- spec bin contents, spec errors, and covariance matrix
 #   Note: We only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
 in_offset_bkg = 1

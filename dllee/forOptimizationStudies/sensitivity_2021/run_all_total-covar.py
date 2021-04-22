@@ -46,6 +46,11 @@ for var_e in sel1e1p_bdt_cut_variables:
                     out_h0_spec_dict[k] = ROOT.TH1D( in_h0_spec_f.Get(k) )
                     out_h1_spec_dict[k] = ROOT.TH1D( in_h1_spec_f.Get(k) )
                 out_covar = ROOT.TMatrixD( in_covar_f.Get("frac_covariance") )
+                # zero out any nans, so that things we add actually get added
+                for i in range(out_covar.GetNrows()):
+                    for j in range(out_covar.GetNcols()):
+                        if math.isnan(out_covar[i][j]):
+                            out_covar[i][j] = 0.
                 
                 # define a few helper variables...
                 Nbins_e = 10

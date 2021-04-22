@@ -12,14 +12,9 @@ xml_str = """<?xml version="1.0"?>
   <bins
       edges="200 300 400 500 600 700 800 900 1000 1100 1200"
       />
-  <subchannel name="data"/>
-</channel>
-
-<channel name="1mu1p" unit="MeV">
-  <bins
-      edges="250 300 350 400 450 500 550 600 650 700 750 800 850 900 950 1000 1050 1100 1150 1200"
-      />
-  <subchannel name="data"/>
+  <subchannel name="nue"/>
+  <subchannel name="bnb"/>
+  <subchannel name="lee"/>
 </channel>
 
 
@@ -27,7 +22,7 @@ xml_str = """<?xml version="1.0"?>
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1e1p_data"
+      associated_subchannel="nu_uBooNE_1e1p_nue"
       additional_weight="( dllee_bdt_score_avg>=0.95 )"
       eventweight_branch_name="weights"
       />
@@ -37,27 +32,28 @@ xml_str = """<?xml version="1.0"?>
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1e1p_data"
+      associated_subchannel="nu_uBooNE_1e1p_nue"
       additional_weight="( dllee_bdt_score_avg>=0.95 )"
       eventweight_branch_name="weights"
       />
 </MultisimFile>
 
-
-<MultisimFile treename="sel_run1_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_FILE_NAME" scale="1.0" maxevents="100000">
+<MultisimFile treename="sel_run1_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1E1P_FILE_NAME" scale="0.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_data"
+      associated_subchannel="nu_uBooNE_1e1p_bnb"
+      additional_weight="( dllee_bdt_score_avg>=0.95 )"
       eventweight_branch_name="weights"
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_run3_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_FILE_NAME" scale="1.0" maxevents="100000">
+<MultisimFile treename="sel_run1_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1E1P_FILE_NAME" scale="0.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
-      associated_subchannel="nu_uBooNE_1mu1p_data"
+      associated_subchannel="nu_uBooNE_1e1p_lee"
+      additional_weight="( dllee_bdt_score_avg>=0.95 )"
       eventweight_branch_name="weights"
       />
 </MultisimFile>
@@ -82,7 +78,7 @@ for tag in fakedata_list:
     var_xml_str = var_xml_str.replace("SEL1E1P_FILE_NAME", sel1e1p_file_name.format(tag))
     var_xml_str = var_xml_str.replace("SEL1MU1P_FILE_NAME", sel1mu1p_file_name.format(tag))
     
-    output = os.path.join(outdir, "dllee_sens_fakedata_{}.xml".format(tag))
+    output = os.path.join(outdir, "dllee_sens_fakedata_1e1p-only_{}.xml".format(tag))
     with open(output, 'w') as f:
         f.write(var_xml_str)
 
