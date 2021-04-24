@@ -132,164 +132,6 @@ int SBNcls::CalcCLS(int numMC, std::string tag){
   return 0 ;
 }
 
-int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
-
-  if(draw_pseudo_from_collapsed){
-    chi_h0.pseudo_from_collapsed = true;
-    chi_h1.pseudo_from_collapsed = true;
-    std::cout<<"SBNcls::CalcCLS || Setting it so we sample from collapsed matrix"<<std::endl;
-  }
-    
-  if(which_sample == 0){
-    std::cout<<"SBNcls::CalcCLS\t|| Running in Poission sampling mode!"<<std::endl;
-  }
-  else if(which_sample ==1){ 
-    std::cout<<"SBNcls::CalcCLS\t|| Running in Covariance sampling mode!"<<std::endl;
-  }
-
-  time_t start_time = time(0);
-
-  chi_h0.InitRandomNumberSeeds(10);
-  chi_h1.InitRandomNumberSeeds(10);
-
-  double central_value_chi = chi_h0.CalcChi(h1);
-  double central_value_chi_h1 = chi_h1.CalcChi(h1);
-
-  std::cout<<"SBNcls::CalcCLS\t|| Central Value Chi is : "<<central_value_chi<<" and "<<central_value_chi_h1<<" should be 0"<<std::endl;
-
-  std::vector<CLSresult> h1_results;
-  std::vector<CLSresult> h0_results;
-
-  std::cout<<"SBNcls::CalcCLS\t|| Starting H1 PDF generation "<<std::endl;
-  if(which_mode==0){
-    //if(which_sample == 0) h1_pdf = chi_h0.SamplePoissonVaryInput(h1, numMC, central_value_chi*50);
-    //else if(which_sample==1) h1_pdf = chi_h0.SampleCovarianceVaryInput(h1, numMC, central_value_chi*50);
-  }else if (which_mode ==1){
-    h1_results =  chi_h1.Mike_NP(h1, chi_h0, chi_h1, numMC, which_sample,1);
-  }
-
-  double sig1 = 0.5-(0.6827)/2.0;
-  double sig2 = 0.5-(0.9545)/2.0;
-
-  std::vector<double> prob_values = {1-sig2, 1-sig1, 0.5, sig1, sig2};
-
-  for(int i=0; i< h1_results.size(); i++){
-    h1_results[i].m_quantiles.resize(prob_values.size(),0.0);	
-    h1_results[i].m_pdf.ComputeIntegral(); 
-    h1_results[i].m_pdf.GetQuantiles(prob_values.size(), &(h1_results[i].m_quantiles)[0], &prob_values[0]);
-    for(int p=0; p< prob_values.size();p++){
-      std::cout<<"Quantile @ "<<prob_values[p]<<" is "<<h1_results[i].m_quantiles[p]<<" for "<<h1_results[i].m_tag<<std::endl;
-    }
-  }
-
-  std::cout<<"SBNcls::CalcCLS\t|| Starting H0 PDF generation "<<std::endl;
-  if(which_mode ==0){
-    //if(which_sample == 0)     h0_pdf = chi_h0.SamplePoissonVaryInput(h0, numMC, &pval);
-    //else if(which_sample ==1) h0_pdf = chi_h0.SampleCovarianceVaryInput(h0, numMC, &pval);
-  }else if (which_mode==1){
-    h0_results = chi_h0.Mike_NP(h0, chi_h0, chi_h1, numMC,which_sample,0);
-  }
-
-  // Calculate chi2 values for data spectrum
-  std::vector<float> data_results(7);
-  float *h0_spec = new float[h0->num_bins_total_compressed];
-  float *h1_spec = new float[h1->num_bins_total_compressed];
-  float *data_spec = new float [data->num_bins_total_compressed];
-  //h0->CollapseVector();
-  //h1->CollapseVector();
-  data->CollapseVector();
-  for(int i=0; i<data->num_bins_total_compressed; i++) {
-    h0_spec[i]   = h0->f_collapsed_vector[i];
-    h1_spec[i]   = h1->f_collapsed_vector[i];
-    data_spec[i] = data->f_collapsed_vector[i];
-  }
-  // Result 0: standard Delta chi2
-  float val_chi_h0 = chi_h0.CalcChi(data);
-  float val_chi_h1 = chi_h1.CalcChi(data);
-  data_results[0] = val_chi_h0 - val_chi_h1;
-  // Result 1: Delta Poisson log likelihood
-  float val_pois_h0 = chi_h0.PoissonLogLiklihood(h0_spec,data_spec);
-  float val_pois_h1 = chi_h1.PoissonLogLiklihood(h1_spec,data_spec);
-  data_results[1] = val_pois_h0 - val_pois_h1;
-  // Result 2: Delta CNP chi2
-  float val_cnp_h0 = chi_h0.CalcChi_CNP(h0_spec,data_spec);
-  float val_cnp_h1 = chi_h1.CalcChi_CNP(h1_spec,data_spec);
-  data_results[2] = val_cnp_h0 - val_cnp_h1;
-  // Result 3: standard chi2 wrt H0
-  data_results[3] = val_chi_h0;
-  // Result 4: standard chi2 wrt H1
-  data_results[4] = val_chi_h1;
-  // Result 5: CNP chi2 wrt H0
-  data_results[5] = val_cnp_h0;
-  // Result 6: CNP chi2 wrt H1
-  data_results[6] = val_cnp_h1;
-  // Print out results
-  std::cout << "Data results: " << std::endl;
-  std::cout << "  Delta Pearson_Chi:  " << data_results[0] << std::endl;
-  std::cout << "  Delta Poisson_LL:   " << data_results[1] << std::endl;
-  std::cout << "  Delta CNP_Chi:      " << data_results[2] << std::endl;
-  std::cout << "  Pearson_Chi for H0: " << data_results[3] << std::endl;
-  std::cout << "  Pearson_Chi for H1: " << data_results[4] << std::endl;
-  std::cout << "  CNP_Chi for H0:     " << data_results[5] << std::endl;
-  std::cout << "  CP_Chi for H1:      " << data_results[6] << std::endl;
-
-  // Calculate p-values for h0 and h1 based on data results
-  // Loop over different chi2 metrics...
-  for(int i=0; i<h0_results.size(); i++ ) {
-    // Reset m_nlower vectors
-    h0_results[i].m_nlower.resize(1,0.);
-    h1_results[i].m_nlower.resize(1,0.);
-    // Loop over pseudo experiment results...
-    for(int m=0; m<numMC; m++) {
-      // If the chi2 value in this pseudo experiment is larger than the data chi2, increment m_nlower
-      if(h0_results[i].m_values[m]>=data_results[i]) h0_results[i].m_nlower[0] += 1.0/(double(numMC));
-      if(h1_results[i].m_values[m]>=data_results[i]) h1_results[i].m_nlower[0] += 1.0/(double(numMC));
-    }
-  }
-  // Print out some info
-  std::cout << "p-values for H0 and H1 wrt data: " << std::endl;
-  std::cout << "  Delta Pearson_Chi:  H0 " << h0_results[0].m_nlower[0] << ", H1 " << h1_results[0].m_nlower[0] << std::endl;
-  std::cout << "  Delta Poisson_LL:   H0 " << h0_results[1].m_nlower[0] << ", H1 " << h1_results[1].m_nlower[0] << std::endl;
-  std::cout << "  Delta Chi_CNP:      H0 " << h0_results[2].m_nlower[0] << ", H1 " << h1_results[2].m_nlower[0] << std::endl;
-  std::cout << "  Pearson_Chi for H0: H0 " << h0_results[3].m_nlower[0] << ", H1 " << h1_results[3].m_nlower[0] << std::endl;
-  std::cout << "  Pearson_Chi for H1: H0 " << h0_results[4].m_nlower[0] << ", H1 " << h1_results[4].m_nlower[0] << std::endl;
-  std::cout << "  CNP_Chi for H0:     H0 " << h0_results[5].m_nlower[0] << ", H1 " << h1_results[5].m_nlower[0] << std::endl;
-  std::cout << "  CNP_Chi for H1:     H0 " << h0_results[6].m_nlower[0] << ", H1 " << h1_results[6].m_nlower[0] << std::endl;
-
-  // Also calculate p-values for median sensitivities, bolt on to the end
-  // Loop over different chi2 metrics...
-  for(int i=0; i<h0_results.size(); i++ ) {
-    // Reset m_nlower vectors
-    h0_results[i].m_nlower.resize(2,0.);
-    // Loop over pseudo experiment results...
-    for(int m=0; m<numMC; m++) {
-      // If the H0 chi2 value in this pseudo experiment is larger than the median H1 chi2, increment m_nlower
-      // ... assuming "median" corresponds to quantile with index 2
-      if(h0_results[i].m_values[m]>=h1_results[i].m_quantiles[2]) h0_results[i].m_nlower[1] += 1.0/(double(numMC));
-    }
-  }
-  // Print this out too
-  std::cout << "Median sensitivities: " << std::endl;
-  std::cout << "  Delta Pearson_Chi:  " << h0_results[0].m_nlower[1] << ", " << pval2sig(h0_results[0].m_nlower[1]) << " sigma" << std::endl;
-  std::cout << "  Delta Poisson_LL:   " << h0_results[1].m_nlower[1] << ", " << pval2sig(h0_results[1].m_nlower[1]) << " sigma" << std::endl;
-  std::cout << "  Delta Chi_CNP:      " << h0_results[2].m_nlower[1] << ", " << pval2sig(h0_results[2].m_nlower[1]) << " sigma" << std::endl;
-  std::cout << "  Pearson_Chi for H0: " << h0_results[3].m_nlower[1] << ", " << pval2sig(h0_results[3].m_nlower[1]) << " sigma" << std::endl;
-  std::cout << "  Pearson_Chi for H1: " << h0_results[4].m_nlower[1] << ", " << pval2sig(h0_results[4].m_nlower[1]) << " sigma" << std::endl;
-  std::cout << "  CNP_Chi for H0:     " << h0_results[5].m_nlower[1] << ", " << pval2sig(h0_results[5].m_nlower[1]) << " sigma" << std::endl;
-  std::cout << "  CNP_Chi for H1:     " << h0_results[6].m_nlower[1] << ", " << pval2sig(h0_results[6].m_nlower[1]) << " sigma" << std::endl;
-
-  std::cout << "Total wall time: " << difftime(time(0), start_time)/1.0 << " Secs.\n";
-    
-  std::vector<std::string> nice_names = {"Pearson_Delta_Chi","Delta_Poisson_Log_Likelihood","CNP_Delta_Chi", "Pearson_Chi_H0", "Pearson_Chi_H1", "CNP_Chi_H0", "CNP_Chi_H1"};
-  std::vector<int> plot_modes = {1, 1, 1, 0, 0, 0, 0};
-
-  for(int i=0; i<h0_results.size(); i++){
-    makePlotsWithData( h0_results[i], h1_results[i], data_results[i], tag+"_"+nice_names[i], plot_modes[i]);
-  }
-
-  return 0 ;
-}  // end definition of CalcCLSWithData
-
 
 int SBNcls::compareToRealData(SBNspec * data){
   
@@ -516,203 +358,6 @@ int SBNcls::makePlots(CLSresult &h0_result, CLSresult & h1_result, std::string t
   
 }
 
-  
-int SBNcls::makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float data_result, std::string tag, int which_mode){
-
-  bool draw_both = true;
-
-  
-  double max_plot = std::max(std::max(h0_result.m_max_value,h1_result.m_max_value),data_result)*1.25;
-  double min_plot = std::min(std::min(h0_result.m_min_value,h1_result.m_min_value),data_result);
-  
-  TH1D h0_pdf((tag+"h0").c_str(),(tag+"h0").c_str(),250,min_plot,max_plot);
-  TH1D h1_pdf((tag+"h1").c_str(),(tag+"h1").c_str(),250,min_plot,max_plot);
-
-  for(int i=0; i<h0_result.m_values.size(); i++){
-    h0_pdf.Fill(h0_result.m_values[i]);
-    h1_pdf.Fill(h1_result.m_values[i]);
-  }
-  
-  
-  TFile* fp = new TFile(("SBNfit_CLs_withData_"+tag+".root").c_str(),"recreate");
-  fp->cd();
-  TCanvas* cp = new TCanvas();
-  
-  h0_pdf.SetStats(false);
-  h1_pdf.SetStats(false);
-  
-  h0_pdf.Scale(1.0/h0_pdf.Integral("width"));
-  h1_pdf.Scale(1.0/h1_pdf.Integral("width"));
-  
-  h0_pdf.SetLineColor(colH0);
-  h1_pdf.SetLineColor(colH1);
-  h0_pdf.SetFillColor(colH0); //h0 kRed-7
-  h1_pdf.SetFillColor(colH1); //h1 kBlue-4
-  h0_pdf.SetFillStyle(3445);
-  h1_pdf.SetFillStyle(3454);
-  
-  h0_pdf.Draw("hist");
-  if(draw_both) h1_pdf.Draw("hist same");	
-  
-  h0_pdf.SetTitle(tag.c_str());
-  
-  double minval = 0;
-  double maxval = std::max(h0_pdf.GetMaximum(),h1_pdf.GetMaximum());
-  std::cout<<"SBNcls::CalcCLS() || Minimum value: "<<minval<<" Maximum value: "<<maxval<<std::endl;
-  h0_pdf.SetMinimum(minval);
-  h0_pdf.SetMaximum(maxval*1.35);
-  
-  double minbin = min_plot;
-  double maxbin = max_plot;
-  std::cout<<"SBNcls::CalcCLS() || Minimum Bin: "<<minbin<<" Maximum bin: "<<maxbin<<std::endl;
-  h0_pdf.GetXaxis()->SetRangeUser(min_plot,max_plot);  
-  
-  
-  // If drawing H1 distribution, H1 quantile lines...
-  double sig1 = 0.5-(0.6827)/2.0;
-  double sig2 = 0.5-(0.9545)/2.0;
-
-  std::vector<double> prob_values = {1-sig2, 1-sig1, 0.5, sig1, sig2};
-  std::vector<double> quantiles(prob_values.size());	
-  quantiles = h1_result.m_quantiles;
-  
-  std::vector<std::string> quantile_names = {"-2#sigma","-1#sigma","Median","+1#sigma","+2#sigma"};
-  std::vector<int> cols = {kYellow-7, kGreen+1, kBlack, kGreen+1, kYellow-7};
-
-  if(draw_both){  // && which_mode==1
-    // Check that quantiles computed in CalcCLSWithData function agree with prob_values here, at least at the level of the size of the vector
-    if(quantiles.size()!=prob_values.size()) {
-      std::cout << quantiles.size() << " " << prob_values.size() << std::endl;
-      std::cout << "WARNING: Something amiss" << std::endl;
-    }
-    // Loop over the quantiles...
-    for(int i=0; i<quantiles.size(); i++){
-      // Draw the vertical line and its label
-      TLine *l = new TLine(quantiles.at(i), 0.0, quantiles.at(i), maxval*1.05);
-      l->SetLineColor(cols.at(i));
-      l->SetLineWidth(2);
-      TLatex * qnam = new TLatex();
-      qnam->SetTextSize(0.045);
-      qnam->SetTextAlign(12);  //align at top
-      qnam->SetTextAngle(-90);
-      qnam->DrawLatex(quantiles.at(i), maxval*1.3, quantile_names.at(i).c_str());
-      l->Draw("same");
-    }
-  }
-    
-  // If this is non-Delta Chi2, analytical chi^2 distribution
-  std::vector<double> analytical_chi;
-  std::vector<double> analytical_prob;
-  for(double t=0; t<maxbin*10; t+=0.01){
-    analytical_chi.push_back(t);
-    analytical_prob.push_back( gsl_ran_chisq_pdf(t,h1->num_bins_total_compressed) );
-  }
-  
-  TGraph *analytical_graph = new TGraph(analytical_chi.size(),&analytical_chi[0],&analytical_prob[0]);
-  analytical_graph->SetLineColor(kRed);
-  // If this is a non-Delta chi2, draw this analytical distribution
-  // ... jk, this graph is already too busy
-  //if(which_mode==0) analytical_graph->Draw("same");
-  
-  // Data result line
-  TLine *data_l = new TLine(data_result, 0.0, data_result, maxval*1.05);
-  data_l->SetLineColor(kCyan-4);
-  data_l->SetLineWidth(2);
-  TLatex *data_nam = new TLatex();
-  data_nam->SetTextSize(0.045);
-  data_nam->SetTextAlign(12);  //align at top
-  data_nam->SetTextAngle(-90);
-  data_nam->DrawLatex(data_result, maxval*1.3, "Data");
-  data_l->Draw("same");
-  
-  // Data chi2
-  TLatex *dat_text = new TLatex();
-  dat_text->SetTextSize(0.045);
-  dat_text->SetTextAlign(32);
-  std::string dat_details = "Data ";
-  if (which_mode==0) dat_details += "#chi^{2}";
-  else if (which_mode==1) dat_details += "#Delta #chi^{2}";
-  dat_details += " = "+to_string_prec(data_result,2);
-  std::cout << dat_details << std::endl;
-  dat_text->DrawLatexNDC(0.85,0.6,dat_details.c_str());
-
-  // Median sensitivity
-  // ... jk, this is too confusing in the context of things that are more important to put on the plot
-  /*
-    if (draw_both) {
-    TLatex *med_text = new TLatex();
-    med_text->SetTextSize(0.03);
-    med_text->SetTextAlign(32);
-    std::string med_details = "Median sensitivity: ";
-    double sens_pval = h0_result.m_nlower[1];
-    double sens_sigma = pval2sig(sens_pval);
-    med_details += "p_value ";
-    if (sens_pval>0.001) med_details += to_string_prec(sens_pval,3);
-    else med_details += "10^{"+to_string_prec(log10(sens_pval),2)+"}";
-    med_details += ", ";
-    if (sens_sigma!=0) med_details += to_string_prec(sens_sigma,1)+"#sigma";
-    else med_details += "inf #sigma";
-    std::cout << med_details << std::endl;
-    med_text->DrawLatexNDC(0.875,0.575,med_details.c_str());
-    }
-  */
-
-  // H0, H1 p-values and sensitivities...
-  double h0_pval = h0_result.m_nlower[0];
-  double h1_pval = h1_result.m_nlower[0];
-
-  std::vector<double> pvals = {h0_pval};
-  std::vector<std::string> pval_names = {legends[0]};
-  if(draw_both){
-    pvals.push_back(h1_pval);
-    pval_names.push_back(legends[1]);
-  }
-
-  for(int i=0; i<pvals.size(); i++){
-    TLatex *pval_text = new TLatex();
-    pval_text->SetTextSize(0.045);
-    pval_text->SetTextAlign(32);
-    
-    std::string pval_str;
-    if(pvals[i]>0.001) pval_str = to_string_prec(pvals[i],3);
-    else pval_str = "10^{"+to_string_prec(log10(pvals[i]),2)+"}";
-    
-    double sigma_val = pval2sig(pvals[i]);
-    std::string sigma_str = to_string_prec(sigma_val,1)+"#sigma";
-    if(sigma_val==0) sigma_str = "inf #sigma";
-    
-    std::string details = pval_names[i]+": p-value "+pval_str+", "+sigma_str;
-    std::cout << details << std::endl;
-    pval_text->DrawLatexNDC(0.85,0.6-(i+1)*0.075,details.c_str());
-  }
-
-
-  // Legend
-  TLegend *leg = new TLegend(0.7,0.7,0.89,0.89);
-  leg->SetLineWidth(0);
-  leg->SetFillStyle(0);
-  leg->AddEntry(&h0_pdf,legends[0].c_str(),"lf");
-  if(draw_both)leg->AddEntry(&h1_pdf,legends[1].c_str(),"lf");
-  //if(which_mode==0)leg->AddEntry(analytical_graph,("#chi^{2} PDF "+std::to_string(h0->num_bins_total_compressed)+" dof").c_str(),"l");
-  leg->Draw();
-  
-  // x and y axis labels
-  if(which_mode==0){
-    h0_pdf.GetXaxis()->SetTitle("#chi^{2}");
-  }
-  else if(which_mode==1){
-    h0_pdf.GetXaxis()->SetTitle(("#Delta #chi^{2} = #chi^{2}_{"+legends[0]+"} - #chi^{2}_{"+legends[1]+"} ").c_str());
-  }
-  h0_pdf.GetYaxis()->SetTitle("PDF");
-  
-
-  cp->Write();	
-  cp->SaveAs(("SBNfit_Cls_"+tag+".pdf").c_str(),"pdf");	
-  fp->Close();
-  
-  return 0;
-  
-}
 
 int SBNcls::runConstraintTest(){
 
@@ -899,3 +544,357 @@ int SBNcls::runPi0Tests(){
   return 0;
   }
 */
+
+
+int SBNcls::CalcCLSWithData(int numMC, std::string tag, SBNspec* data){
+
+  if(draw_pseudo_from_collapsed){
+    chi_h0.pseudo_from_collapsed = true;
+    chi_h1.pseudo_from_collapsed = true;
+    std::cout<<"SBNcls::CalcCLS || Setting it so we sample from collapsed matrix"<<std::endl;
+  }
+    
+  if(which_sample == 0){
+    std::cout<<"SBNcls::CalcCLS\t|| Running in Poission sampling mode!"<<std::endl;
+  }
+  else if(which_sample ==1){ 
+    std::cout<<"SBNcls::CalcCLS\t|| Running in Covariance sampling mode!"<<std::endl;
+  }
+
+  time_t start_time = time(0);
+
+  chi_h0.InitRandomNumberSeeds(10);
+  chi_h1.InitRandomNumberSeeds(10);
+
+  double central_value_chi = chi_h0.CalcChi(h1);
+  double central_value_chi_h1 = chi_h1.CalcChi(h1);
+
+  std::cout<<"SBNcls::CalcCLS\t|| Central Value Chi is : "<<central_value_chi<<" and "<<central_value_chi_h1<<" should be 0"<<std::endl;
+
+  std::vector<CLSresult> h1_results;
+  std::vector<CLSresult> h0_results;
+
+  std::cout<<"SBNcls::CalcCLS\t|| Starting H1 PDF generation "<<std::endl;
+  if(which_mode==0){
+    //if(which_sample == 0) h1_pdf = chi_h0.SamplePoissonVaryInput(h1, numMC, central_value_chi*50);
+    //else if(which_sample==1) h1_pdf = chi_h0.SampleCovarianceVaryInput(h1, numMC, central_value_chi*50);
+  }else if (which_mode ==1){
+    h1_results =  chi_h1.Mike_NP(h1, chi_h0, chi_h1, numMC, which_sample,1);
+  }
+
+  double sig1 = 0.5-(0.6827)/2.0;
+  double sig2 = 0.5-(0.9545)/2.0;
+
+  std::vector<double> prob_values = {1-sig2, 1-sig1, 0.5, sig1, sig2};
+
+  for(int i=0; i< h1_results.size(); i++){
+    h1_results[i].m_quantiles.resize(prob_values.size(),0.0);	
+    h1_results[i].m_pdf.ComputeIntegral(); 
+    h1_results[i].m_pdf.GetQuantiles(prob_values.size(), &(h1_results[i].m_quantiles)[0], &prob_values[0]);
+    for(int p=0; p< prob_values.size();p++){
+      std::cout<<"Quantile @ "<<prob_values[p]<<" is "<<h1_results[i].m_quantiles[p]<<" for "<<h1_results[i].m_tag<<std::endl;
+    }
+  }
+
+  std::cout<<"SBNcls::CalcCLS\t|| Starting H0 PDF generation "<<std::endl;
+  if(which_mode ==0){
+    //if(which_sample == 0)     h0_pdf = chi_h0.SamplePoissonVaryInput(h0, numMC, &pval);
+    //else if(which_sample ==1) h0_pdf = chi_h0.SampleCovarianceVaryInput(h0, numMC, &pval);
+  }else if (which_mode==1){
+    h0_results = chi_h0.Mike_NP(h0, chi_h0, chi_h1, numMC,which_sample,0);
+  }
+
+  // Calculate chi2 values for data spectrum
+  std::vector<float> data_results(7);
+  float *h0_spec = new float[h0->num_bins_total_compressed];
+  float *h1_spec = new float[h1->num_bins_total_compressed];
+  float *data_spec = new float [data->num_bins_total_compressed];
+  //h0->CollapseVector();
+  //h1->CollapseVector();
+  data->CollapseVector();
+  for(int i=0; i<data->num_bins_total_compressed; i++) {
+    h0_spec[i]   = h0->f_collapsed_vector[i];
+    h1_spec[i]   = h1->f_collapsed_vector[i];
+    data_spec[i] = data->f_collapsed_vector[i];
+  }
+  // Result 0: standard Delta chi2
+  float val_chi_h0 = chi_h0.CalcChi(data);
+  float val_chi_h1 = chi_h1.CalcChi(data);
+  data_results[0] = val_chi_h0 - val_chi_h1;
+  // Result 1: Delta Poisson log likelihood
+  float val_pois_h0 = chi_h0.PoissonLogLiklihood(h0_spec,data_spec);
+  float val_pois_h1 = chi_h1.PoissonLogLiklihood(h1_spec,data_spec);
+  data_results[1] = val_pois_h0 - val_pois_h1;
+  // Result 2: Delta CNP chi2
+  float val_cnp_h0 = chi_h0.CalcChi_CNP(h0_spec,data_spec);
+  float val_cnp_h1 = chi_h1.CalcChi_CNP(h1_spec,data_spec);
+  data_results[2] = val_cnp_h0 - val_cnp_h1;
+  // Result 3: standard chi2 wrt H0
+  data_results[3] = val_chi_h0;
+  // Result 4: standard chi2 wrt H1
+  data_results[4] = val_chi_h1;
+  // Result 5: CNP chi2 wrt H0
+  data_results[5] = val_cnp_h0;
+  // Result 6: CNP chi2 wrt H1
+  data_results[6] = val_cnp_h1;
+  // Print out results
+  std::cout << "Data results: " << std::endl;
+  std::cout << "  Delta Pearson_Chi:  " << data_results[0] << std::endl;
+  std::cout << "  Delta Poisson_LL:   " << data_results[1] << std::endl;
+  std::cout << "  Delta CNP_Chi:      " << data_results[2] << std::endl;
+  std::cout << "  Pearson_Chi for H0: " << data_results[3] << std::endl;
+  std::cout << "  Pearson_Chi for H1: " << data_results[4] << std::endl;
+  std::cout << "  CNP_Chi for H0:     " << data_results[5] << std::endl;
+  std::cout << "  CNP_Chi for H1:     " << data_results[6] << std::endl;
+
+  // Calculate p-values for h0 and h1 based on data results
+  // Loop over different chi2 metrics...
+  for(int i=0; i<h0_results.size(); i++ ) {
+    // Reset m_nlower vectors
+    h0_results[i].m_nlower.resize(1,0.);
+    h1_results[i].m_nlower.resize(1,0.);
+    // Loop over pseudo experiment results...
+    for(int m=0; m<numMC; m++) {
+      // If the chi2 value in this pseudo experiment is larger than the data chi2, increment m_nlower
+      if(h0_results[i].m_values[m]>=data_results[i]) h0_results[i].m_nlower[0] += 1.0/(double(numMC));
+      if(h1_results[i].m_values[m]>=data_results[i]) h1_results[i].m_nlower[0] += 1.0/(double(numMC));
+    }
+  }
+  // Print out some info
+  std::cout << "p-values for H0 and H1 wrt data: " << std::endl;
+  std::cout << "  Delta Pearson_Chi:  H0 " << h0_results[0].m_nlower[0] << ", H1 " << h1_results[0].m_nlower[0] << std::endl;
+  std::cout << "  Delta Poisson_LL:   H0 " << h0_results[1].m_nlower[0] << ", H1 " << h1_results[1].m_nlower[0] << std::endl;
+  std::cout << "  Delta Chi_CNP:      H0 " << h0_results[2].m_nlower[0] << ", H1 " << h1_results[2].m_nlower[0] << std::endl;
+  std::cout << "  Pearson_Chi for H0: H0 " << h0_results[3].m_nlower[0] << ", H1 " << h1_results[3].m_nlower[0] << std::endl;
+  std::cout << "  Pearson_Chi for H1: H0 " << h0_results[4].m_nlower[0] << ", H1 " << h1_results[4].m_nlower[0] << std::endl;
+  std::cout << "  CNP_Chi for H0:     H0 " << h0_results[5].m_nlower[0] << ", H1 " << h1_results[5].m_nlower[0] << std::endl;
+  std::cout << "  CNP_Chi for H1:     H0 " << h0_results[6].m_nlower[0] << ", H1 " << h1_results[6].m_nlower[0] << std::endl;
+
+  // Also calculate p-values for median sensitivities, bolt on to the end
+  // Loop over different chi2 metrics...
+  for(int i=0; i<h0_results.size(); i++ ) {
+    // Reset m_nlower vectors
+    h0_results[i].m_nlower.resize(2,0.);
+    // Loop over pseudo experiment results...
+    for(int m=0; m<numMC; m++) {
+      // If the H0 chi2 value in this pseudo experiment is larger than the median H1 chi2, increment m_nlower
+      // ... assuming "median" corresponds to quantile with index 2
+      if(h0_results[i].m_values[m]>=h1_results[i].m_quantiles[2]) h0_results[i].m_nlower[1] += 1.0/(double(numMC));
+    }
+  }
+  // Print this out too
+  std::cout << "Median sensitivities: " << std::endl;
+  std::cout << "  Delta Pearson_Chi:  " << h0_results[0].m_nlower[1] << ", " << pval2sig(h0_results[0].m_nlower[1]) << " sigma" << std::endl;
+  std::cout << "  Delta Poisson_LL:   " << h0_results[1].m_nlower[1] << ", " << pval2sig(h0_results[1].m_nlower[1]) << " sigma" << std::endl;
+  std::cout << "  Delta Chi_CNP:      " << h0_results[2].m_nlower[1] << ", " << pval2sig(h0_results[2].m_nlower[1]) << " sigma" << std::endl;
+  std::cout << "  Pearson_Chi for H0: " << h0_results[3].m_nlower[1] << ", " << pval2sig2sided(h0_results[3].m_nlower[1]) << " sigma" << std::endl;
+  std::cout << "  Pearson_Chi for H1: " << h0_results[4].m_nlower[1] << ", " << pval2sig2sided(h0_results[4].m_nlower[1]) << " sigma" << std::endl;
+  std::cout << "  CNP_Chi for H0:     " << h0_results[5].m_nlower[1] << ", " << pval2sig2sided(h0_results[5].m_nlower[1]) << " sigma" << std::endl;
+  std::cout << "  CNP_Chi for H1:     " << h0_results[6].m_nlower[1] << ", " << pval2sig2sided(h0_results[6].m_nlower[1]) << " sigma" << std::endl;
+
+  std::cout << "Total wall time: " << difftime(time(0), start_time)/1.0 << " Secs.\n";
+    
+  std::vector<std::string> nice_names = {"Pearson_Delta_Chi","Delta_Poisson_Log_Likelihood","CNP_Delta_Chi", "Pearson_Chi_H0", "Pearson_Chi_H1", "CNP_Chi_H0", "CNP_Chi_H1"};
+  std::vector<int> plot_modes = {1, 1, 1, 0, 0, 0, 0};
+
+  for(int i=0; i<h0_results.size(); i++){
+    makePlotsWithData( h0_results[i], h1_results[i], data_results[i], tag+"_"+nice_names[i], plot_modes[i]);
+  }
+
+  return 0 ;
+}  // end definition of CalcCLSWithData
+
+int SBNcls::makePlotsWithData(CLSresult &h0_result, CLSresult & h1_result, float data_result, std::string tag, int which_mode){
+
+  bool draw_both = true;
+  if (which_mode==0) draw_both = false;
+  
+  
+  double max_plot = std::max(std::max(h0_result.m_max_value,h1_result.m_max_value),data_result)*1.25;
+  double min_plot = std::min(std::min(h0_result.m_min_value,h1_result.m_min_value),data_result);
+  
+  TH1D h0_pdf((tag+"h0").c_str(),(tag+"h0").c_str(),250,min_plot,max_plot);
+  TH1D h1_pdf((tag+"h1").c_str(),(tag+"h1").c_str(),250,min_plot,max_plot);
+
+  for(int i=0; i<h0_result.m_values.size(); i++){
+    h0_pdf.Fill(h0_result.m_values[i]);
+    h1_pdf.Fill(h1_result.m_values[i]);
+  }
+  
+  
+  TFile* fp = new TFile(("SBNfit_CLs_withData_"+tag+".root").c_str(),"recreate");
+  fp->cd();
+  TCanvas* cp = new TCanvas();
+  
+  h0_pdf.SetStats(false);
+  h1_pdf.SetStats(false);
+  
+  h0_pdf.Scale(1.0/h0_pdf.Integral("width"));
+  h1_pdf.Scale(1.0/h1_pdf.Integral("width"));
+  
+  h0_pdf.SetLineColor(colH0);
+  h1_pdf.SetLineColor(colH1);
+  h0_pdf.SetFillColor(colH0); //h0 kRed-7
+  h1_pdf.SetFillColor(colH1); //h1 kBlue-4
+  h0_pdf.SetFillStyle(3445);
+  h1_pdf.SetFillStyle(3454);
+  
+  h0_pdf.Draw("hist");
+  if(draw_both) h1_pdf.Draw("hist same");	
+  
+  h0_pdf.SetTitle(tag.c_str());
+  
+  double minval = 0;
+  double maxval = std::max(h0_pdf.GetMaximum(),h1_pdf.GetMaximum());
+  std::cout<<"SBNcls::CalcCLS() || Minimum value: "<<minval<<" Maximum value: "<<maxval<<std::endl;
+  h0_pdf.SetMinimum(minval);
+  h0_pdf.SetMaximum(maxval*1.35);
+  
+  double minbin = min_plot;
+  double maxbin = max_plot;
+  std::cout<<"SBNcls::CalcCLS() || Minimum Bin: "<<minbin<<" Maximum bin: "<<maxbin<<std::endl;
+  h0_pdf.GetXaxis()->SetRangeUser(min_plot,max_plot);  
+  
+  
+  // If drawing H1 distribution, H1 quantile lines...
+  double sig1 = 0.5-(0.6827)/2.0;
+  double sig2 = 0.5-(0.9545)/2.0;
+
+  std::vector<double> prob_values = {1-sig2, 1-sig1, 0.5, sig1, sig2};
+  std::vector<double> quantiles(prob_values.size());	
+  quantiles = h1_result.m_quantiles;
+  
+  std::vector<std::string> quantile_names = {"-2#sigma","-1#sigma","Median","+1#sigma","+2#sigma"};
+  std::vector<int> cols = {kYellow-7, kGreen+1, kBlack, kGreen+1, kYellow-7};
+
+  if(draw_both){  // && which_mode==1
+    // Check that quantiles computed in CalcCLSWithData function agree with prob_values here, at least at the level of the size of the vector
+    if(quantiles.size()!=prob_values.size()) {
+      std::cout << quantiles.size() << " " << prob_values.size() << std::endl;
+      std::cout << "WARNING: Something amiss" << std::endl;
+    }
+    // Loop over the quantiles...
+    for(int i=0; i<quantiles.size(); i++){
+      // Draw the vertical line and its label
+      TLine *l = new TLine(quantiles.at(i), 0.0, quantiles.at(i), maxval*1.05);
+      l->SetLineColor(cols.at(i));
+      l->SetLineWidth(2);
+      TLatex * qnam = new TLatex();
+      qnam->SetTextSize(0.045);
+      qnam->SetTextAlign(12);  //align at top
+      qnam->SetTextAngle(-90);
+      qnam->DrawLatex(quantiles.at(i), maxval*1.3, quantile_names.at(i).c_str());
+      l->Draw("same");
+    }
+  }
+
+  // Median sensitivity
+  // ... people sometimes ask for this, so... fine
+  if (draw_both) {
+    TLatex *med_text = new TLatex();
+    med_text->SetTextSize(0.03);
+    med_text->SetTextAlign(32);
+    double sens_pval = h0_result.m_nlower[1];
+    double sens_sigma = pval2sig(sens_pval);
+    std::string a_string;
+    if (sens_pval>0.001) a_string = to_string_prec(sens_pval,3);
+    else a_string = "10^{"+to_string_prec(log10(sens_pval),2)+"}";
+    std::string whatsigma;
+    if (sens_pval!=0) whatsigma = to_string_prec(sens_sigma,1)+"#sigma";
+    else whatsigma = "inf #sigma";
+    std::string med_details =  ("#splitline{Median sensitivity }{1-#beta(" +to_string_prec(0.5,3) + ") #alpha("+ a_string +" | "+whatsigma+ ")}");
+    //std::cout << med_details << std::endl;
+    med_text->DrawLatexNDC(0.875,0.4,med_details.c_str());
+  }
+    
+  // If this is non-Delta Chi2, analytical chi^2 distribution
+  std::vector<double> analytical_chi;
+  std::vector<double> analytical_prob;
+  for(double t=0; t<maxbin*10; t+=0.01){
+    analytical_chi.push_back(t);
+    analytical_prob.push_back( gsl_ran_chisq_pdf(t,h1->num_bins_total_compressed) );
+  }
+  
+  TGraph *analytical_graph = new TGraph(analytical_chi.size(),&analytical_chi[0],&analytical_prob[0]);
+  analytical_graph->SetLineColor(kRed);
+  // If this is a non-Delta chi2, draw this analytical distribution
+  // ... jk, this graph is already too busy
+  //if(which_mode==0) analytical_graph->Draw("same");
+  
+  // Data result line
+  TLine *data_l = new TLine(data_result, 0.0, data_result, maxval*1.05);
+  data_l->SetLineColor(kCyan-4);
+  data_l->SetLineWidth(2);
+  TLatex *data_nam = new TLatex();
+  data_nam->SetTextSize(0.045);
+  data_nam->SetTextAlign(12);  //align at top
+  data_nam->SetTextAngle(-90);
+  data_nam->DrawLatex(data_result, maxval*1.3, "Data");
+  data_l->Draw("same");
+  
+  // Data chi2
+  TLatex *dat_text = new TLatex();
+  dat_text->SetTextSize(0.045);
+  dat_text->SetTextAlign(32);
+  std::string dat_details = "Data ";
+  if (which_mode==0) dat_details += "#chi^{2}";
+  else if (which_mode==1) dat_details += "#Delta #chi^{2}";
+  dat_details += " = "+to_string_prec(data_result,2);
+  std::cout << dat_details << std::endl;
+  dat_text->DrawLatexNDC(0.85,0.6,dat_details.c_str());
+  
+  // H0, H1 p-values and sensitivities...
+  double h0_pval = h0_result.m_nlower[0];
+  double h1_pval = h1_result.m_nlower[0];
+
+  std::vector<double> pvals = {h0_pval};
+  std::vector<std::string> pval_names = {legends[0]};
+  // if we were going to draw the other p-value, that would go here...
+
+  for(int i=0; i<pvals.size(); i++){
+    TLatex *pval_text = new TLatex();
+    pval_text->SetTextSize(0.045);
+    pval_text->SetTextAlign(32);
+    
+    std::string pval_str;
+    if(pvals[i]>0.001) pval_str = to_string_prec(pvals[i],3);
+    else pval_str = "10^{"+to_string_prec(log10(pvals[i]),2)+"}";
+    
+    double sigma_val = pval2sig(pvals[i]);
+    if(which_mode==0) sigma_val = pval2sig2sided(pvals[i]);
+    std::string sigma_str = to_string_prec(sigma_val,1)+"#sigma";
+    if(sigma_val==0) sigma_str = "inf #sigma";
+    
+    //std::string details = pval_names[i]+": p-value "+pval_str+", "+sigma_str;
+    std::string details = "p-value: "+pval_str+", "+sigma_str;
+    std::cout << details << std::endl;
+    pval_text->DrawLatexNDC(0.85,0.6-(i+1)*0.075,details.c_str());
+  }
+
+
+  // Legend
+  TLegend *leg = new TLegend(0.7,0.7,0.89,0.89);
+  leg->SetLineWidth(0);
+  leg->SetFillStyle(0);
+  leg->AddEntry(&h0_pdf,legends[0].c_str(),"lf");
+  if(draw_both)leg->AddEntry(&h1_pdf,legends[1].c_str(),"lf");
+  //if(which_mode==0)leg->AddEntry(analytical_graph,("#chi^{2} PDF "+std::to_string(h0->num_bins_total_compressed)+" dof").c_str(),"l");
+  leg->Draw();
+  
+  // x and y axis labels
+  if(which_mode==0){
+    h0_pdf.GetXaxis()->SetTitle("#chi^{2}");
+  }
+  else if(which_mode==1){
+    h0_pdf.GetXaxis()->SetTitle(("#Delta #chi^{2} = #chi^{2}_{"+legends[0]+"} - #chi^{2}_{"+legends[1]+"} ").c_str());
+  }
+  h0_pdf.GetYaxis()->SetTitle("PDF");
+  
+
+  cp->Write();	
+  cp->SaveAs(("SBNfit_Cls_withData_"+tag+".pdf").c_str(),"pdf");	
+  fp->Close();
+  
+  return 0;
+  
+} // end definition of makePlotsWithData
