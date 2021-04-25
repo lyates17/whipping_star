@@ -39,7 +39,7 @@ for tag in fakedata_list:
         out_h1_spec_dict[k] = ROOT.TH1D( in_h1_spec_f.Get(k) )
     out_covar = ROOT.TMatrixD( in_covar_f.Get("frac_covariance") )
     
-    # detector systematics already added
+    # detector systematics already added...
     
     # add *fractional* mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p...
     #   and remove them from spec errors, so SBNfit doesn't double-count
@@ -77,21 +77,15 @@ for tag in fakedata_list:
     with open(bkg_mcstat_f, 'r') as f:
         for l in f:
             bkg_mcstat_covar.append( [ float(x) for x in l.strip().split() ] )
-    # scale the prediction and update the normalization error in the bkg covariance matrix as needed
+    # scale the prediction to match the normalization of the backgrounds in this set
     #   note: we only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
     in_offset_bkg = 1
     in_norm_bkg      = sum(bkg_pred[in_offset_bkg:])
-    in_norm_bkg_err2 = 0.033752591055783904  # from Nick, from Slack message at 8:51am on 4/21; note: this is the fractional error *squared*
-    in_norm_1e1p_bnb      = sum([ in_h1_spec_f.Get("nu_uBooNE_1e1p_bnb").GetBinContent(i+1)  for i in range(Nbins_e) ])
-    in_norm_1e1p_bnb_err2 = sum([ in_h1_spec_f.Get("nu_uBooNE_1e1p_bnb").GetBinError(i+1)**2 for i in range(Nbins_e) ]) / (in_norm_1e1p_bnb**2)
+    in_norm_1e1p_bnb = sum([ in_h1_spec_f.Get("nu_uBooNE_1e1p_bnb").GetBinContent(i+1)  for i in range(Nbins_e) ])
     bkg_scale = in_norm_1e1p_bnb / in_norm_bkg
     bkg_pred = [ bkg_scale*x for x in bkg_pred ]
-    for i in range(len(bkg_mcstat_covar)):
-        for j in range(len(bkg_mcstat_covar[i])):
-            bkg_mcstat_covar[i][j] += ( in_norm_1e1p_bnb_err2 - in_norm_bkg_err2 )
     print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:.3f}/{:.3f} = {:.3f}".format(in_norm_1e1p_bnb, in_norm_bkg, bkg_scale)
     print "  Resulting backgrounds: {} (sum: {:.3f} = {:.3f})".format([round(x,3) for x in bkg_pred], in_norm_1e1p_bnb, sum(bkg_pred[in_offset_bkg:]))
-    print "  Resulting normalization error: {:.3f} (previously: {:.3f})".format(sqrt(in_norm_1e1p_bnb_err2), sqrt(in_norm_bkg_err2))
     # update everything -- spec bin contents, spec errors, and covariance matrix
     #   note: we only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
     #in_offset_bkg = 1  # declared above

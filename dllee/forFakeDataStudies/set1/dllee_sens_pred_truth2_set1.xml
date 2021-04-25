@@ -1,0 +1,448 @@
+<?xml version="1.0"?>
+
+<mode name="nu"/>
+<detector name="uBooNE"/>
+
+<channel name="1e1p" unit="MeV">
+  <bins
+      edges="200 300 400 500 600 700 800 900 1000 1100 1200"
+      />
+  <subchannel name="nueCCQE"/>
+  <subchannel name="nueOther"/>
+  <subchannel name="numuCCQE"/>
+  <subchannel name="numuMEC"/>
+  <subchannel name="numuPi0"/>
+  <subchannel name="numuPiCh"/>
+  <subchannel name="numuOther"/>
+  <subchannel name="offVtx"/>
+  <subchannel name="lee"/>
+</channel>
+
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_nueCCQE"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_nueCCQE"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_nueOther"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type!=1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_nueOther"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type!=1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuCCQE"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuCCQE"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuCCQE"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuCCQE"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1001)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuMEC"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_mode==10)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuMEC"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_mode==10)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuMEC"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_mode==10)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuMEC"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_mode==10)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuMEC"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_mode==10)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuMEC"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_mode==10)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPi0"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1004||nu_interaction_type==1006||nu_interaction_type==1008||nu_interaction_type==1011||nu_interaction_type==1013||nu_interaction_type==1015||nu_interaction_type==1080||nu_interaction_type==1086||nu_interaction_type==1090)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPi0"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPi0"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPi0"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPi0"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPi0"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPiCh"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPiCh"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPiCh"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPiCh"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPiCh"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuPiCh"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*(nu_interaction_type==1003||nu_interaction_type==1005||nu_interaction_type==1007||nu_interaction_type==1009||nu_interaction_type==1010||nu_interaction_type==1012||nu_interaction_type==1014||nu_interaction_type==1016||nu_interaction_type==1017||nu_interaction_type==1021||nu_interaction_type==1028||nu_interaction_type==1032||nu_interaction_type==1079||nu_interaction_type==1085)) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuOther"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*((nu_interaction_type==1000*nu_interaction_mode!=10)||(nu_interaction_type==1002)||(nu_interaction_type>1032*nu_interaction_type<1079)||(nu_interaction_type>1090))) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuOther"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*((nu_interaction_type==1000*nu_interaction_mode!=10)||(nu_interaction_type==1002)||(nu_interaction_type>1032*nu_interaction_type<1079)||(nu_interaction_type>1090))) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuOther"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*((nu_interaction_type==1000*nu_interaction_mode!=10)||(nu_interaction_type==1002)||(nu_interaction_type>1032*nu_interaction_type<1079)||(nu_interaction_type>1090))) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuOther"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*((nu_interaction_type==1000*nu_interaction_mode!=10)||(nu_interaction_type==1002)||(nu_interaction_type>1032*nu_interaction_type<1079)||(nu_interaction_type>1090))) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuOther"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*((nu_interaction_type==1000*nu_interaction_mode!=10)||(nu_interaction_type==1002)||(nu_interaction_type>1032*nu_interaction_type<1079)||(nu_interaction_type>1090))) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_numuOther"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * ((dllee_scedr<5.0)*((nu_interaction_type==1000*nu_interaction_mode!=10)||(nu_interaction_type==1002)||(nu_interaction_type>1032*nu_interaction_type<1079)||(nu_interaction_type>1090))) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_bnb_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((nu_pdg==14)||(nu_pdg==-14)||(nu_interaction_ccnc==1)) * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_ccpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_offVtx"
+      additional_weight="( spline_weight*rootino_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) * (dllee_scedr>5.0) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run1_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_lee"
+      additional_weight="( spline_weight*rootino_weight*3.5*lee_weight * ((1.936e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>
+
+<MultisimFile treename="sel_nue_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v40-v48_FakeData_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
+  <branch
+      name="nu_energy_reco"
+      type="double"
+      associated_subchannel="nu_uBooNE_1e1p_lee"
+      additional_weight="( spline_weight*rootino_weight*3.5*lee_weight * ((3.000e+20)/dllee_pot_weight) * (dllee_bdt_score_avg>=0.95) )"
+      eventweight_branch_name="sys_weights"
+      />
+</MultisimFile>

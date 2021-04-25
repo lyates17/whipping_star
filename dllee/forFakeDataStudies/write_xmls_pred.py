@@ -110,7 +110,7 @@ xml_str = """<?xml version="1.0"?>
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight_v40*lee_weight * ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1E1P_LEE_BDT_CUT_VAR>=0.95) )"
+      additional_weight="( xsec_corr_weight_v40*lee_weight * ((RUN1_DATA_POT)/dllee_pot_weight) * (SEL1E1P_BDT_CUT_VAR>=0.95) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
@@ -120,7 +120,7 @@ xml_str = """<?xml version="1.0"?>
       name="nu_energy_reco"
       type="double"
       associated_subchannel="nu_uBooNE_1e1p_lee"
-      additional_weight="( xsec_corr_weight_v40*lee_weight * ((RUN3_DATA_POT)/dllee_pot_weight) * (SEL1E1P_LEE_BDT_CUT_VAR>=0.95) )"
+      additional_weight="( xsec_corr_weight_v40*lee_weight * ((RUN3_DATA_POT)/dllee_pot_weight) * (SEL1E1P_BDT_CUT_VAR>=0.95) )"
       eventweight_branch_name="sys_weights"
       />
 </MultisimFile>
@@ -225,22 +225,8 @@ fakedata_pot_dict['set3'] = [ float(4.025e+20), float(3.969e+20) ]
 fakedata_pot_dict['set4'] = [ float(3.908e+20), float(3.924e+20) ]
 fakedata_pot_dict['set5'] = [ float(7.006e+20), 0. ]
 
-# construct the 1e1p BDT variable for use with fake data that contains events that were included in the training samples
-#   note: everything *except* fake data set 1 signal and fake data set 5 was used in training
-Nbdts_e = 20
-sel1e1p_training_sample_var = '(('
-for i in range(Nbdts_e):
-    sel1e1p_training_sample_var += 'dllee_bdt_score{:02d}+'.format(i)
-sel1e1p_training_sample_var = sel1e1p_training_sample_var[:-1]  # remove a trailing '+'
-sel1e1p_training_sample_var += ')/{})'.format(Nbdts_e)
-
 # cut variable information
-sel1e1p_bdt_cut_var_dict = {}
-sel1e1p_bdt_cut_var_dict['set1'] = [ sel1e1p_training_sample_var, 'dllee_bdt_score_avg' ]
-sel1e1p_bdt_cut_var_dict['set2'] = [ sel1e1p_training_sample_var, sel1e1p_training_sample_var ]
-sel1e1p_bdt_cut_var_dict['set3'] = [ sel1e1p_training_sample_var, sel1e1p_training_sample_var ]
-sel1e1p_bdt_cut_var_dict['set4'] = [ sel1e1p_training_sample_var, sel1e1p_training_sample_var ]
-sel1e1p_bdt_cut_var_dict['set5'] = [ 'dllee_bdt_score_avg', 'dllee_bdt_score_avg' ]
+sel1e1p_bdt_cut_var = 'dllee_bdt_score_avg'
 
 # Loop over everything, write the xmls...
 for tag in fakedata_list:
@@ -250,9 +236,7 @@ for tag in fakedata_list:
     
     run1_data_pot = fakedata_pot_dict[tag][0]
     run3_data_pot = fakedata_pot_dict[tag][1]
-    sel1e1p_bdt_cut_var = sel1e1p_bdt_cut_var_dict[tag][0]
-    sel1e1p_lee_bdt_cut_var = sel1e1p_bdt_cut_var_dict[tag][1]
-
+    
     var_xml_str = xml_str
     
     var_xml_str = var_xml_str.replace("SEL1E1P_RUN1_FILE_NAME", sel1e1p_run1_file_name)
@@ -262,8 +246,7 @@ for tag in fakedata_list:
     var_xml_str = var_xml_str.replace("RUN1_DATA_POT", "{:.3e}".format(run1_data_pot) )
     var_xml_str = var_xml_str.replace("RUN3_DATA_POT", "{:.3e}".format(run3_data_pot) )
     var_xml_str = var_xml_str.replace("SEL1E1P_BDT_CUT_VAR", sel1e1p_bdt_cut_var)
-    var_xml_str = var_xml_str.replace("SEL1E1P_LEE_BDT_CUT_VAR", sel1e1p_lee_bdt_cut_var)
-                    
+    
     output = os.path.join(outdir, "dllee_sens_pred_{}.xml".format(tag))
     with open(output, 'w') as f:
         f.write(var_xml_str)
