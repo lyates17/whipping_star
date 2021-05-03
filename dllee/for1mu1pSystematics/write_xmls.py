@@ -194,9 +194,9 @@ run2_data_pot = (float(1.63e+20) + float(2.964e+19) + float(1.239e+19)) + float(
 run3_data_pot = (float(1.701e+20) + float(2.97e+19) + float(1.524e+17)) + float(4.3e+19)
 
 # file name information
-run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Mar31.root"
-run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_Mar31.root"
-run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Mar31.root"
+run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_Apr20.root"
+run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_Apr20.root"
+run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Apr20.root"
 
 # weighting information
 #weight_str = "xsec_corr_weight"

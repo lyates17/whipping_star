@@ -418,7 +418,7 @@ int main(int argc, char* argv[])
         mg->Draw("ALF");
         
         mg->GetXaxis()->SetTitle("Measured eLEE Signal Strength (x)");
-        mg->GetYaxis()->SetTitle("True eLEE Signal Strength (#mu)");
+        mg->GetYaxis()->SetTitle("True Median eLEE Signal Strength (#mu)");
         mg->SetMinimum(v_true.front());
         mg->SetMinimum(v_true.front());
 
