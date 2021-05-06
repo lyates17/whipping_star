@@ -360,7 +360,9 @@ if __name__ == "__main__":
                     sel1mu1p_data_spec = getSpecList( [ in_data_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
                     # convert input fractional covariance matrix to full covariance matrix
                     full_covar = getFullCovar( in_covar_f.Get("frac_covariance"), joint_spec, debug=debug )
-
+                    # force diagonal entry of the 1mu1p 200-250 MeV bin to 1
+                    full_covar[len(sel1e1p_keys)*Nbins_1e1p][len(sel1e1p_keys)*Nbins_1e1p] = 1.
+                    
                     # run the constraint
                     constr_1e1p_spec, constr_1e1p_full_covar = runConstraint(sel1e1p_spec, sel1mu1p_spec, full_covar, sel1mu1p_data_spec, debug=debug)
 

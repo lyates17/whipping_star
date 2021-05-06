@@ -1,4 +1,5 @@
 import os,subprocess
+import math
 import ROOT
 
 topdir = os.getcwd()
@@ -168,7 +169,7 @@ for var_e in sel1e1p_bdt_cut_variables:
                 in_pot_spec = float(6.96e20)
                 bkg_scale = in_pot_spec / in_pot_bkg
                 bkg_pred = [ bkg_scale*x for x in bkg_pred ]
-                print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:0.3f}/{0.3f} = {:0.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
+                print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:0.3f}/{:0.3f} = {:0.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
                 print "  Resulting backgrounds: {}".format(bkg_pred)
                 # update everything -- spec bin contents, spec errors, and covariance matrix
                 #   note: we only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1

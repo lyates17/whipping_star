@@ -65,7 +65,7 @@ xml_str = """<?xml version="1.0"?>
 
 
 # fake data set list
-fakedata_list = [ 'set1', 'set2', 'set3', 'set4', 'set5' ]
+fakedata_list = [ 'set1', 'set2', 'set3', 'set4', 'set5', 'set7' ]
 
 # input file information
 sel1e1p_file_name  = "input_to_sbnfit_fakedata_{}_1e1p_Apr14.root"

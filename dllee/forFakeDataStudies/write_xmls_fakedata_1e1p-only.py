@@ -61,11 +61,10 @@ xml_str = """<?xml version="1.0"?>
 
 
 # fake data set list
-fakedata_list = [ 'set1', 'set2', 'set3', 'set4', 'set5' ]
+fakedata_list = [ 'set1', 'set2', 'set3', 'set4', 'set5', 'set7' ]
 
 # input file information
 sel1e1p_file_name  = "input_to_sbnfit_fakedata_{}_1e1p_Apr14.root"
-sel1mu1p_file_name = "input_to_sbnfit_fakedata_{}_1mu1p_Apr20.root"
 
 # Loop over everything, write the xmls...
 for tag in fakedata_list:
@@ -76,7 +75,6 @@ for tag in fakedata_list:
     var_xml_str = xml_str
     
     var_xml_str = var_xml_str.replace("SEL1E1P_FILE_NAME", sel1e1p_file_name.format(tag))
-    var_xml_str = var_xml_str.replace("SEL1MU1P_FILE_NAME", sel1mu1p_file_name.format(tag))
     
     output = os.path.join(outdir, "dllee_sens_fakedata_1e1p-only_{}.xml".format(tag))
     with open(output, 'w') as f:

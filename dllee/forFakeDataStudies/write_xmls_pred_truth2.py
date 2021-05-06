@@ -455,7 +455,7 @@ xml_str = """<?xml version="1.0"?>
 
 
 # fake data set list
-fakedata_list = [ 'set1', 'set2', 'set3', 'set4' ] #, 'set5' ]
+fakedata_list = [ 'set1', 'set2', 'set3', 'set4' ] #, 'set5', 'set7' ]
 # ... for set5, just read it off Nick's plot
 
 # input file information
@@ -483,6 +483,7 @@ fakedata_pot_dict['set2'] = [ float(4.013e+20), float(3.852e+20) ]
 fakedata_pot_dict['set3'] = [ float(4.025e+20), float(3.969e+20) ]
 fakedata_pot_dict['set4'] = [ float(3.908e+20), float(3.924e+20) ]
 fakedata_pot_dict['set5'] = [ float(7.006e+20), 0. ]
+fakedata_pot_dict['set7'] = [ float(1.838e+20), float(2.05e+20)  ]
 
 # cut variable information
 sel1e1p_bdt_cut_var = 'dllee_bdt_score_avg'
