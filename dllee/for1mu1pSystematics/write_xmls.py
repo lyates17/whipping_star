@@ -194,9 +194,9 @@ run2_data_pot = (float(1.63e+20) + float(2.964e+19) + float(1.239e+19)) + float(
 run3_data_pot = (float(1.701e+20) + float(2.97e+19) + float(1.524e+17)) + float(4.3e+19)
 
 # file name information
-run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_May05.root"
-run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_May05.root"
-run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_May05.root"
+run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_May26.root"
+run2_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run2_May26.root"
+run3_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_May26.root"
 
 # weighting information
 #weight_str = "xsec_corr_weight"
@@ -238,6 +238,8 @@ var_dict = { "x_reco": (14,15.,241.25,"cm"),
              "mpid_proton_score": (14,0.,1.,""),
              #"mpid_gamma_score": (14,0.,1.,""),
              #"mpid_pion_score": (14,0.,1.,""),
+             "nu_energy_QE_lepton_reco": (20,200.,1200.,"MeV"),
+             "nu_energy_QE_proton_reco": (20,200.,1200.,"MeV"),
              #"bdt_score": (14,0.,0.4,"")
              "dllee_bdt_score_avg": (5,0.5,1.,"")
          }

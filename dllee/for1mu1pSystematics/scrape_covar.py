@@ -15,6 +15,7 @@ var_list = [ "x_reco", "y_reco", "z_reco",
              "lepton_theta_reco", "lepton_phi_reco", "lepton_length_reco", "lepton_KE_reco", "lepton_cos_theta_reco",
              "proton_theta_reco", "proton_phi_reco", "proton_length_reco", "proton_KE_reco", "proton_cos_theta_reco", 
              "mpid_electron_score", "mpid_muon_score", "mpid_proton_score", #"mpid_gamma_score", "mpid_pion_score",
+             "nu_energy_QE_lepton_reco", "nu_energy_QE_proton_reco",
              #"bdt_score" ]
              "dllee_bdt_score_avg" ]
 
