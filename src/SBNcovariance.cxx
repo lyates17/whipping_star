@@ -1217,10 +1217,12 @@ int SBNcovariance::PrintVariations(std::string tag){
 
         //are we in a new variation? maybe. 
 
+      if( universes_used > 100 ){
         if( m%((int)floor((double)universes_used/100.0))==0){
-            std::cout<<"SBNcovariance::PrintVariations\t||\t On Universe: "<<m<<"/"<<universes_used<<" ---time elapsed since last notification: " << difftime(time(0), start_time) << " Seconds.\n";
-            start_time = time(0);
+	  std::cout<<"SBNcovariance::PrintVariations\t||\t On Universe: "<<m<<"/"<<universes_used<<" ---time elapsed since last notification: " << difftime(time(0), start_time) << " Seconds.\n";
+	  start_time = time(0);
         }
+      }
 
         std::string var =  map_universe_to_var.at(m);
         int which_matrix = map_var_to_matrix.at(var);
@@ -1454,10 +1456,12 @@ int SBNcovariance::PrintVariations_2D(std::string tag){
             number_of_used_universes = 0;
         }
 
-        if( m%((int)floor((double)universes_used/100.0))==0){
+	if( universes_used > 100 ){
+	  if( m%((int)floor((double)universes_used/100.0))==0){
             std::cout<<"SBNcovariance::PrintVariations_2D\t||\t On Universe: "<<m<<"/"<<universes_used<<" ---time elapsed since last notification: " << difftime(time(0), start_time) << " Seconds.\n";
             start_time = time(0);
-        }
+	  }
+	}
 
         vec_dir.at(which_matrix)->cd();
 

@@ -1,5 +1,4 @@
 # Write the 34+3 xml files
-
 import math
 import subprocess
 
@@ -189,9 +188,9 @@ xml_str = """<?xml version="1.0"?>
 
 
 # POT information
-run1_data_pot = float(1.558e+20) + float(1.129e+17) + float(1.869e+19)
-run2_data_pot = (float(1.63e+20) + float(2.964e+19) + float(1.239e+19)) + float(5.923e+19)
-run3_data_pot = (float(1.701e+20) + float(2.97e+19) + float(1.524e+17)) + float(4.3e+19)
+run1_data_pot = float(1.63e20)
+run2_data_pot = float(2.75e20)
+run3_data_pot = float(2.29e20)
 
 # file name information
 run1_file_name = "input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run1_May26.root"
@@ -246,8 +245,8 @@ var_dict = { "x_reco": (14,15.,241.25,"cm"),
 
 # sel_dict
 # selection name: [ run1_pot, run2_pot, run3_pot, additional_weight ]
-sel_dict = { #'sel_total_withoutPi0Weights': [ run1_data_pot, run2_data_pot, run3_data_pot, "xsec_corr_weight" ],
-             'sel_total_withPi0Weights':    [ run1_data_pot, run2_data_pot, run3_data_pot, "xsec_corr_weight*dllee_pi0_weight" ]  }
+sel_dict = { #'sel_total_withoutPi0Weights': [ run1_data_pot, run2_data_pot, run3_data_pot, "xsec_corr_weight*(nu_energy_reco<1200)" ],
+             'sel_total_withPi0Weights':    [ run1_data_pot, run2_data_pot, run3_data_pot, "xsec_corr_weight*dllee_pi0_weight*(nu_energy_reco<1200)" ]  }
 
 
 # Loop over everything, write the xmls...

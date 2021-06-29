@@ -323,6 +323,8 @@ if __name__ == "__main__":
     if "total" not in in_covar_fname:
         print("Input file names must have 'total' in them! Exiting...")
         sys.exit(1)
+    in_data_spec_fname = os.path.join(topdir, "data.SBNspec.root")
+
 
     # Define helper variables...
     #   Note: Making some assumptions about the xml configuration
@@ -337,7 +339,7 @@ if __name__ == "__main__":
     in_h0_spec_f   = ROOT.TFile.Open(in_h0_spec_fname, "READ")
     in_h1_spec_f   = ROOT.TFile.Open(in_h1_spec_fname, "READ")
     in_covar_f     = ROOT.TFile.Open(in_covar_fname, "READ")
-    in_data_spec_f = in_h0_spec_f  # TODO: when real 1mu1p data is available, update this
+    in_data_spec_f = ROOT.TFile.Open(in_data_spec_fname, "READ")
     
     # Declare file names for output files
     out_h0_spec_fname = in_h0_spec_fname.replace("total", "constr")
@@ -354,13 +356,13 @@ if __name__ == "__main__":
     sel1e1p_spec  = getSpecList( [ in_h1_spec_f.Get(k) for k in sel1e1p_keys ] )
     sel1mu1p_spec = getSpecList( [ in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
     joint_spec    = getSpecList( [ in_h1_spec_f.Get(k) for k in joint_keys ] )
-    sel1mu1p_data_spec = getSpecList( [ in_data_spec_f.Get("nu_uBooNE_1mu1p_bnb") ] )
+    sel1mu1p_data_spec = getSpecList( [ in_data_spec_f.Get("nu_uBooNE_1mu1p_data") ] )
     # Convert input fractional covariance matrix to full covariance matrix
     full_covar = getFullCovar( in_covar_f.Get("frac_covariance"), joint_spec, debug=debug )
-
+    
     # Run the constraint
     constr_1e1p_spec, constr_1e1p_full_covar = runConstraint(sel1e1p_spec, sel1mu1p_spec, full_covar, sel1mu1p_data_spec, debug=debug)
-
+    
     # Convert the constrained spectra back to TH1Ds
     out_h0_hist_dict = {}
     out_h1_hist_dict = {}

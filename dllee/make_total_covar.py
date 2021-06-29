@@ -143,11 +143,11 @@ with open(bkg_covar_fname, 'r') as f:
     for l in f:
         bkg_covar.append( [ float(x) for x in l.strip().split() ] )
 # scale the prediction as needed
-#   TODO: update with values from new filtered data samples
+#   TODO: update with values from final filtered data sample
 in_pot_bkg  = sum([ float(1.558e+20) + float(1.129e+17) + float(1.869e+19),                     # C1
                     float(1.63e+20)  + float(2.964e+19) + float(1.239e+19),  float(5.923e+19),  # D2, E1
                     float(4.3e+19), float(1.701e+20) + float(2.97e+19)  + float(1.524e+17) ])   # F1, G1
-in_pot_spec = float(6.96e20)
+in_pot_spec = float(6.671e+20)
 bkg_scale = in_pot_spec / in_pot_bkg
 bkg_pred = [ bkg_scale*x for x in bkg_pred ]
 print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:.3e}/{:.3e} = {:.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
@@ -163,7 +163,7 @@ for i in range(Nbins_e):
     for j in range(Nbins_e):
         out_covar[offset_1e1p_bnb+i][offset_1e1p_bnb+j] += bkg_covar[in_offset_bkg+i][in_offset_bkg+j]
 # ... done updating prediction and mc stat errors for 1e1p bnb
-                
+
                 
 # Write everything out
 for k in [ key.GetName() for key in in_h1_spec_f.GetListOfKeys() ]:
