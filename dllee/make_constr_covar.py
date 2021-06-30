@@ -332,7 +332,7 @@ if __name__ == "__main__":
     sel1e1p_keys = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee"]
     joint_keys   = ["nu_uBooNE_1e1p_nue", "nu_uBooNE_1e1p_bnb", "nu_uBooNE_1e1p_lee", "nu_uBooNE_1mu1p_bnb"]
     # If we want debugging info, set this to True
-    debug = False
+    debug = True
 
     
     # Open the input files

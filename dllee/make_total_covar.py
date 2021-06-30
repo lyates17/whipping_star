@@ -49,6 +49,30 @@ for i in range(out_covar.GetNrows()):
         if math.isnan(out_covar[i][j]):
             out_covar[i][j] = 0.
 
+
+# Zero out correlations between 1e1p bnb and other channels
+for i in range(3*Nbins_e+Nbins_m):
+    for j in range(3*Nbins_e+Nbins_m):
+        # Determine whether i refers to a 1e1p_bnb row
+        if ((i<offset_1e1p_bnb) or (i>=offset_1e1p_lee)):
+            cond_i = False
+        else:
+            cond_i = True
+        # Determine whether j refers to a 1e1p_bnb column
+        if ((j<offset_1e1p_bnb) or (j>=offset_1e1p_lee)):
+            cond_j = False
+        else:
+            cond_j = True
+        # If neither is 1e1p_bnb, don't change anything
+        if (not(cond_i) and not(cond_j)):
+            continue
+        # If i is 1e1p_bnb but j is not, or vice versa, zero out correlations
+        if ((cond_i and not(cond_j)) or (not(cond_i) and cond_j)):
+            out_covar[i][j] = 0.
+        # If both are 1e1p but they are not equal to each other, also zero out correlations
+        if ((cond_i and cond_j) and not(i==j)):
+            out_covar[i][j] = 0.
+
 # Add detector systematics for 1e1p nue, 1e1p lee, and 1mu1p bnb... 
 # Read in fractional detector systematic covariance matrix from csv file
 #   Note: Covariance matrix in this file has dimension 20+12
