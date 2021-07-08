@@ -100,7 +100,7 @@ xml_str = """<?xml version="1.0"?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1E1P_RUN3_FILE_NAME" scale="0.356" maxevents="100000">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1E1P_RUN3_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
@@ -231,7 +231,7 @@ xml_str = """<?xml version="1.0"?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="0.356" maxevents="100000">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/SEL1MU1P_RUN3_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"

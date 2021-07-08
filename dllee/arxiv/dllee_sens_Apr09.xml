@@ -92,7 +92,7 @@
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_FinalSelection_run3_Apr07.root" scale="0.356" maxevents="100000">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1e1p_FinalSelection_run3_Apr07.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"
@@ -223,7 +223,7 @@
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Mar31.root" scale="0.356" maxevents="100000">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/input_to_sbnfit_v48_Sep24_withExtraGENIE_1mu1p_run3_Mar31.root" scale="1.0" maxevents="100000">
   <branch
       name="nu_energy_reco"
       type="double"

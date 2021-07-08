@@ -90,7 +90,7 @@ xml_str = """<?xml version="1.0"?>
       />
 </MultisimFile>
 
-<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="0.356" maxevents="100000">
+<MultisimFile treename="sel_ncpi0_tree" filename="/uboone/data/users/yatesla/othersys_mcc9/input_to_sbnfit/RUN3_FILE_NAME" scale="1.0" maxevents="100000">
   <branch
       name="VAR_NAME"
       type="double"
