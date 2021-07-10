@@ -7,9 +7,9 @@ topdir = os.getcwd()
 in_h0_spec_fname = os.path.join(topdir, "leeless.SBNspec.root")
 in_h1_spec_fname = os.path.join(topdir, "sens.SBNspec.root")
 in_covar_fname   = os.path.join(topdir, "sens.SBNcovar.root")
-detsys_fname     = os.path.join(topdir, "detsys", "covMat_Tot.csv")
-bkg_pred_fname   = os.path.join(topdir, "bkg", "bkg_0.95_prediction.txt")
-bkg_covar_fname  = os.path.join(topdir, "bkg", "bkg_0.95_cov.txt")
+detsys_fname     = os.path.join(topdir, "../detsys", "covMat_Tot.csv")
+bkg_pred_fname   = os.path.join(topdir, "../bkg", "bkg_0.95_prediction.txt")
+bkg_covar_fname  = os.path.join(topdir, "../bkg", "bkg_0.95_cov.txt")
 
 # Define a few helper variables...
 #   Note: Making some assumptions about the xml configuration

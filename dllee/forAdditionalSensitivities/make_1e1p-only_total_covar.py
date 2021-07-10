@@ -4,21 +4,20 @@ import ROOT
 
 # Declare file names for input files
 topdir = os.getcwd()
-in_h0_spec_fname = os.path.join(topdir, "leeless.SBNspec.root")
-in_h1_spec_fname = os.path.join(topdir, "sens.SBNspec.root")
-in_covar_fname   = os.path.join(topdir, "sens.SBNcovar.root")
-detsys_fname     = os.path.join(topdir, "detsys", "covMat_Tot.csv")
-bkg_pred_fname   = os.path.join(topdir, "bkg", "bkg_0.95_prediction.txt")
-bkg_covar_fname  = os.path.join(topdir, "bkg", "bkg_0.95_cov.txt")
+in_h0_spec_fname = os.path.join(topdir, "leeless_1e1p-only.SBNspec.root")
+in_h1_spec_fname = os.path.join(topdir, "sens_1e1p-only.SBNspec.root")
+in_covar_fname   = os.path.join(topdir, "sens_1e1p-only.SBNcovar.root")
+detsys_fname     = os.path.join(topdir, "../detsys", "covMat_Tot.csv")
+bkg_pred_fname   = os.path.join(topdir, "../bkg", "bkg_0.95_prediction.txt")
+bkg_covar_fname  = os.path.join(topdir, "../bkg", "bkg_0.95_cov.txt")
 
 # Define a few helper variables...
 #   Note: Making some assumptions about the xml configuration
-Nbins_e = 10
 Nbins_m = 19
+Nbins_e = 10
 #offset_1e1p_nue = 0
 offset_1e1p_bnb = Nbins_e 
 offset_1e1p_lee = 2*Nbins_e
-offset_1mu1p    = 3*Nbins_e
 
 
 # Open the input SBNfit files
@@ -50,8 +49,8 @@ for i in range(out_covar.GetNrows()):
             out_covar[i][j] = 0.
 
 # Zero out correlations between 1e1p bnb and other channels
-for i in range(3*Nbins_e+Nbins_m):
-    for j in range(3*Nbins_e+Nbins_m):
+for i in range(3*Nbins_e):
+    for j in range(3*Nbins_e):
         # Determine whether i refers to a 1e1p_bnb row
         if ((i<offset_1e1p_bnb) or (i>=offset_1e1p_lee)):
             cond_i = False
@@ -73,7 +72,7 @@ for i in range(3*Nbins_e+Nbins_m):
             out_covar[i][j] = 0.
 
 
-# Add detector systematics for 1e1p nue, 1e1p lee, and 1mu1p bnb... 
+# Add detector systematics for 1e1p nue and 1e1p lee... 
 # Read in fractional detector systematic covariance matrix from csv file
 #   Note: Covariance matrix in this file has dimension 20+12
 #           20 1mu1p bins from 200 to 1200 MeV in  50 MeV bins, then
@@ -110,19 +109,8 @@ for i in range(Nbins_e):
         out_covar[i][offset_1e1p_lee+j] += detsys_covar_ee[i][j]
         out_covar[offset_1e1p_lee+i][j] += detsys_covar_ee[i][j]
         out_covar[offset_1e1p_lee+i][offset_1e1p_lee+j] += detsys_covar_ee[i][j]
-# Add detsys_covar_em to the block off-diagonals between {1e1p nue, 1e1p lee}x{1mu1p bnb}
-for i in range(Nbins_e):
-    for j in range(Nbins_m):
-        out_covar[i][offset_1mu1p+j] += detsys_covar_em[i][j]
-        out_covar[offset_1mu1p+j][i] += detsys_covar_em[i][j]
-        out_covar[offset_1e1p_lee+i][offset_1mu1p+j] += detsys_covar_em[i][j]
-        out_covar[offset_1mu1p+j][offset_1e1p_lee+i] += detsys_covar_em[i][j]
-# Add detsys_covar_mm to the 1mu1p bnb
-for i in range(Nbins_m):
-    for j in range(Nbins_m):
-        out_covar[offset_1mu1p+i][offset_1mu1p+j] += detsys_covar_mm[i][j]
-# ... done adding detector systematics for 1e1p nue, 1e1p lee, and 1mu1p bnb
-                
+# ... done adding detector systematics for 1e1p nue and 1e1p lee
+
                 
 # Add detector systematics for 1e1p bnb (i.e., numu backgrounds to the 1e1p selection)...
 detsys_bkg = 0.20**2  # settled on 20%, see Slack DM with Nick at 9:34 on April 5
@@ -132,7 +120,7 @@ for i in range(Nbins_e):
 # ... done adding detector systeamtics for 1e1p bnb
 
                 
-# Add *fractional* mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p...
+# Add *fractional* mc stat errors for 1e1p nue and 1e1p lee...
 #   and remove them from spec errors, so SBNfit doesn't double-count
 print "Adding mc stat errors from {}".format(in_h1_spec_fname)
 for i in range(Nbins_e):
@@ -145,12 +133,7 @@ for i in range(Nbins_e):
         out_covar[offset_1e1p_lee+i][offset_1e1p_lee+i] += (in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1e1p_lee").GetBinContent(i+1))**2
     out_h0_spec_dict["nu_uBooNE_1e1p_lee"].SetBinError(i+1, 0.)
     out_h1_spec_dict["nu_uBooNE_1e1p_lee"].SetBinError(i+1, 0.)
-for i in range(Nbins_m):
-    if in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1) > 0.:
-        out_covar[offset_1mu1p+i][offset_1mu1p+i] += (in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinError(i+1) / in_h1_spec_f.Get("nu_uBooNE_1mu1p_bnb").GetBinContent(i+1))**2
-    out_h0_spec_dict["nu_uBooNE_1mu1p_bnb"].SetBinError(i+1, 0.)
-    out_h1_spec_dict["nu_uBooNE_1mu1p_bnb"].SetBinError(i+1, 0.)
-# ... done adding mc stat errors for 1e1p nue, 1e1p lee, and 1mu1p
+# ... done adding mc stat errors for 1e1p nue and 1e1p lee
 
 
 # Update prediction and mc stat errors for 1e1p bnb (i.e., numu backgrounds to the 1e1p selection)...

@@ -1,4 +1,5 @@
 import os,subprocess
+import math
 import ROOT
 
 # Declare file names for input files
@@ -6,9 +7,9 @@ topdir = os.getcwd()
 in_h0_spec_fname = os.path.join(topdir, "leeless_Runs1to5.SBNspec.root")
 in_h1_spec_fname = os.path.join(topdir, "sens_Runs1to5.SBNspec.root")
 in_covar_fname   = os.path.join(topdir, "sens_Runs1to5.SBNcovar.root")
-detsys_fname     = os.path.join(topdir, "detsys", "covMat_Tot.csv")
-bkg_pred_fname   = os.path.join(topdir, "bkg", "bkg_0.95_prediction.txt")
-bkg_covar_fname  = os.path.join(topdir, "bkg", "bkg_0.95_cov.txt")
+detsys_fname     = os.path.join(topdir, "../detsys", "covMat_Tot.csv")
+bkg_pred_fname   = os.path.join(topdir, "../bkg", "bkg_0.95_prediction.txt")
+bkg_covar_fname  = os.path.join(topdir, "../bkg", "bkg_0.95_cov.txt")
 
 # Define a few helper variables...
 #   Note: Making some assumptions about the xml configuration
@@ -42,6 +43,34 @@ for k in [ key.GetName() for key in in_h1_spec_f.GetListOfKeys() ]:
     out_h0_spec_dict[k] = ROOT.TH1D( in_h0_spec_f.Get(k) )
     out_h1_spec_dict[k] = ROOT.TH1D( in_h1_spec_f.Get(k) )
 out_covar = ROOT.TMatrixD( in_covar_f.Get("frac_covariance") )
+# Zero out any nans, so that things we add actually get added
+for i in range(out_covar.GetNrows()):
+    for j in range(out_covar.GetNcols()):
+        if math.isnan(out_covar[i][j]):
+            out_covar[i][j] = 0.
+
+# Zero out correlations between 1e1p bnb and other channels
+for i in range(3*Nbins_e+Nbins_m):
+    for j in range(3*Nbins_e+Nbins_m):
+        # Determine whether i refers to a 1e1p_bnb row
+        if ((i<offset_1e1p_bnb) or (i>=offset_1e1p_lee)):
+            cond_i = False
+        else:
+            cond_i = True
+        # Determine whether j refers to a 1e1p_bnb column
+        if ((j<offset_1e1p_bnb) or (j>=offset_1e1p_lee)):
+            cond_j = False
+        else:
+            cond_j = True
+        # If neither is 1e1p_bnb, don't change anything
+        if (not(cond_i) and not(cond_j)):
+            continue
+        # If i is 1e1p_bnb but j is not, or vice versa, zero out correlations
+        if ((cond_i and not(cond_j)) or (not(cond_i) and cond_j)):
+            out_covar[i][j] = 0.
+        # If both are 1e1p but they are not equal to each other, also zero out correlations
+        if ((cond_i and cond_j) and not(i==j)):
+            out_covar[i][j] = 0.
 
 
 # Add detector systematics for 1e1p nue, 1e1p lee, and 1mu1p bnb... 
@@ -132,11 +161,18 @@ print "Updating prediction for numu backgrounds to the 1e1p from {}".format(bkg_
 print "Adding mc stat errors for numu backgrounds to the 1e1p from {}".format(bkg_covar_fname)
 with open(bkg_pred_fname, 'r') as f:
     # First line has binning information, second line has spectrum
-    bkg_pred = [ 1.868*float(x) for x in f.readlines()[1].strip().split() ]
+    bkg_pred = [ float(x) for x in f.readlines()[1].strip().split() ]
 bkg_covar = []
 with open(bkg_covar_fname, 'r') as f:
     for l in f:
         bkg_covar.append( [ float(x) for x in l.strip().split() ] )
+# scale the prediction as needed
+in_pot_bkg  = float(1.631e+20) + float(2.749e+20) + float(2.291e+20)  # Run 1 + 2 + 3, for the final filtered data samples
+in_pot_spec = float(13.e+20)
+bkg_scale = in_pot_spec / in_pot_bkg
+bkg_pred = [ bkg_scale*x for x in bkg_pred ]
+print "Scaling the nominal prediction for numu backgrounds to the 1e1p by {:.3e}/{:.3e} = {:.3f}".format(in_pot_spec, in_pot_bkg, bkg_scale)
+print "  Resulting backgrounds: {}".format([round(x,3) for x in bkg_pred])
 # Update everything -- spec bin contents, spec errors, and covariance matrix
 #   Note: We only use the 10 1e1p bins from 200 to 1200 MeV, so have an offset of 1
 in_offset_bkg = 1
@@ -148,7 +184,7 @@ for i in range(Nbins_e):
     for j in range(Nbins_e):
         out_covar[offset_1e1p_bnb+i][offset_1e1p_bnb+j] += bkg_covar[in_offset_bkg+i][in_offset_bkg+j]
 # ... done updating prediction and mc stat errors for 1e1p bnb
-                
+
                 
 # Write everything out
 for k in [ key.GetName() for key in in_h1_spec_f.GetListOfKeys() ]:
